@@ -17,13 +17,14 @@ const Robots: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Robots</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {robots.map((robot, index) => (
             <motion.div
               key={robot.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
             >
               <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
                 <img

@@ -26,13 +26,14 @@ const Unitybots: React.FC = () => {
         {/* Resources Section */}
         <section className="mb-16">
           <h2 className="text-4xl font-bold text-[#d92507] text-center mb-8">Our Resources</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto">
             {resources.map((resource, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="w-full md:w-[calc(50%-1rem)]"
               >
                 <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
                   <CardHeader className="bg-[#0d2f60] text-white p-6">
@@ -63,13 +64,14 @@ const Unitybots: React.FC = () => {
         {/* Initiatives Section */}
         <section>
           <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Community Initiatives</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {initiatives.map((initiative, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
               >
                 <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
                   {initiative.imageUrl && (
