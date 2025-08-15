@@ -117,8 +117,8 @@ const Events: React.FC = () => {
             className="relative mt-8"
           >
             <div className="absolute top-3 left-4 md:left-1/2 w-4 h-4 bg-[#d92507] rounded-full -translate-x-1/2 border-4 border-white" />
-            <div className="w-full text-center">
-                <div className="inline-flex items-center bg-[#0d2f60] text-white text-xl font-bold px-6 py-2 rounded-full z-10 shadow-lg">
+            <div className="w-full text-center pt-8">
+                <div className="inline-flex items-center bg-[#0d2f60] text-white text-xl font-bold px-6 py-2 rounded-full shadow-lg">
                     <Flag className="mr-2 h-5 w-5" />
                     Team Founded 2018
                 </div>
