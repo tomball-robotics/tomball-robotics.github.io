@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { events } from "@/data/eventsData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy } from "lucide-react";
+import { MapPin, Trophy, Flag } from "lucide-react";
 
 interface Event {
   year: number;
@@ -62,7 +62,7 @@ const Events: React.FC = () => {
 
         <div className="relative max-w-4xl mx-auto">
           {/* The timeline's vertical line */}
-          <div className="absolute left-4 md:left-1/2 top-10 h-[calc(100%-2.5rem)] w-0.5 bg-gray-200" />
+          <div className="absolute left-4 md:left-1/2 top-10 h-[calc(100%-4rem)] w-0.5 bg-gray-200" />
 
           {sortedYears.map((year) => (
             <div key={year} className="mb-12">
@@ -110,6 +110,20 @@ const Events: React.FC = () => {
               ))}
             </div>
           ))}
+
+          {/* Team Founded Marker */}
+          <motion.div
+            variants={itemVariants}
+            className="relative mt-8"
+          >
+            <div className="absolute top-3 left-4 md:left-1/2 w-4 h-4 bg-[#d92507] rounded-full -translate-x-1/2 border-4 border-white" />
+            <div className="w-full text-center">
+                <div className="inline-flex items-center bg-[#0d2f60] text-white text-xl font-bold px-6 py-2 rounded-full z-10 shadow-lg">
+                    <Flag className="mr-2 h-5 w-5" />
+                    Team Founded 2018
+                </div>
+            </div>
+          </motion.div>
         </div>
 
         {events.length === 0 && (
