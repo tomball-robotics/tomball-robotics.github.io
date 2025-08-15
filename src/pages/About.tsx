@@ -31,13 +31,14 @@ const About: React.FC = () => {
         {/* Team Members Section */}
         <section className="mb-12">
           <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Meet the Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={member.id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="w-full sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
               >
                 <Card className="h-full flex flex-col items-center justify-center text-center p-6 shadow-lg rounded-lg bg-white">
                   <CardHeader className="p-0 mb-1">
@@ -58,13 +59,14 @@ const About: React.FC = () => {
         {/* Achievements Section */}
         <section>
           <h2 className="text-4xl font-bold text-[#d92507] text-center mb-8">Our Achievements</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
             {achievements.map((achievement, index) => (
               <motion.div
                 key={achievement.id}
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="w-full md:w-[calc(50%-0.75rem)]"
               >
                 <Card className="p-5 shadow-lg rounded-lg bg-white flex items-center space-x-4">
                   <div className="flex-shrink-0 text-3xl font-extrabold text-[#0d2f60]">
