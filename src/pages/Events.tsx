@@ -25,6 +25,11 @@ const Events: React.FC = () => {
     return acc;
   }, {} as Record<number, Event[]>);
 
+  // Reverse the order of events within each year to show the most recent first
+  for (const year in eventsByYear) {
+    eventsByYear[year].reverse();
+  }
+
   const sortedYears = Object.keys(eventsByYear)
     .map(Number)
     .sort((a, b) => b - a);
