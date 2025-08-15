@@ -23,13 +23,13 @@ export const homePageData: HomePageData = {
   hero: {
     title: "Tomball T3 Robotics",
     subtitle: "FIRST Robotics Competition Team 7312",
-    backgroundImage: "/images/general/indexcollage.jpg",
+    backgroundImage: "/indexcollage.jpg",
   },
   aboutPreview: {
     title: "Who We Are",
     description:
       "Tomball T3 Robotics, FRC Team 7312, is a high school robotics team dedicated to fostering interest in STEM fields. We design, build, and program robots to compete in the FIRST Robotics Competition, learning valuable skills in engineering, teamwork, and leadership.",
-    imageUrl: "/images/general/RobotTeamPhoto.jpg",
+    imageUrl: "/placeholder.svg",
   },
   eventsPreview: {
     title: "Our Journey",

@@ -41,7 +41,7 @@ export const initiatives: UnitybotInitiative[] = [
   {
     title: "FIRST Alliances",
     description: "Combines the impact of the 600,000+ students in FIRST, reaching greater heights and inspire more people than ever before",
-    imageUrl: "/images/initiatives/FirstAlliances.avif",
+    imageUrl: "/FirstAlliances.avif",
     links: [
       {
         text: "More Information",
@@ -52,7 +52,7 @@ export const initiatives: UnitybotInitiative[] = [
   {
     title: "FIRST Like a Girl",
     description: "Improve STEM by posting and spreading awareness of the experiences of women in FIRST",
-    imageUrl: "/images/initiatives/FirstLikeAGirl.avif",
+    imageUrl: "/FirstLikeAGirl.avif",
     links: [
       {
         text: "More Information",
@@ -63,7 +63,7 @@ export const initiatives: UnitybotInitiative[] = [
   {
     title: "M.E.+FIRST",
     description: "Advocate for women in STEM by creating safe spaces for networking and communication",
-    imageUrl: "/images/initiatives/ME.avif",
+    imageUrl: "/ME.avif",
     links: [
       {
         text: "More Information",
@@ -74,7 +74,7 @@ export const initiatives: UnitybotInitiative[] = [
   {
     title: "Girls Get Together",
     description: "An international community of FIRST teams who support and promote gender inclusion in FIRST robotics",
-    imageUrl: "/images/initiatives/GGT.avif",
+    imageUrl: "/GGT.avif",
     links: [
       {
         text: "More Information",
@@ -85,7 +85,7 @@ export const initiatives: UnitybotInitiative[] = [
   {
     title: "First Ladies",
     description: "Support and promote women in FIRST robotics",
-    imageUrl: "/images/initiatives/FIRSTLadies.avif",
+    imageUrl: "/FIRSTLadies.avif",
     links: [
       {
         text: "More Information",
