@@ -1,0 +1,60 @@
+import React from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { robots } from "@/data/robotsData";
+
+const Robots: React.FC = () => {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex-grow container mx-auto px-4 py-12 pt-24"
+      >
+        <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Robots</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {robots.map((robot, index) => (
+            <motion.div
+              key={robot.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
+                <img
+                  src={robot.imageUrl}
+                  alt={robot.name}
+                  className="w-full h-96 object-cover"
+                />
+                <CardHeader className="p-4">
+                  <CardTitle className="text-2xl font-bold text-[#d92507]">{robot.name}</CardTitle>
+                  <CardDescription className="text-gray-600">{robot.year} Robot</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 pt-0 flex-grow">
+                  <p className="text-gray-700 mb-3">
+                    <span className="font-semibold text-[#0d2f60]">Specs:</span> {robot.specs}
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-semibold text-[#0d2f60]">Awards:</span> {robot.awards}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {robots.length === 0 && (
+          <p className="text-center text-gray-600 text-xl mt-8">No robots to display yet. Check back soon!</p>
+        )}
+      </motion.main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Robots;
