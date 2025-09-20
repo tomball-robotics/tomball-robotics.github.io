@@ -3,41 +3,25 @@ export const teamMembers = [
     id: 1,
     name: "Stephanie Piazza",
     role: "Lead Mentor",
+    imageUrl: "/placeholder.svg", // Placeholder image
   },
   {
     id: 2,
     name: "Anika Yedevelli",
     role: "Logistics",
+    imageUrl: "/placeholder.svg", // Placeholder image
   },
   {
     id: 3,
     name: "Kegan Cherry",
     role: "Programming",
+    imageUrl: "/placeholder.svg", // Placeholder image
   },
   {
     id: 4,
     name: "Chase Webster",
     role: "Electrical",
-  },
-  {
-    id: 5,
-    name: "John Lezama",
-    role: "Mechanical",
-  },
-  {
-    id: 6,
-    name: "Daniel Hoffmaster",
-    role: "Snacks",
-  },
-  {
-    id: 7,
-    name: "Santi Angel",
-    role: "Design",
-  },
-  {
-    id: 8,
-    name: "Sidd Mannepalli",
-    role: "Strategy",
+    imageUrl: "/placeholder.svg", // Placeholder image
   },
   // Add more team members here
 ];

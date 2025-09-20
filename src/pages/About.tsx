@@ -4,6 +4,9 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { teamMembers, achievements } from "@/data/aboutData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Trophy, Users, Flag } from "lucide-react"; // Added Users and Flag icons
+
+import TeamCarousel from "@/components/TeamCarousel"; // Import the new carousel component
 
 const About: React.FC = () => {
   const sectionVariants = {
@@ -53,7 +56,7 @@ const About: React.FC = () => {
 
         {/* Mission Section */}
         <motion.section
-          className="mb-12 text-center"
+          className="mb-16 text-center"
           variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
@@ -68,25 +71,42 @@ const About: React.FC = () => {
           </p>
         </motion.section>
 
-        {/* Team Members Section */}
+        {/* Team Photos Slideshow */}
         <motion.section
-          className="mb-12"
+          className="mb-16"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Team Highlights</h2>
+          <TeamCarousel />
+        </motion.section>
+
+        {/* Meet the Team Section */}
+        <motion.section
+          className="mb-16"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Meet the Team</h2>
+          <h2 className="text-4xl font-bold text-[#d92507] text-center mb-8">Meet the Team</h2>
           <motion.div
-            className="flex flex-wrap justify-center gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto"
             variants={listVariants}
           >
             {teamMembers.map((member) => (
               <motion.div
                 key={member.id}
                 variants={itemVariants}
-                className="w-full sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
+                className="flex"
               >
-                <Card className="h-full flex flex-col items-center justify-center text-center p-6 shadow-lg rounded-lg bg-white">
+                <Card className="w-full flex flex-col items-center text-center p-6 shadow-lg rounded-lg bg-white hover:shadow-xl transition-shadow">
+                  <img
+                    src={member.imageUrl}
+                    alt={member.name}
+                    className="w-32 h-32 rounded-full object-cover mb-4 border-4 border-[#0d2f60] shadow-md"
+                  />
                   <CardHeader className="p-0 mb-1">
                     <CardTitle className="text-xl font-bold text-[#0d2f60]">{member.name}</CardTitle>
                   </CardHeader>
@@ -108,23 +128,24 @@ const About: React.FC = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <h2 className="text-4xl font-bold text-[#d92507] text-center mb-8">Our Achievements</h2>
+          <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Our Achievements</h2>
           <motion.div
-            className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
             variants={listVariants}
           >
             {achievements.map((achievement) => (
               <motion.div
                 key={achievement.id}
                 variants={itemVariants}
-                className="w-full md:w-[calc(50%-0.75rem)]"
+                className="flex"
               >
-                <Card className="p-5 shadow-lg rounded-lg bg-white flex items-center space-x-4">
-                  <div className="flex-shrink-0 text-3xl font-extrabold text-[#0d2f60]">
-                    {achievement.year}
+                <Card className="w-full p-5 shadow-lg rounded-lg bg-white flex items-center space-x-4 border-l-4 border-[#d92507] hover:shadow-xl transition-shadow">
+                  <div className="flex-shrink-0 text-[#0d2f60]">
+                    <Trophy className="h-8 w-8" />
                   </div>
                   <div className="flex-grow">
-                    <p className="text-lg text-gray-700">{achievement.description}</p>
+                    <p className="text-sm font-semibold text-gray-500">{achievement.year}</p>
+                    <p className="text-lg text-gray-700 font-medium">{achievement.description}</p>
                   </div>
                 </Card>
               </motion.div>
