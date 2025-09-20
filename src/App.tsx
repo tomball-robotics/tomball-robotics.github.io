@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin"; // Import the new Admin page
 import ScrollToTop from "./components/ScrollToTop";
 import { useSupabase } from "./components/SessionContextProvider";
+import AdminWebsiteSettings from "./pages/admin/AdminWebsiteSettings"; // Import new admin page
 
 const queryClient = new QueryClient();
 
@@ -47,8 +48,14 @@ const App = () => {
             <Route path="/unitybots" element={<Unitybots />} />
             <Route path="/login" element={<Login />} />
 
-            {/* Protected Admin route */}
-            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+            {/* Protected Admin routes */}
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>}>
+              {/* Admin Dashboard (default for /admin) */}
+              <Route index element={<h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>} />
+              {/* Specific Admin Pages */}
+              <Route path="settings" element={<AdminWebsiteSettings />} />
+              {/* Add more admin routes here as we build them */}
+            </Route>
             
             <Route path="*" element={<NotFound />} />
           </Routes>
