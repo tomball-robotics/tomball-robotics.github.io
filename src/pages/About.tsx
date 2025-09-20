@@ -1,14 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { teamMembers, achievements } from "@/data/aboutData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
-
-import SimpleImageCarousel from "@/components/SimpleImageCarousel"; // Import the new carousel component
+import SimpleImageCarousel from "@/components/SimpleImageCarousel";
+import { supabase } from "@/integrations/supabase/client";
+import { TeamMember, Achievement } from "@/types/supabase"; // Import new types
 
 const About: React.FC = () => {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data: membersData, error: membersError } = await supabase
+        .from("team_members")
+        .select("*")
+        .order("created_at", { ascending: true }); // Order for consistent display
+
+      const { data: achievementsData, error: achievementsError } = await supabase
+        .from("achievements")
+        .select("*")
+        .order("year", { ascending: false }) // Order by year descending
+        .order("created_at", { ascending: false }); // Consistent order for same year
+
+      if (membersError) {
+        console.error("Error fetching team members:", membersError);
+        setError("Failed to load team members.");
+      } else if (achievementsError) {
+        console.error("Error fetching achievements:", achievementsError);
+        setError("Failed to load achievements.");
+      } else {
+        setTeamMembers(membersData || []);
+        setAchievements(achievementsData || []);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -47,6 +82,30 @@ const About: React.FC = () => {
     "/indexcollage.jpg",
     "/hero-background.jpeg",
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-gray-600">Loading About page content...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-red-600">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -102,12 +161,14 @@ const About: React.FC = () => {
                   className="flex"
                 >
                   <Card className="w-full flex flex-col shadow-lg rounded-lg bg-white hover:shadow-xl transition-shadow overflow-hidden">
-                    <img
-                      src={member.imageUrl}
-                      alt={member.name}
-                      className="w-full h-48 object-cover rounded-t-lg border-b-4 border-[#0d2f60]" // Square, fills top, rounded top corners
-                    />
-                    <CardHeader className="p-4 text-center"> {/* Adjusted padding and text alignment */}
+                    {member.image_url && (
+                      <img
+                        src={member.image_url}
+                        alt={member.name}
+                        className="w-full h-48 object-cover rounded-t-lg border-b-4 border-[#0d2f60]"
+                      />
+                    )}
+                    <CardHeader className="p-4 text-center">
                       <CardTitle className="text-xl font-bold text-[#0d2f60]">{member.name}</CardTitle>
                       <p className="text-gray-600 text-sm">{member.role}</p>
                     </CardHeader>

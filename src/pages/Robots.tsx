@@ -1,11 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { robots } from "@/data/robotsData";
+import { supabase } from "@/integrations/supabase/client";
+import { Robot } from "@/types/supabase"; // Import the new type
 
 const Robots: React.FC = () => {
+  const [robots, setRobots] = useState<Robot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRobots = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("robots")
+        .select("*")
+        .order("year", { ascending: false }); // Order by year descending
+
+      if (error) {
+        console.error("Error fetching robots:", error);
+        setError("Failed to load robots.");
+      } else {
+        setRobots(data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchRobots();
+  }, []);
+
   const listVariants = {
     visible: {
       transition: {
@@ -27,6 +52,30 @@ const Robots: React.FC = () => {
       },
     },
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-gray-600">Loading robots...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-red-600">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -52,22 +101,28 @@ const Robots: React.FC = () => {
               className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
             >
               <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
-                <img
-                  src={robot.imageUrl}
-                  alt={robot.name}
-                  className="w-full h-96 object-cover"
-                />
+                {robot.image_url && (
+                  <img
+                    src={robot.image_url}
+                    alt={robot.name}
+                    className="w-full h-96 object-cover"
+                  />
+                )}
                 <CardHeader className="p-4">
                   <CardTitle className="text-2xl font-bold text-[#d92507]">{robot.name}</CardTitle>
                   <CardDescription className="text-gray-600">{robot.year} Robot</CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 flex-grow">
-                  <p className="text-gray-700 mb-3">
-                    <span className="font-semibold text-[#0d2f60]">Specs:</span> {robot.specs}
-                  </p>
-                  <p className="text-gray-700">
-                    <span className="font-semibold text-[#0d2f60]">Awards:</span> {robot.awards}
-                  </p>
+                  {robot.specs && (
+                    <p className="text-gray-700 mb-3">
+                      <span className="font-semibold text-[#0d2f60]">Specs:</span> {robot.specs}
+                    </p>
+                  )}
+                  {robot.awards && (
+                    <p className="text-gray-700">
+                      <span className="font-semibold text-[#0d2f60]">Awards:</span> {robot.awards}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

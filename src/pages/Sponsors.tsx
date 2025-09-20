@@ -1,13 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { sponsorsData } from "@/data/sponsorsData";
-import { sponsorshipTiers } from "@/data/sponsorshipTiers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { Sponsor, SponsorshipTier } from "@/types/supabase"; // Import new types
 
 const Sponsors: React.FC = () => {
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data: sponsorsData, error: sponsorsError } = await supabase
+        .from("sponsors")
+        .select("*")
+        .order("amount", { ascending: false }); // Order by amount for tiering
+
+      const { data: tiersData, error: tiersError } = await supabase
+        .from("sponsorship_tiers")
+        .select("*")
+        .order("price", { ascending: false }); // Order by price for tier determination
+
+      if (sponsorsError) {
+        console.error("Error fetching sponsors:", sponsorsError);
+        setError("Failed to load sponsors.");
+      } else if (tiersError) {
+        console.error("Error fetching sponsorship tiers:", tiersError);
+        setError("Failed to load sponsorship tiers.");
+      } else {
+        setSponsors(sponsorsData || []);
+        setSponsorshipTiers(tiersData || []);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
   const tierOrder = ["diamond", "sapphire", "platinum", "gold", "silver", "bronze"];
   const tierStyles: { [key: string]: string } = {
     diamond: "text-cyan-400",
@@ -20,14 +54,14 @@ const Sponsors: React.FC = () => {
 
   // Helper function to determine tier from amount
   const getTierForAmount = (amount: number): string => {
-    // sponsorshipTiers is already sorted from highest to lowest price
     for (const tier of sponsorshipTiers) {
+      // Extract numeric value from price string (e.g., "$50,000" -> 50000)
       const threshold = parseInt(tier.price.replace(/[^0-9]/g, ''), 10);
       if (amount >= threshold) {
-        return tier.tierId;
+        return tier.tier_id;
       }
     }
-    return "";
+    return ""; // Default if no tier matches
   };
 
   const listVariants = {
@@ -51,9 +85,11 @@ const Sponsors: React.FC = () => {
     },
   };
 
-  const renderSponsorsByTier = (tier: string) => {
-    const filteredSponsors = sponsorsData.filter(s => getTierForAmount(s.amount) === tier);
+  const renderSponsorsByTier = (tierId: string) => {
+    const filteredSponsors = sponsors.filter(s => getTierForAmount(s.amount) === tierId);
     if (filteredSponsors.length === 0) return null;
+
+    const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
 
     return (
       <motion.div
@@ -62,8 +98,8 @@ const Sponsors: React.FC = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h2 className={`text-4xl font-bold text-center mb-8 ${tierStyles[tier]}`}>
-          {tier.charAt(0).toUpperCase() + tier.slice(1)} Sponsors
+        <h2 className={`text-4xl font-bold text-center mb-8 ${tierStyles[tierId]}`}>
+          {tierName} Sponsors
         </h2>
         <motion.div
           className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
@@ -76,16 +112,18 @@ const Sponsors: React.FC = () => {
               className="w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.666rem)]"
             >
               <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg rounded-lg bg-white">
-                <img
-                  src={sponsor.imageUrl}
-                  alt={sponsor.name}
-                  className="w-32 h-32 object-contain mb-4"
-                />
+                {sponsor.image_url && (
+                  <img
+                    src={sponsor.image_url}
+                    alt={sponsor.name}
+                    className="w-32 h-32 object-contain mb-4"
+                  />
+                )}
                 <CardHeader className="p-0 mb-2">
                   <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0 flex-grow">
-                  <p className="text-gray-700">{sponsor.description}</p>
+                  {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
                   {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
                 </CardContent>
               </Card>
@@ -95,6 +133,30 @@ const Sponsors: React.FC = () => {
       </motion.div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-gray-600">Loading sponsors...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-red-600">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -109,9 +171,9 @@ const Sponsors: React.FC = () => {
 
         {tierOrder.map(tier => renderSponsorsByTier(tier))}
 
-        {sponsorsData.length === 0 && (
+        {sponsors.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">
-            We are actively seeking sponsors for the current season. 
+            We are actively seeking sponsors for the current season.
             Your support can make a huge difference!
           </p>
         )}

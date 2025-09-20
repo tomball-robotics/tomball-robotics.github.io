@@ -1,13 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { sponsorshipTiers } from "@/data/sponsorshipTiers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { SponsorshipTier } from "@/types/supabase"; // Import the new type
 
 const Donate: React.FC = () => {
+  const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSponsorshipTiers = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("sponsorship_tiers")
+        .select("*")
+        .order("price", { ascending: false }); // Order by price descending for display
+
+      if (error) {
+        console.error("Error fetching sponsorship tiers:", error);
+        setError("Failed to load sponsorship tiers.");
+      } else {
+        setSponsorshipTiers(data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchSponsorshipTiers();
+  }, []);
+
   const listVariants = {
     visible: {
       transition: {
@@ -29,6 +54,30 @@ const Donate: React.FC = () => {
     },
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-gray-600">Loading sponsorship tiers...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-red-600">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -40,8 +89,8 @@ const Donate: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] mb-6">Become a Sponsor</h1>
         <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-12">
-          T3 Tomball Robotics is searching for valuable sponsors to help keep our team running. 
-          T3 Robotics strives to empower young leaders in the Tomball community and teaches the 
+          T3 Tomball Robotics is searching for valuable sponsors to help keep our team running.
+          T3 Robotics strives to empower young leaders in the Tomball community and teaches the
           necessary skills needed for future success.
         </p>
 
@@ -53,7 +102,7 @@ const Donate: React.FC = () => {
         >
           {sponsorshipTiers.map((tier) => (
             <motion.div
-              key={tier.name}
+              key={tier.id} // Use tier.id as key
               variants={itemVariants}
               className="flex"
             >
@@ -64,7 +113,7 @@ const Donate: React.FC = () => {
                 </CardHeader>
                 <CardContent className="p-0 flex-grow text-left">
                   <ul className="space-y-2 text-gray-600">
-                    {tier.benefits.map((benefit, i) => (
+                    {tier.benefits && tier.benefits.map((benefit, i) => (
                       <li key={i} className="flex items-start">
                         <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-1 flex-shrink-0" />
                         <span>{benefit}</span>
