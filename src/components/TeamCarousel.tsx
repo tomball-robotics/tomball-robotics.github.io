@@ -29,11 +29,11 @@ const TeamCarousel: React.FC = () => {
     >
       <CarouselContent className="h-full">
         {teamPhotos.map((photo, index) => (
-          <CarouselItem key={index} className="h-full">
+          <CarouselItem key={index} className="h-full overflow-hidden"> {/* Added overflow-hidden */}
             <img
               src={photo}
               alt={`Team Photo ${index + 1}`}
-              className="w-full h-full object-cover" // Image fills the item
+              className="w-full h-full object-cover" // Image fills the item, cropping as needed
             />
           </CarouselItem>
         ))}
