@@ -8,6 +8,27 @@ import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Donate: React.FC = () => {
+  const listVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+    hidden: {},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -24,13 +45,16 @@ const Donate: React.FC = () => {
           necessary skills needed for future success.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-12">
-          {sponsorshipTiers.map((tier, index) => (
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-12"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {sponsorshipTiers.map((tier) => (
             <motion.div
               key={tier.name}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={itemVariants}
               className="flex"
             >
               <Card className="w-full flex flex-col bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow">
@@ -51,7 +75,7 @@ const Donate: React.FC = () => {
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="bg-gray-100 p-8 rounded-lg shadow-inner max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-[#d92507] mb-4">Ready to Support Us?</h2>

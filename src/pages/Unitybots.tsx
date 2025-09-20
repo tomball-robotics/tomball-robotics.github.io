@@ -6,6 +6,27 @@ import { motion } from "framer-motion";
 import { resources, initiatives } from "@/data/unitybotsData";
 
 const Unitybots: React.FC = () => {
+  const listVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+    hidden: {},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -24,15 +45,21 @@ const Unitybots: React.FC = () => {
         </div>
 
         {/* Resources Section */}
-        <section className="mb-16">
+        <motion.section
+          className="mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <h2 className="text-4xl font-bold text-[#d92507] text-center mb-8">Our Resources</h2>
-          <div className="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto">
+          <motion.div
+            className="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto"
+            variants={listVariants}
+          >
             {resources.map((resource, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                variants={itemVariants}
                 className="w-full md:w-[calc(50%-1rem)]"
               >
                 <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
@@ -58,19 +85,24 @@ const Unitybots: React.FC = () => {
                 </Card>
               </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Initiatives Section */}
-        <section>
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Community Initiatives</h2>
-          <div className="flex flex-wrap justify-center gap-8">
+          <motion.div
+            className="flex flex-wrap justify-center gap-8"
+            variants={listVariants}
+          >
             {initiatives.map((initiative, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                variants={itemVariants}
                 className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
               >
                 <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
@@ -105,7 +137,7 @@ const Unitybots: React.FC = () => {
                 </Card>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
       </motion.main>
       <Footer />

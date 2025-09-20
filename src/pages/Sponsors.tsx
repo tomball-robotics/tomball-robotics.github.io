@@ -30,22 +30,49 @@ const Sponsors: React.FC = () => {
     return "";
   };
 
+  const listVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+    hidden: {},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+      },
+    },
+  };
+
   const renderSponsorsByTier = (tier: string) => {
     const filteredSponsors = sponsorsData.filter(s => getTierForAmount(s.amount) === tier);
     if (filteredSponsors.length === 0) return null;
 
     return (
-      <div className="mb-10">
+      <motion.div
+        className="mb-10"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <h2 className={`text-4xl font-bold text-center mb-8 ${tierStyles[tier]}`}>
           {tier.charAt(0).toUpperCase() + tier.slice(1)} Sponsors
         </h2>
-        <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
-          {filteredSponsors.map((sponsor, index) => (
+        <motion.div
+          className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
+          variants={listVariants}
+        >
+          {filteredSponsors.map((sponsor) => (
             <motion.div
               key={sponsor.id}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={itemVariants}
               className="w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.666rem)]"
             >
               <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg rounded-lg bg-white">
@@ -64,8 +91,8 @@ const Sponsors: React.FC = () => {
               </Card>
             </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     );
   };
 

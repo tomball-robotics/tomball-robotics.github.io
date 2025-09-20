@@ -6,6 +6,40 @@ import { teamMembers, achievements } from "@/data/aboutData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const About: React.FC = () => {
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 1,
+        bounce: 0.3,
+      },
+    },
+  };
+
+  const listVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+    hidden: {},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -18,7 +52,13 @@ const About: React.FC = () => {
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">About Tomball T3 Robotics</h1>
 
         {/* Mission Section */}
-        <section className="mb-12 text-center">
+        <motion.section
+          className="mb-12 text-center"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <h2 className="text-4xl font-bold text-[#d92507] mb-6">Our Mission</h2>
           <p className="text-lg text-gray-700 max-w-4xl mx-auto">
             Tomball T3 Robotics, FRC Team 7312, is dedicated to inspiring young minds in science, technology,
@@ -26,18 +66,24 @@ const About: React.FC = () => {
             We aim to build not just robots, but also future leaders, innovators, and problem-solvers,
             fostering a culture of teamwork, Gracious Professionalism, and Coopertition.
           </p>
-        </section>
+        </motion.section>
 
         {/* Team Members Section */}
-        <section className="mb-12">
+        <motion.section
+          className="mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Meet the Team</h2>
-          <div className="flex flex-wrap justify-center gap-6">
-            {teamMembers.map((member, index) => (
+          <motion.div
+            className="flex flex-wrap justify-center gap-6"
+            variants={listVariants}
+          >
+            {teamMembers.map((member) => (
               <motion.div
                 key={member.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
+                variants={itemVariants}
                 className="w-full sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
               >
                 <Card className="h-full flex flex-col items-center justify-center text-center p-6 shadow-lg rounded-lg bg-white">
@@ -50,22 +96,27 @@ const About: React.FC = () => {
                 </Card>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
           {teamMembers.length === 0 && (
             <p className="text-center text-gray-600 text-xl mt-8">No team members to display yet.</p>
           )}
-        </section>
+        </motion.section>
 
         {/* Achievements Section */}
-        <section>
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <h2 className="text-4xl font-bold text-[#d92507] text-center mb-8">Our Achievements</h2>
-          <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
-            {achievements.map((achievement, index) => (
+          <motion.div
+            className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto"
+            variants={listVariants}
+          >
+            {achievements.map((achievement) => (
               <motion.div
                 key={achievement.id}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
+                variants={itemVariants}
                 className="w-full md:w-[calc(50%-0.75rem)]"
               >
                 <Card className="p-5 shadow-lg rounded-lg bg-white flex items-center space-x-4">
@@ -78,7 +129,7 @@ const About: React.FC = () => {
                 </Card>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
           {achievements.length === 0 && (
             <p className="text-center text-gray-600 text-xl mt-8">No achievements to display yet.</p>
           )}

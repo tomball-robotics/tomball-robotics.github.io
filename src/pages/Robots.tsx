@@ -6,6 +6,28 @@ import { motion } from "framer-motion";
 import { robots } from "@/data/robotsData";
 
 const Robots: React.FC = () => {
+  const listVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+    hidden: {},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -17,13 +39,16 @@ const Robots: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Robots</h1>
 
-        <div className="flex flex-wrap justify-center gap-8">
-          {robots.map((robot, index) => (
+        <motion.div
+          className="flex flex-wrap justify-center gap-8"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {robots.map((robot) => (
             <motion.div
               key={robot.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={itemVariants}
               className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
             >
               <Card className="h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
@@ -47,12 +72,12 @@ const Robots: React.FC = () => {
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {robots.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">No robots to display yet. Check back soon!</p>
         )}
-      </motion.main>
+      </main>
       <Footer />
     </div>
   );

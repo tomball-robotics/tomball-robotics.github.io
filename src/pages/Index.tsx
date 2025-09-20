@@ -18,32 +18,30 @@ const Index: React.FC = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut",
+        type: "spring",
+        duration: 1,
+        bounce: 0.3,
       },
     },
   };
 
-  const aboutTextVariants = {
-    hidden: { opacity: 0, x: -50 },
+  const listVariants = {
     visible: {
-      opacity: 1,
-      x: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut",
+        staggerChildren: 0.1,
       },
     },
+    hidden: {},
   };
 
-  const aboutImageVariants = {
-    hidden: { opacity: 0, x: 50 },
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
-      x: 0,
+      y: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut",
+        type: "spring",
+        duration: 0.8,
       },
     },
   };
@@ -66,7 +64,12 @@ const Index: React.FC = () => {
           <AwardBanners />
 
           <div className="absolute inset-0 bg-black bg-opacity-50" />
-          <div className="relative z-10 p-8 max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+            className="relative z-10 p-8 max-w-3xl mx-auto"
+          >
             <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
               {homePageData.hero.title}
             </h1>
@@ -85,19 +88,23 @@ const Index: React.FC = () => {
                 </Link>
               </Button>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* About Section Preview */}
         <motion.section
           className="py-20 bg-white"
+          variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <motion.div className="text-left" variants={aboutTextVariants}>
+            <motion.div
+              className="grid md:grid-cols-2 gap-12 items-center"
+              variants={listVariants}
+            >
+              <motion.div className="text-left" variants={itemVariants}>
                 <h2 className="text-4xl font-bold text-[#0d2f60] mb-6">{homePageData.aboutPreview.title}</h2>
                 <p className="text-lg text-gray-700 mb-8">
                   {homePageData.aboutPreview.description}
@@ -108,10 +115,10 @@ const Index: React.FC = () => {
                   </Link>
                 </Button>
               </motion.div>
-              <motion.div variants={aboutImageVariants}>
+              <motion.div variants={itemVariants}>
                 <img src={homePageData.aboutPreview.imageUrl} alt="T3 Robotics Team" className="rounded-lg shadow-xl w-full h-auto" />
               </motion.div>
-            </div>
+            </motion.div>
           </div>
         </motion.section>
 
@@ -128,9 +135,15 @@ const Index: React.FC = () => {
             <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-10">
               {homePageData.eventsPreview.description}
             </p>
-            <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto mb-10">
+            <motion.div
+              className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto mb-10"
+              variants={listVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               {latestEvents.map((event, index) => (
-                <div key={index} className="w-full md:w-[45%] lg:w-[30%]">
+                <motion.div key={index} className="w-full md:w-[45%] lg:w-[30%]" variants={itemVariants}>
                   <Card className="text-left shadow-lg bg-white flex flex-col h-full">
                     <CardHeader className="bg-[#d92507] text-white p-4">
                       <p className="font-semibold">{event.year}</p>
@@ -149,9 +162,9 @@ const Index: React.FC = () => {
                       )}
                     </CardContent>
                   </Card>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
             <Button asChild size="lg" className="bg-[#d92507] hover:bg-[#b31f06] text-white group">
               <Link to="/events">
                 View All Events <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -173,16 +186,24 @@ const Index: React.FC = () => {
             <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-10">
               {homePageData.sponsorsPreview.description}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-10">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-10"
+              variants={listVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               {featuredSponsors.map(sponsor => (
-                <Card key={sponsor.id} className="text-center shadow-md hover:shadow-xl transition-shadow">
-                  <CardHeader>
-                    <img src={sponsor.imageUrl} alt={sponsor.name} className="w-24 h-24 mx-auto object-contain mb-4" />
-                    <CardTitle className="text-xl text-[#d92507]">{sponsor.name}</CardTitle>
-                  </CardHeader>
-                </Card>
+                <motion.div key={sponsor.id} variants={itemVariants}>
+                  <Card className="text-center shadow-md hover:shadow-xl transition-shadow h-full">
+                    <CardHeader>
+                      <img src={sponsor.imageUrl} alt={sponsor.name} className="w-24 h-24 mx-auto object-contain mb-4" />
+                      <CardTitle className="text-xl text-[#d92507]">{sponsor.name}</CardTitle>
+                    </CardHeader>
+                  </Card>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
             <Button asChild size="lg" className="bg-[#0d2f60] hover:bg-[#0a244a] text-white group">
               <Link to="/sponsors">
                 See All Sponsors <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
