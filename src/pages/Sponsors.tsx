@@ -119,14 +119,14 @@ const Sponsors: React.FC = () => {
             >
               <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
                 {sponsor.image_url && (
-                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] p-4">
+                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60]"> {/* Removed p-4 here */}
                     <img
                       src={sponsor.image_url}
                       alt={sponsor.name}
                       className={
                         sponsor.image_fit === 'cover'
                           ? 'w-full h-full object-cover'
-                          : 'max-h-full max-w-full object-contain' // Default to contain if not specified or 'contain'
+                          : 'max-h-full max-w-full object-contain p-4' // Added p-4 here for 'contain' only
                       }
                     />
                   </div>
