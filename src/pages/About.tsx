@@ -61,7 +61,7 @@ const About: React.FC = () => {
         >
           {/* Simple Image Carousel as Background */}
           <SimpleImageCarousel images={carouselImages} className="absolute inset-0 z-0" />
-          <div className="absolute inset-0 bg-black bg-opacity-50 z-10" /> {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-70 z-10" /> {/* Dark overlay - changed to 70% opacity */}
 
           {/* Content over the slideshow */}
           <motion.div
