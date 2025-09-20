@@ -133,7 +133,7 @@ const About: React.FC = () => {
           {achievements.length === 0 && (
             <p className="text-center text-gray-600 text-xl mt-8">No achievements to display yet.</p>
           )}
-        </section>
+        </motion.section>
       </motion.main>
       <Footer />
     </div>
