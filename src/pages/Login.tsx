@@ -23,7 +23,7 @@ const Login: React.FC = () => {
         <h1 className="text-3xl font-bold text-center text-[#0d2f60] mb-6">Login to Tomball Robotics</h1>
         <Auth
           supabaseClient={supabase}
-          providers={['google']} // Enable Google authentication
+          // Removed providers={['google']} to enable email/password by default
           appearance={{
             theme: ThemeSupa,
             variables: {
