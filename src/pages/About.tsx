@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import SimpleImageCarousel from "@/components/SimpleImageCarousel";
 import { supabase } from "@/integrations/supabase/client";
-import { TeamMember, Achievement } from "@/types/supabase"; // Import new types
+import { TeamMember, Achievement, SlideshowImage } from "@/types/supabase"; // Import new types
 
 const About: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [carouselImages, setCarouselImages] = useState<string[]>([]); // State for carousel images
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,15 +29,26 @@ const About: React.FC = () => {
         .order("year", { ascending: false }) // Order by year descending
         .order("created_at", { ascending: false }); // Consistent order for same year
 
+      const { data: slideshowImagesData, error: slideshowImagesError } = await supabase
+        .from("slideshow_images")
+        .select("image_url")
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true });
+
       if (membersError) {
         console.error("Error fetching team members:", membersError);
         setError("Failed to load team members.");
       } else if (achievementsError) {
         console.error("Error fetching achievements:", achievementsError);
         setError("Failed to load achievements.");
-      } else {
+      } else if (slideshowImagesError) {
+        console.error("Error fetching slideshow images:", slideshowImagesError);
+        setError("Failed to load slideshow images for carousel.");
+      }
+      else {
         setTeamMembers(membersData || []);
         setAchievements(achievementsData || []);
+        setCarouselImages(slideshowImagesData?.map(img => img.image_url) || []);
       }
       setLoading(false);
     };
@@ -77,11 +89,6 @@ const About: React.FC = () => {
       },
     },
   };
-
-  const carouselImages = [
-    "/indexcollage.jpg",
-    "/hero-background.jpeg",
-  ];
 
   if (loading) {
     return (

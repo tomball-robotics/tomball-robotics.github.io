@@ -106,3 +106,11 @@ export interface Achievement {
   created_at: string;
   updated_at: string;
 }
+
+export interface SlideshowImage {
+  id: string;
+  image_url: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}

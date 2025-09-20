@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, LayoutDashboard, Image } from 'lucide-react';
+import { Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, LayoutDashboard, Image, Images } from 'lucide-react'; // Added Images icon
 import { cn } from '@/lib/utils';
 
 const adminNavLinks = [
@@ -13,7 +13,8 @@ const adminNavLinks = [
   { name: 'Unitybots', path: '/admin/unitybots', icon: Bot },
   { name: 'Team Members', path: '/admin/team-members', icon: Users },
   { name: 'Achievements', path: '/admin/achievements', icon: Award },
-  { name: 'Banners', path: '/admin/banners', icon: Image }, // Added Banners link
+  { name: 'Banners', path: '/admin/banners', icon: Image },
+  { name: 'Slideshow Images', path: '/admin/slideshow-images', icon: Images }, // Added Slideshow Images link
 ];
 
 const AdminSidebar: React.FC = () => {
