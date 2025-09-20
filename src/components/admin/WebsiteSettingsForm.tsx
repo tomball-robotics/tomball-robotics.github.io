@@ -118,7 +118,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
       control={form.control}
       name={fieldName as any}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="space-y-2"> {/* Added space-y-2 for consistent spacing */}
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <div className="space-y-2">
@@ -162,7 +162,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="hero_title"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>Hero Title</FormLabel>
               <FormControl>
                 <Input placeholder="Enter hero title" {...field} />
@@ -175,7 +175,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="hero_subtitle"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>Hero Subtitle</FormLabel>
               <FormControl>
                 <Textarea placeholder="Enter hero subtitle" {...field} />
@@ -191,7 +191,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="about_preview_title"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>About Preview Title</FormLabel>
               <FormControl>
                 <Input placeholder="Enter about preview title" {...field} />
@@ -204,7 +204,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="about_preview_description"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>About Preview Description</FormLabel>
               <FormControl>
                 <Textarea placeholder="Enter about preview description" {...field} />
@@ -220,7 +220,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="events_preview_title"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>Events Preview Title</FormLabel>
               <FormControl>
                 <Input placeholder="Enter events preview title" {...field} />
@@ -233,9 +233,9 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="events_preview_description"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>Events Preview Description</FormLabel>
-            <FormControl>
+              <FormControl>
                 <Textarea placeholder="Enter events preview description" {...field} />
               </FormControl>
               <FormMessage />
@@ -248,7 +248,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="sponsors_preview_title"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>Sponsors Preview Title</FormLabel>
               <FormControl>
                 <Input placeholder="Enter sponsors preview title" {...field} />
@@ -261,9 +261,9 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           control={form.control}
           name="sponsors_preview_description"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-2"> {/* Added space-y-2 */}
               <FormLabel>Sponsors Preview Description</FormLabel>
-            <FormControl>
+              <FormControl>
                 <Textarea placeholder="Enter sponsors preview description" {...field} />
               </FormControl>
               <FormMessage />

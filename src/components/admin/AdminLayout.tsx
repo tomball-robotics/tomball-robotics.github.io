@@ -64,7 +64,7 @@ const AdminLayout: React.FC = () => {
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:bg-transparent sm:px-6">
           <h1 className="text-2xl font-semibold">Admin Panel</h1>
         </header>
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 overflow-y-auto"> {/* Added overflow-y-auto */}
           <Outlet /> {/* This is where nested routes will render */}
         </main>
       </div>

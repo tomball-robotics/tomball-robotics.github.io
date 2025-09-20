@@ -31,7 +31,7 @@ export function DataTable<T extends { id?: string }>({
   getKey,
 }: DataTableProps<T>) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto"> {/* Added overflow-x-auto here */}
       <Table>
         <TableHeader>
           <TableRow>

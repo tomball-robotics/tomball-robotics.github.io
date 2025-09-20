@@ -18,7 +18,7 @@ const LinkArrayInputField: React.FC<LinkArrayInputFieldProps> = ({ form, name, l
   });
 
   return (
-    <FormItem>
+    <FormItem className="space-y-2"> {/* Added space-y-2 for consistent spacing */}
       <FormLabel>{label}</FormLabel>
       <div className="space-y-4">
         {fields.map((field, index) => (
