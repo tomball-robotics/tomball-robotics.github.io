@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Youtube, X, Music } from "lucide-react"; // X is for Twitter, Music for TikTok
+import { Facebook, Instagram, Youtube, X } from "lucide-react"; // X is for Twitter
 
 const Footer: React.FC = () => {
   return (
@@ -48,15 +48,6 @@ const Footer: React.FC = () => {
             aria-label="X (Twitter)"
           >
             <X size={24} />
-          </a>
-          <a
-            href="https://www.tiktok.com/@t3team7312"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#d92507] transition-colors"
-            aria-label="TikTok"
-          >
-            <Music size={24} />
           </a>
         </div>
 

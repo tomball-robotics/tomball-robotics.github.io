@@ -1,11 +1,11 @@
 export const robots = [
   {
     id: 1,
-    name: "Nesie",
+    name: "Nessie",
     year: 2025,
     imageUrl: "/Nessie.jpg",
     specs: "Swerve Drive, Multi-Game Piece Manipulator, One-Stage Elevator, Vision Alignment",
-    awards: "Gratious Professionalism Award, Alliance Captains (4th Place) @ FIT District Tomball Event",
+    awards: "Gracious Professionalism Award, Alliance Captains (4th Place) @ FIT District Tomball Event",
   },
   {
     id: 2,
