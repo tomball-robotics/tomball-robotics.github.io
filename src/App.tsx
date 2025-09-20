@@ -16,9 +16,10 @@ import Admin from "./pages/Admin";
 import ScrollToTop from "./components/ScrollToTop";
 import { useSupabase } from "./components/SessionContextProvider";
 import AdminWebsiteSettings from "./pages/admin/AdminWebsiteSettings";
-import AdminEvents from "./pages/admin/AdminEvents"; // Import new admin page
-import AdminSponsors from "./pages/admin/AdminSponsors"; // Import new admin page
-import AdminTeamMembers from "./pages/admin/AdminTeamMembers"; // Import new admin page
+import AdminEvents from "./pages/admin/AdminEvents";
+import AdminSponsors from "./pages/admin/AdminSponsors";
+import AdminTeamMembers from "./pages/admin/AdminTeamMembers";
+import AdminSponsorshipTiers from "./pages/admin/AdminSponsorshipTiers"; // Import new admin page
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => {
               <Route path="settings" element={<AdminWebsiteSettings />} />
               <Route path="events" element={<AdminEvents />} />
               <Route path="sponsors" element={<AdminSponsors />} />
+              <Route path="sponsorship-tiers" element={<AdminSponsorshipTiers />} />
               <Route path="team-members" element={<AdminTeamMembers />} />
               {/* Add more admin routes here as we build them */}
             </Route>
