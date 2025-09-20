@@ -1,5 +1,5 @@
 import React from 'react';
-import DashboardInsights from '@/components/admin/DashboardInsights';
+import DashboardStatsCards from '@/components/admin/DashboardStatsCards'; // Import the new stats cards
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import { Separator } from '@/components/ui/separator';
 
@@ -9,8 +9,8 @@ const AdminDashboardContent: React.FC = () => {
       <h2 className="text-3xl font-bold text-[#0d2f60]">Dashboard Overview</h2>
       
       <section>
-        <h3 className="text-2xl font-semibold text-[#d92507] mb-4">Key Insights</h3>
-        <DashboardInsights />
+        <h3 className="text-2xl font-semibold text-[#d92507] mb-4">Overview Statistics</h3> {/* Updated section title */}
+        <DashboardStatsCards /> {/* Using the new stats cards */}
       </section>
 
       <Separator />
