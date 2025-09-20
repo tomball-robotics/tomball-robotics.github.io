@@ -41,7 +41,7 @@ const Header: React.FC = () => {
       <div className="w-full flex items-center justify-between px-4">
         {/* Team Name */}
         <Link to="/" className="flex items-center gap-3 text-white hover:text-white/90 transition-colors">
-          <span className="text-3xl font-bold">
+          <span className="text-2xl sm:text-3xl font-bold"> {/* Adjusted font size here */}
             Tomball Robotics
           </span>
         </Link>

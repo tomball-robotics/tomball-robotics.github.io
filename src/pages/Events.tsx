@@ -124,16 +124,18 @@ const Events: React.FC = () => {
                   variants={itemVariants}
                   className="relative mb-8"
                 >
-                  <div className="absolute top-3 left-4 md:left-1/2 w-4 h-4 bg-[#0d2f60] rounded-full -translate-x-1/2 border-4 border-white" />
+                  {/* Timeline dot */}
+                  <div className="absolute top-3 left-4 w-4 h-4 bg-[#0d2f60] rounded-full -translate-x-1/2 border-4 border-white md:left-1/2" />
+                  {/* Event card container */}
                   <div
-                    className={`w-[calc(100%-3rem)] md:w-1/2 ml-10 md:ml-0 ${
+                    className={`w-[calc(100%-3rem)] ml-10 md:w-1/2 md:ml-0 ${
                       index % 2 === 0 ? "md:ml-[calc(50%+1.5rem)] md:pl-8" : "md:mr-[calc(50%+1.5rem)] md:pr-8 md:text-right"
                     }`}
                   >
                     <Card className="shadow-lg hover:shadow-xl transition-shadow">
                       <CardHeader>
                         <CardTitle className="text-xl font-bold text-[#0d2f60]">{event.name}</CardTitle>
-                        <p className={`flex items-center text-sm text-gray-500 ${index % 2 !== 0 && "md:justify-end"}`}>
+                        <p className={`flex items-center text-sm text-gray-500 ${index % 2 !== 0 ? "md:justify-end" : ""}`}> {/* Adjusted alignment */}
                           <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
                           {event.location}
                         </p>
