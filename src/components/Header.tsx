@@ -2,9 +2,9 @@ import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, LogIn, LogOut, Settings } from "lucide-react"; // Added Settings icon
+import { Menu, LogOut, Settings } from "lucide-react"; // Removed LogIn icon
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useSupabase } from "@/components/SessionContextProvider"; // Import useSupabase
+import { useSupabase } from "@/components/SessionContextProvider";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -18,7 +18,7 @@ const navLinks = [
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
-  const { session, supabase } = useSupabase(); // Get session and supabase client
+  const { session, supabase } = useSupabase();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -53,7 +53,7 @@ const Header: React.FC = () => {
                   {link.name}
                 </NavLink>
               ))}
-              {session ? (
+              {session && ( // Only show Admin and Logout if session exists
                 <>
                   <NavLink
                     to="/admin"
@@ -69,12 +69,6 @@ const Header: React.FC = () => {
                     <LogOut className="h-5 w-5 mr-1" /> Logout
                   </Button>
                 </>
-              ) : (
-                <Button asChild variant="ghost" className="text-white hover:text-white/90 transition-colors flex items-center">
-                  <Link to="/login">
-                    <LogIn className="h-5 w-5 mr-1" /> Login
-                  </Link>
-                </Button>
               )}
             </nav>
           </div>
@@ -104,28 +98,17 @@ const Header: React.FC = () => {
                     {link.name}
                   </NavLink>
                 ))}
-                {session ? (
-                  <>
-                    <NavLink
-                      to="/admin"
-                      className={({ isActive }) =>
-                        `text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded flex items-center ${
-                          isActive ? "font-bold text-white bg-[#d92507]" : ""
-                        }`
-                      }
-                    >
-                      <Settings className="h-5 w-5 mr-2" /> Admin
-                    </NavLink>
-                    <Button onClick={handleLogout} variant="ghost" className="text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded flex items-center justify-start">
-                      <LogOut className="h-5 w-5 mr-2" /> Logout
-                    </Button>
-                  </>
-                ) : (
-                  <Button asChild variant="ghost" className="text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded flex items-center justify-start">
-                    <Link to="/login">
-                      <LogIn className="h-5 w-5 mr-2" /> Login
-                    </Link>
-                  </Button>
+                {session && ( // Only show Admin if session exists
+                  <NavLink
+                    to="/admin"
+                    className={({ isActive }) =>
+                      `text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded flex items-center ${
+                        isActive ? "font-bold text-white bg-[#d92507]" : ""
+                      }`
+                    }
+                  >
+                    <Settings className="h-5 w-5 mr-2" /> Admin
+                  </NavLink>
                 )}
               </nav>
             </SheetContent>

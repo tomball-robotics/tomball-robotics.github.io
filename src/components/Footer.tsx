@@ -1,8 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Facebook, Instagram, Youtube, X } from "lucide-react"; // X is for Twitter
+import { Link, useNavigate } from "react-router-dom";
+import { Facebook, Instagram, Youtube, X, LogIn, LogOut } from "lucide-react"; // Added LogIn and LogOut icons
+import { useSupabase } from "@/components/SessionContextProvider"; // Import useSupabase
 
 const Footer: React.FC = () => {
+  const { session, supabase } = useSupabase();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
+
   return (
     <footer className="bg-[#0d2f60] text-white py-8 mt-auto">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -59,6 +68,15 @@ const Footer: React.FC = () => {
             </a>
           </p>
           <Link to="/donate" className="text-[#d92507] hover:underline mt-1 block">Support Us</Link>
+          {session ? (
+            <button onClick={handleLogout} className="text-[#d92507] hover:underline mt-1 block w-full text-center md:text-right">
+              <LogOut className="inline-block h-4 w-4 mr-1" /> Logout
+            </button>
+          ) : (
+            <Link to="/login" className="text-[#d92507] hover:underline mt-1 block">
+              <LogIn className="inline-block h-4 w-4 mr-1" /> Login
+            </Link>
+          )}
         </div>
       </div>
     </footer>
