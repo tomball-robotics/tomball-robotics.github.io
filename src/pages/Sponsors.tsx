@@ -123,7 +123,11 @@ const Sponsors: React.FC = () => {
                     <img
                       src={sponsor.image_url}
                       alt={sponsor.name}
-                      className={`max-h-full max-w-full object-${sponsor.image_fit || 'contain'}`} // Dynamically apply image fit class
+                      className={
+                        sponsor.image_fit === 'cover'
+                          ? 'w-full h-full object-cover'
+                          : 'max-h-full max-w-full object-contain' // Default to contain if not specified or 'contain'
+                      }
                     />
                   </div>
                 )}
