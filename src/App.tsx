@@ -20,7 +20,8 @@ import AdminEvents from "./pages/admin/AdminEvents";
 import AdminSponsors from "./pages/admin/AdminSponsors";
 import AdminTeamMembers from "./pages/admin/AdminTeamMembers";
 import AdminSponsorshipTiers from "./pages/admin/AdminSponsorshipTiers";
-import AdminRobots from "./pages/admin/AdminRobots"; // Import new admin page
+import AdminRobots from "./pages/admin/AdminRobots";
+import AdminUnitybots from "./pages/admin/AdminUnitybots"; // Import new admin page
 
 const queryClient = new QueryClient();
 
@@ -62,7 +63,8 @@ const App = () => {
               <Route path="events" element={<AdminEvents />} />
               <Route path="sponsors" element={<AdminSponsors />} />
               <Route path="sponsorship-tiers" element={<AdminSponsorshipTiers />} />
-              <Route path="robots" element={<AdminRobots />} /> {/* New admin route */}
+              <Route path="robots" element={<AdminRobots />} />
+              <Route path="unitybots" element={<AdminUnitybots />} /> {/* New admin route */}
               <Route path="team-members" element={<AdminTeamMembers />} />
               {/* Add more admin routes here as we build them */}
             </Route>
