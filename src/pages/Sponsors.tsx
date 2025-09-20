@@ -4,10 +4,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button"; // Import Button
-import { ExternalLink } from "lucide-react"; // Import ExternalLink icon
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Sponsor, SponsorshipTier } from "@/types/supabase"; // Import new types
+import { Sponsor, SponsorshipTier } from "@/types/supabase";
+
+const MIN_TIER_AMOUNT = 500; // Define the threshold for "Other Sponsors"
 
 const Sponsors: React.FC = () => {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -62,7 +64,6 @@ const Sponsors: React.FC = () => {
   // Helper function to determine tier from amount
   const getTierForAmount = (amount: number): string => {
     for (const tier of sponsorshipTiers) {
-      // Extract numeric value from price string (e.g., "$50,000" -> 50000)
       const threshold = parseInt(tier.price.replace(/[^0-9]/g, ''), 10);
       if (amount >= threshold) {
         return tier.tier_id;
@@ -92,11 +93,8 @@ const Sponsors: React.FC = () => {
     },
   };
 
-  const renderSponsorsByTier = (tierId: string) => {
-    const filteredSponsors = sponsors.filter(s => getTierForAmount(s.amount) === tierId);
+  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string) => {
     if (filteredSponsors.length === 0) return null;
-
-    const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
 
     return (
       <motion.div
@@ -105,8 +103,8 @@ const Sponsors: React.FC = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h2 className={`text-4xl font-bold text-center mb-8 ${tierStyles[tierId]}`}>
-          {tierName} Sponsors
+        <h2 className={`text-4xl font-bold text-center mb-8 ${titleColorClass}`}>
+          {sectionTitle}
         </h2>
         <motion.div
           className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
@@ -174,6 +172,10 @@ const Sponsors: React.FC = () => {
     );
   }
 
+  // Separate sponsors into tiered and other
+  const tieredSponsors = sponsors.filter(s => s.amount >= MIN_TIER_AMOUNT);
+  const otherSponsors = sponsors.filter(s => s.amount < MIN_TIER_AMOUNT);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -185,7 +187,13 @@ const Sponsors: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Valued Sponsors</h1>
 
-        {tierOrder.map(tier => renderSponsorsByTier(tier))}
+        {tierOrder.map(tierId => {
+          const filteredSponsors = tieredSponsors.filter(s => getTierForAmount(s.amount) === tierId);
+          const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
+          return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId]);
+        })}
+
+        {renderSponsors(otherSponsors, "Other Sponsors", "text-gray-700")}
 
         {sponsors.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">
