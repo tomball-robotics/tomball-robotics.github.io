@@ -27,20 +27,20 @@ const Index: React.FC = () => {
   const listVariants = {
     visible: {
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.3,
       },
     },
     hidden: {},
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut",
+        duration: 0.8,
+        ease: [0.6, 0.01, -0.05, 0.95],
       },
     },
   };
@@ -91,17 +91,14 @@ const Index: React.FC = () => {
         </motion.div>
 
         {/* About Section Preview */}
-        <motion.section
-          className="py-20 bg-white"
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
+        <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <motion.div
               className="grid md:grid-cols-2 gap-12 items-center"
               variants={listVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
             >
               <motion.div className="text-left" variants={itemVariants}>
                 <h2 className="text-4xl font-bold text-[#0d2f60] mb-6">{homePageData.aboutPreview.title}</h2>
@@ -119,7 +116,7 @@ const Index: React.FC = () => {
               </motion.div>
             </motion.div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Events Section Preview */}
         <motion.section
