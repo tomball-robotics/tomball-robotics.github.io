@@ -8,20 +8,20 @@ export const teamMembers = [
   {
     id: 2,
     name: "Anika Yedevelli",
-    role: "Logistics",
+    role: "Logistics Captain",
     imageUrl: "/placeholder.svg", // Placeholder image
   },
   {
     id: 3,
     name: "Kegan Cherry",
-    role: "Programming",
-    imageUrl: "/placeholder.svg", // Placeholder image
+    role: "Robot Captain",
+    imageUrl: "/KeganH.png",
   },
   {
     id: 4,
     name: "Chase Webster",
-    role: "Electrical",
-    imageUrl: "/placeholder.svg", // Placeholder image
+    role: "Robot Captain",
+    imageUrl: "/ChaseH.png",
   },
   // Add more team members here
 ];
