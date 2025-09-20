@@ -18,9 +18,8 @@ const Index: React.FC = () => {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
-        duration: 1,
-        bounce: 0.3,
+        duration: 0.8,
+        ease: "easeOut",
       },
     },
   };
@@ -28,7 +27,7 @@ const Index: React.FC = () => {
   const listVariants = {
     visible: {
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.2,
       },
     },
     hidden: {},
@@ -40,8 +39,8 @@ const Index: React.FC = () => {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
-        duration: 0.8,
+        duration: 0.6,
+        ease: "easeOut",
       },
     },
   };
