@@ -138,7 +138,7 @@ const Unitybots: React.FC = () => {
               </motion.div>
             ))}
           </motion.div>
-        </section>
+        </motion.section>
       </motion.main>
       <Footer />
     </div>
