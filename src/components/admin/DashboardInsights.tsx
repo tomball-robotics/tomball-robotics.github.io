@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';
 import { Clock } from 'lucide-react';
-import { format } from 'date-fns'; // Corrected import statement
+import { format } from 'date-fns';
 
 interface LatestUpdateInfo {
   table: string;
@@ -31,7 +31,8 @@ const DashboardInsights: React.FC = () => {
         name = `${data.year}: ${data.description.substring(0, 50)}${data.description.length > 50 ? '...' : ''}`;
       } else if (tableName === 'slideshow_images') {
         const filename = data.image_url.split('/').pop();
-        name = `Slideshow Image (${filename ? decodeURIComponent(filename) : 'N/A'})`;
+        const decodedFilename = filename ? decodeURIComponent(filename) : 'N/A';
+        name = `Slideshow Image (${decodedFilename.substring(0, 30)}${decodedFilename.length > 30 ? '...' : ''})`; // Truncate filename
       } else if (tableName === 'website_settings') {
         name = 'Website Settings'; // Static name for settings
       }
@@ -119,9 +120,9 @@ const DashboardInsights: React.FC = () => {
             <Spinner size={20} className="h-8" />
           ) : latestEditedItem ? (
             <>
-              <p className="text-xl font-bold text-[#d92507]">{latestEditedItem.name}</p>
-              <p className="text-sm text-gray-600 capitalize">{latestEditedItem.table.replace(/_/g, ' ')}</p>
-              <p className="text-xs text-gray-500">{format(latestEditedItem.updated_at, 'PPP p')}</p>
+              <p className="text-xl font-bold text-[#d92507] break-words px-2">{latestEditedItem.name}</p> {/* Added break-words and horizontal padding */}
+              <p className="text-sm text-gray-600 capitalize break-words px-2">{latestEditedItem.table.replace(/_/g, ' ')}</p> {/* Added break-words and horizontal padding */}
+              <p className="text-xs text-gray-500 px-2">{format(latestEditedItem.updated_at, 'PPP p')}</p> {/* Added horizontal padding */}
             </>
           ) : (
             <p className="text-lg text-gray-500">No recent edits</p>
