@@ -77,7 +77,7 @@ const Robots: React.FC = () => {
         {robots.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">No robots to display yet. Check back soon!</p>
         )}
-      </main>
+      </motion.main>
       <Footer />
     </div>
   );
