@@ -51,7 +51,20 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
     if (!file) return;
 
     const toastId = showLoading(`Uploading ${fieldName.replace(/_/g, ' ')}...`);
-    const filePath = `website_settings/${fieldName}/${file.name}`;
+    
+    let subfolder = '';
+    if (fieldName === 'hero_background_image') {
+      subfolder = 'hero_background';
+    } else if (fieldName === 'about_preview_image_url') {
+      subfolder = 'about_preview';
+    } else {
+      console.error(`Unexpected fieldName for image upload: ${fieldName}`);
+      dismissToast(toastId);
+      showError('Invalid image field for upload.');
+      return;
+    }
+
+    const filePath = `website_settings/${subfolder}/${file.name}`;
     const publicUrl = await uploadFile('website-images', filePath, file);
 
     dismissToast(toastId);
@@ -77,7 +90,6 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
     const toastId = showLoading(`Removing ${fieldName.replace(/_/g, ' ')}...`);
 
     // Extract file path from Supabase public URL
-    // Example: https://iuxotivoerhdhinhbysj.supabase.co/storage/v1/object/public/website-images/website_settings/hero_background_image/image.jpg
     const pathSegments = currentUrl.split('/public/website-images/');
     if (pathSegments.length > 1) {
       const filePathInBucket = pathSegments[1];
@@ -223,7 +235,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
           render={({ field }) => (
             <FormItem>
               <FormLabel>Events Preview Description</FormLabel>
-              <FormControl>
+            <FormControl>
                 <Textarea placeholder="Enter events preview description" {...field} />
               </FormControl>
               <FormMessage />
