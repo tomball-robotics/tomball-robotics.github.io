@@ -2,7 +2,7 @@ import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, LogOut, Settings } from "lucide-react"; // Removed LogIn icon
+import { Menu, LogOut, Settings } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSupabase } from "@/components/SessionContextProvider";
 
@@ -26,6 +26,16 @@ const Header: React.FC = () => {
     navigate('/login');
   };
 
+  const getNavLinkClasses = (isActive: boolean) =>
+    `text-white hover:text-white/90 transition-colors pb-1 border-b-2 border-transparent ${
+      isActive ? "font-semibold text-white border-[#d92507]" : ""
+    }`;
+
+  const getMobileNavLinkClasses = (isActive: boolean) =>
+    `text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded ${
+      isActive ? "font-bold text-white bg-[#d92507]" : ""
+    }`;
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0d2f60] text-white shadow-lg h-16 flex items-center">
       <div className="w-full flex items-center justify-between px-4">
@@ -44,11 +54,7 @@ const Header: React.FC = () => {
                 <NavLink
                   key={link.name}
                   to={link.path}
-                  className={({ isActive }) =>
-                    `text-white hover:text-white/90 transition-colors pb-1 border-b-2 border-transparent ${
-                      isActive ? "font-semibold text-white border-[#d92507]" : ""
-                    }`
-                  }
+                  className={({ isActive }) => getNavLinkClasses(isActive)}
                 >
                   {link.name}
                 </NavLink>
@@ -57,17 +63,17 @@ const Header: React.FC = () => {
                 <>
                   <NavLink
                     to="/admin"
-                    className={({ isActive }) =>
-                      `text-white hover:text-white/90 transition-colors pb-1 border-b-2 border-transparent flex items-center ${
-                        isActive ? "font-semibold text-white border-[#d92507]" : ""
-                      }`
-                    }
+                    className={({ isActive }) => getNavLinkClasses(isActive) + " flex items-center"}
                   >
                     <Settings className="h-5 w-5 mr-1" /> Admin
                   </NavLink>
-                  <Button onClick={handleLogout} variant="ghost" className="text-white hover:text-white/90 transition-colors flex items-center">
+                  <NavLink
+                    to="#" // Using '#' as a placeholder, onClick will handle navigation
+                    onClick={handleLogout}
+                    className={({ isActive }) => getNavLinkClasses(isActive) + " flex items-center"}
+                  >
                     <LogOut className="h-5 w-5 mr-1" /> Logout
-                  </Button>
+                  </NavLink>
                 </>
               )}
             </nav>
@@ -89,26 +95,27 @@ const Header: React.FC = () => {
                   <NavLink
                     key={link.name}
                     to={link.path}
-                    className={({ isActive }) =>
-                      `text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded ${
-                        isActive ? "font-bold text-white bg-[#d92507]" : ""
-                      }`
-                    }
+                    className={({ isActive }) => getMobileNavLinkClasses(isActive)}
                   >
                     {link.name}
                   </NavLink>
                 ))}
-                {session && ( // Only show Admin if session exists
-                  <NavLink
-                    to="/admin"
-                    className={({ isActive }) =>
-                      `text-lg font-medium hover:text-white/90 transition-colors px-2 py-1 rounded flex items-center ${
-                        isActive ? "font-bold text-white bg-[#d92507]" : ""
-                      }`
-                    }
-                  >
-                    <Settings className="h-5 w-5 mr-2" /> Admin
-                  </NavLink>
+                {session && ( // Only show Admin and Logout if session exists
+                  <>
+                    <NavLink
+                      to="/admin"
+                      className={({ isActive }) => getMobileNavLinkClasses(isActive) + " flex items-center"}
+                    >
+                      <Settings className="h-5 w-5 mr-2" /> Admin
+                    </NavLink>
+                    <NavLink
+                      to="#" // Using '#' as a placeholder, onClick will handle navigation
+                      onClick={handleLogout}
+                      className={({ isActive }) => getMobileNavLinkClasses(isActive) + " flex items-center"}
+                    >
+                      <LogOut className="h-5 w-5 mr-2" /> Logout
+                    </NavLink>
+                  </>
                 )}
               </nav>
             </SheetContent>
