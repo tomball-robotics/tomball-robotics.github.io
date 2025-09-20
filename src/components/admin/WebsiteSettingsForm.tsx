@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { WebsiteSettings } from '@/types/supabase';
-import { uploadFile } from '@/integrations/supabase/storage';
+import { uploadFile, deleteFile } from '@/integrations/supabase/storage';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
+import { XCircle } from 'lucide-react'; // For remove button icon
 
 const formSchema = z.object({
   hero_title: z.string().min(1, "Hero title is required"),
@@ -35,11 +36,17 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
     defaultValues: initialData,
   });
 
+  // Refs for file inputs to clear their value after upload
+  const fileInputRefs = {
+    hero_background_image: useRef<HTMLInputElement>(null),
+    about_preview_image_url: useRef<HTMLInputElement>(null),
+  };
+
   useEffect(() => {
     form.reset(initialData);
   }, [initialData, form]);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>, fieldName: keyof WebsiteSettings) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, fieldName: keyof WebsiteSettings) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -54,11 +61,86 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
     } else {
       showError(`Failed to upload ${fieldName.replace(/_/g, ' ')}.`);
     }
+    // Clear the file input value so the same file can be selected again
+    if (fileInputRefs[fieldName as 'hero_background_image' | 'about_preview_image_url'].current) {
+      fileInputRefs[fieldName as 'hero_background_image' | 'about_preview_image_url'].current!.value = '';
+    }
+  };
+
+  const handleRemoveImage = async (fieldName: keyof WebsiteSettings) => {
+    const currentUrl = form.getValues(fieldName as any);
+    if (!currentUrl) return;
+
+    const confirmRemove = window.confirm("Are you sure you want to remove this image? This will also delete it from Supabase Storage.");
+    if (!confirmRemove) return;
+
+    const toastId = showLoading(`Removing ${fieldName.replace(/_/g, ' ')}...`);
+
+    // Extract file path from Supabase public URL
+    // Example: https://iuxotivoerhdhinhbysj.supabase.co/storage/v1/object/public/website-images/website_settings/hero_background_image/image.jpg
+    const pathSegments = currentUrl.split('/public/website-images/');
+    if (pathSegments.length > 1) {
+      const filePathInBucket = pathSegments[1];
+      const success = await deleteFile('website-images', filePathInBucket);
+
+      if (success) {
+        form.setValue(fieldName as any, '', { shouldValidate: true });
+        showSuccess(`${fieldName.replace(/_/g, ' ')} removed successfully!`);
+      } else {
+        showError(`Failed to remove ${fieldName.replace(/_/g, ' ')} from storage.`);
+      }
+    } else {
+      // If it's not a Supabase URL, just clear the field
+      form.setValue(fieldName as any, '', { shouldValidate: true });
+      showSuccess(`${fieldName.replace(/_/g, ' ')} URL cleared.`);
+    }
+    dismissToast(toastId);
   };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     await onSubmit(values);
   };
+
+  const renderImageField = (fieldName: keyof WebsiteSettings, label: string) => (
+    <FormField
+      control={form.control}
+      name={fieldName as any}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <div className="space-y-2">
+              {field.value && (
+                <div className="relative w-48 h-32 rounded-md overflow-hidden border border-gray-200">
+                  <img src={field.value} alt={label} className="w-full h-full object-cover" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 rounded-full"
+                    onClick={() => handleRemoveImage(fieldName)}
+                  >
+                    <XCircle className="h-4 w-4" />
+                    <span className="sr-only">Remove image</span>
+                  </Button>
+                </div>
+              )}
+              <Input
+                type="file"
+                ref={fileInputRefs[fieldName as 'hero_background_image' | 'about_preview_image_url']}
+                onChange={(e) => handleFileUpload(e, fieldName)}
+                className="cursor-pointer"
+              />
+              {field.value && (
+                <p className="text-sm text-gray-500 break-all mt-2">Current URL: {field.value}</p>
+              )}
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
 
   return (
     <Form {...form}>
@@ -90,23 +172,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="hero_background_image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Hero Background Image URL</FormLabel>
-              <FormControl>
-                <>
-                  <Input type="file" onChange={(e) => handleFileChange(e, 'hero_background_image')} />
-                  {field.value && <img src={field.value} alt="Hero Background" className="mt-2 h-32 object-cover rounded-md" />}
-                  <Input placeholder="Or enter image URL" {...field} className="mt-2" />
-                </>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {renderImageField('hero_background_image', 'Hero Background Image')}
 
         <h3 className="text-2xl font-bold text-[#0d2f60] mb-4 mt-8">About Section Preview</h3>
         <FormField
@@ -135,23 +201,7 @@ const WebsiteSettingsForm: React.FC<WebsiteSettingsFormProps> = ({ initialData, 
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="about_preview_image_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>About Preview Image URL</FormLabel>
-              <FormControl>
-                <>
-                  <Input type="file" onChange={(e) => handleFileChange(e, 'about_preview_image_url')} />
-                  {field.value && <img src={field.value} alt="About Preview" className="mt-2 h-32 object-cover rounded-md" />}
-                  <Input placeholder="Or enter image URL" {...field} className="mt-2" />
-                </>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {renderImageField('about_preview_image_url', 'About Preview Image')}
 
         <h3 className="text-2xl font-bold text-[#0d2f60] mb-4 mt-8">Events Section Preview</h3>
         <FormField
