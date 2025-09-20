@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 interface SimpleImageCarouselProps {
   images: string[];
   interval?: number; // Time in ms for image change
-  className?: string;
+  className?: string; // Applied to the root container of the images
 }
 
 const SimpleImageCarousel: React.FC<SimpleImageCarouselProps> = ({
@@ -29,7 +29,7 @@ const SimpleImageCarousel: React.FC<SimpleImageCarouselProps> = ({
   }
 
   return (
-    <div className={cn("relative w-full h-full overflow-hidden", className)}>
+    <div className={cn("overflow-hidden", className)}> {/* Removed relative w-full h-full */}
       {images.map((image, index) => (
         <img
           key={index}

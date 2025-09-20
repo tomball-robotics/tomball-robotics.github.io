@@ -60,7 +60,7 @@ const About: React.FC = () => {
           className="relative h-[calc(100vh-4rem)] flex items-center justify-center text-center"
         >
           {/* Simple Image Carousel as Background */}
-          <SimpleImageCarousel images={carouselImages} className="z-0" />
+          <SimpleImageCarousel images={carouselImages} className="absolute inset-0 z-0" />
           <div className="absolute inset-0 bg-black bg-opacity-50 z-10" /> {/* Dark overlay */}
 
           {/* Content over the slideshow */}
@@ -68,7 +68,7 @@ const About: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-            className="relative z-20 p-8 max-w-3xl mx-auto"
+            className="absolute inset-0 z-20 p-8 max-w-3xl mx-auto flex flex-col items-center justify-center"
           >
             <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
               About Tomball T3 Robotics
