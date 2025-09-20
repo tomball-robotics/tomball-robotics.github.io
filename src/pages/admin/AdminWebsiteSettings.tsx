@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
 import WebsiteSettingsForm from '@/components/admin/WebsiteSettingsForm';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
+import { Button } from '@/components/ui/button'; // Ensure Button is imported
 
 const AdminWebsiteSettings: React.FC = () => {
   const [settings, setSettings] = useState<WebsiteSettings | null>(null);
@@ -16,6 +17,7 @@ const AdminWebsiteSettings: React.FC = () => {
 
   const fetchSettings = async () => {
     setLoading(true);
+    setError(null); // Clear previous errors
     const { data, error } = await supabase
       .from('website_settings')
       .select('*')
@@ -24,8 +26,9 @@ const AdminWebsiteSettings: React.FC = () => {
 
     if (error) {
       console.error('Error fetching website settings:', error);
-      setError('Failed to load website settings.');
+      setError('Failed to load website settings. Please ensure there is exactly one entry in the "website_settings" table.');
       showError('Failed to load website settings.');
+      setSettings(null); // Ensure settings is null if fetch fails
     } else {
       setSettings(data);
     }
@@ -37,12 +40,13 @@ const AdminWebsiteSettings: React.FC = () => {
     const toastId = showLoading('Saving website settings...');
 
     if (!settings) {
-      showError('No settings found to update. Please ensure an initial entry exists.');
+      showError('No settings found to update. Please ensure an initial entry exists and is correctly fetched.');
       dismissToast(toastId);
       setIsSubmitting(false);
       return;
     }
 
+    console.log('[AdminWebsiteSettings] Attempting to update settings with ID:', settings.id, 'Data:', formData);
     const { error } = await supabase
       .from('website_settings')
       .update(formData)
@@ -51,10 +55,11 @@ const AdminWebsiteSettings: React.FC = () => {
     dismissToast(toastId);
     if (error) {
       console.error('Error updating website settings:', error);
-      showError('Failed to save website settings.');
+      showError(`Failed to save website settings: ${error.message}`);
     } else {
+      console.log('[AdminWebsiteSettings] Website settings updated successfully.');
       showSuccess('Website settings saved successfully!');
-      fetchSettings(); // Re-fetch to ensure UI is up-to-date
+      fetchSettings(); // Re-fetch to ensure UI is up-to-date with the latest data from DB
     }
     setIsSubmitting(false);
   };
@@ -79,7 +84,7 @@ const AdminWebsiteSettings: React.FC = () => {
   if (!settings) {
     return (
       <div className="text-center p-4">
-        <p className="text-lg text-gray-600">No website settings found. Please add an initial entry in Supabase.</p>
+        <p className="text-lg text-gray-600">No website settings found. Please ensure an initial entry exists in your Supabase `website_settings` table.</p>
       </div>
     );
   }
