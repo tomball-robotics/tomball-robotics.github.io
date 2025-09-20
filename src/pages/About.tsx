@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import SimpleImageCarousel from "@/components/SimpleImageCarousel";
 import { supabase } from "@/integrations/supabase/client";
-import { TeamMember, Achievement } from "@/types/supabase"; // Import new types
+import { TeamMember, Achievement, WebsiteSettings } from "@/types/supabase"; // Import WebsiteSettings
 
 const About: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [websiteSettings, setWebsiteSettings] = useState<WebsiteSettings | null>(null); // State for website settings
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,15 +29,26 @@ const About: React.FC = () => {
         .order("year", { ascending: false }) // Order by year descending
         .order("created_at", { ascending: false }); // Consistent order for same year
 
+      const { data: settingsData, error: settingsError } = await supabase
+        .from("website_settings")
+        .select("about_preview_image_url") // Only fetch the needed field
+        .limit(1)
+        .single();
+
       if (membersError) {
         console.error("Error fetching team members:", membersError);
         setError("Failed to load team members.");
       } else if (achievementsError) {
         console.error("Error fetching achievements:", achievementsError);
         setError("Failed to load achievements.");
-      } else {
+      } else if (settingsError) {
+        console.error("Error fetching website settings for About page:", settingsError);
+        setError("Failed to load About page settings.");
+      }
+      else {
         setTeamMembers(membersData || []);
         setAchievements(achievementsData || []);
+        setWebsiteSettings(settingsData);
       }
       setLoading(false);
     };
@@ -78,10 +90,9 @@ const About: React.FC = () => {
     },
   };
 
-  const carouselImages = [
-    "/indexcollage.jpg",
-    "/hero-background.jpeg",
-  ];
+  // Use the image from websiteSettings for the carousel
+  const carouselImages = websiteSettings?.about_preview_image_url ? [websiteSettings.about_preview_image_url] : ["/placeholder.svg"];
+
 
   if (loading) {
     return (
