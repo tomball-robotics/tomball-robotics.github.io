@@ -10,9 +10,9 @@ const adminNavLinks = [
   { name: 'Sponsors', path: '/admin/sponsors', icon: Handshake },
   { name: 'Sponsorship Tiers', path: '/admin/sponsorship-tiers', icon: DollarSign },
   { name: 'Robots', path: '/admin/robots', icon: Bot },
-  { name: 'Unitybots', path: '/admin/unitybots', icon: Bot }, // Added Unitybots link
+  { name: 'Unitybots', path: '/admin/unitybots', icon: Bot },
   { name: 'Team Members', path: '/admin/team-members', icon: Users },
-  { name: 'Achievements', path: '/admin/achievements', icon: Award },
+  { name: 'Achievements', path: '/admin/achievements', icon: Award }, // Added Achievements link
   { name: 'Banners', path: '/admin/banners', icon: Image },
 ];
 
