@@ -24,7 +24,8 @@ import AdminRobots from "./pages/admin/AdminRobots";
 import AdminUnitybots from "./pages/admin/AdminUnitybots";
 import AdminAchievements from "./pages/admin/AdminAchievements";
 import AdminBanners from "./pages/admin/AdminBanners";
-import AdminSlideshowImages from "./pages/admin/AdminSlideshowImages"; // Import new admin page
+import AdminSlideshowImages from "./pages/admin/AdminSlideshowImages";
+import AdminDashboardContent from "./pages/admin/AdminDashboardContent"; // Import new dashboard content
 
 const queryClient = new QueryClient();
 
@@ -60,7 +61,7 @@ const App = () => {
             {/* Protected Admin routes */}
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>}>
               {/* Admin Dashboard (default for /admin) */}
-              <Route index element={<h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>} />
+              <Route index element={<AdminDashboardContent />} /> {/* Updated index route */}
               {/* Specific Admin Pages */}
               <Route path="settings" element={<AdminWebsiteSettings />} />
               <Route path="events" element={<AdminEvents />} />
@@ -71,7 +72,7 @@ const App = () => {
               <Route path="team-members" element={<AdminTeamMembers />} />
               <Route path="achievements" element={<AdminAchievements />} />
               <Route path="banners" element={<AdminBanners />} />
-              <Route path="slideshow-images" element={<AdminSlideshowImages />} /> {/* New admin route */}
+              <Route path="slideshow-images" element={<AdminSlideshowImages />} />
               {/* Add more admin routes here as we build them */}
             </Route>
             
