@@ -25,7 +25,8 @@ import AdminUnitybots from "./pages/admin/AdminUnitybots";
 import AdminAchievements from "./pages/admin/AdminAchievements";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminSlideshowImages from "./pages/admin/AdminSlideshowImages";
-import AdminDashboardContent from "./pages/admin/AdminDashboardContent"; // Import new dashboard content
+import AdminDashboardContent from "./pages/admin/AdminDashboardContent";
+import AdminFooterSettings from "./pages/admin/AdminFooterSettings"; // Import new footer settings page
 
 const queryClient = new QueryClient();
 
@@ -61,9 +62,10 @@ const App = () => {
             {/* Protected Admin routes */}
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>}>
               {/* Admin Dashboard (default for /admin) */}
-              <Route index element={<AdminDashboardContent />} /> {/* Updated index route */}
+              <Route index element={<AdminDashboardContent />} />
               {/* Specific Admin Pages */}
               <Route path="settings" element={<AdminWebsiteSettings />} />
+              <Route path="footer" element={<AdminFooterSettings />} /> {/* New route for Footer Settings */}
               <Route path="events" element={<AdminEvents />} />
               <Route path="sponsors" element={<AdminSponsors />} />
               <Route path="sponsorship-tiers" element={<AdminSponsorshipTiers />} />

@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, LayoutDashboard, Image, Images } from 'lucide-react'; // Added Images icon
+import { Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, LayoutDashboard, Image, Images, Info } from 'lucide-react'; // Added Info icon for Footer Settings
 import { cn } from '@/lib/utils';
 
 const adminNavLinks = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
   { name: 'Website Settings', path: '/admin/settings', icon: Settings },
+  { name: 'Footer Settings', path: '/admin/footer', icon: Info }, // New link for Footer Settings
   { name: 'Events', path: '/admin/events', icon: Calendar },
   { name: 'Sponsors', path: '/admin/sponsors', icon: Handshake },
   { name: 'Sponsorship Tiers', path: '/admin/sponsorship-tiers', icon: DollarSign },
@@ -14,7 +15,7 @@ const adminNavLinks = [
   { name: 'Team Members', path: '/admin/team-members', icon: Users },
   { name: 'Achievements', path: '/admin/achievements', icon: Award },
   { name: 'Banners', path: '/admin/banners', icon: Image },
-  { name: 'Slideshow Images', path: '/admin/slideshow-images', icon: Images }, // Added Slideshow Images link
+  { name: 'Slideshow Images', path: '/admin/slideshow-images', icon: Images },
 ];
 
 const AdminSidebar: React.FC = () => {

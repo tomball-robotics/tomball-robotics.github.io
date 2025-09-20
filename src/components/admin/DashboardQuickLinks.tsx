@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images } from 'lucide-react';
+import { ArrowRight, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info } from 'lucide-react'; // Added Info icon
 
 const quickLinks = [
   { name: 'Website Settings', path: '/admin/settings', icon: Settings },
+  { name: 'Footer Settings', path: '/admin/footer', icon: Info }, // New quick link for Footer Settings
   { name: 'Manage Events', path: '/admin/events', icon: Calendar },
   { name: 'Manage Sponsors', path: '/admin/sponsors', icon: Handshake },
   { name: 'Manage Sponsorship Tiers', path: '/admin/sponsorship-tiers', icon: DollarSign },

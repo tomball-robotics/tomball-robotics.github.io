@@ -68,6 +68,13 @@ export interface WebsiteSettings {
   sponsors_preview_description: string;
   created_at: string;
   updated_at: string;
+  // New footer fields
+  footer_address: string | null;
+  footer_email: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
+  youtube_url: string | null;
+  x_url: string | null;
 }
 
 export interface Robot {
