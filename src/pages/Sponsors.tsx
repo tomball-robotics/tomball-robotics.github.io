@@ -94,7 +94,7 @@ const Sponsors: React.FC = () => {
     },
   };
 
-  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string) => { // Removed imageFitClass parameter
+  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string) => {
     if (filteredSponsors.length === 0) return null;
 
     return (
