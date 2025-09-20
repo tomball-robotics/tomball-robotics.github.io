@@ -12,10 +12,13 @@ import About from "./pages/About";
 import Unitybots from "./pages/Unitybots";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
-import Admin from "./pages/Admin"; // Import the new Admin page
+import Admin from "./pages/Admin";
 import ScrollToTop from "./components/ScrollToTop";
 import { useSupabase } from "./components/SessionContextProvider";
-import AdminWebsiteSettings from "./pages/admin/AdminWebsiteSettings"; // Import new admin page
+import AdminWebsiteSettings from "./pages/admin/AdminWebsiteSettings";
+import AdminEvents from "./pages/admin/AdminEvents"; // Import new admin page
+import AdminSponsors from "./pages/admin/AdminSponsors"; // Import new admin page
+import AdminTeamMembers from "./pages/admin/AdminTeamMembers"; // Import new admin page
 
 const queryClient = new QueryClient();
 
@@ -54,6 +57,9 @@ const App = () => {
               <Route index element={<h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>} />
               {/* Specific Admin Pages */}
               <Route path="settings" element={<AdminWebsiteSettings />} />
+              <Route path="events" element={<AdminEvents />} />
+              <Route path="sponsors" element={<AdminSponsors />} />
+              <Route path="team-members" element={<AdminTeamMembers />} />
               {/* Add more admin routes here as we build them */}
             </Route>
             
