@@ -12,8 +12,8 @@ const adminNavLinks = [
   { name: 'Robots', path: '/admin/robots', icon: Bot },
   { name: 'Unitybots', path: '/admin/unitybots', icon: Bot },
   { name: 'Team Members', path: '/admin/team-members', icon: Users },
-  { name: 'Achievements', path: '/admin/achievements', icon: Award }, // Added Achievements link
-  { name: 'Banners', path: '/admin/banners', icon: Image },
+  { name: 'Achievements', path: '/admin/achievements', icon: Award },
+  { name: 'Banners', path: '/admin/banners', icon: Image }, // Added Banners link
 ];
 
 const AdminSidebar: React.FC = () => {
