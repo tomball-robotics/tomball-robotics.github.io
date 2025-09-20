@@ -120,18 +120,20 @@ const Sponsors: React.FC = () => {
               variants={itemVariants}
               className="w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.666rem)]"
             >
-              <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden"> {/* Removed p-6, added overflow-hidden */}
+              <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
                 {sponsor.image_url && (
-                  <img
-                    src={sponsor.image_url}
-                    alt={sponsor.name}
-                    className="w-full h-48 object-cover rounded-t-lg border-b-4 border-[#0d2f60]" // Updated styling
-                  />
+                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] p-4"> {/* Added flex, items-center, justify-center, bg-gray-50, and p-4 */}
+                    <img
+                      src={sponsor.image_url}
+                      alt={sponsor.name}
+                      className="max-h-full max-w-full object-contain" // Changed to object-contain
+                    />
+                  </div>
                 )}
-                <CardHeader className="p-4 text-center"> {/* Added p-4 back to CardHeader */}
+                <CardHeader className="p-4 text-center">
                   <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between"> {/* Added p-4 pt-0 back to CardContent */}
+                <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
                   <div>
                     {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
                     {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
@@ -216,11 +218,13 @@ const Sponsors: React.FC = () => {
                 >
                   <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
                     {sponsor.image_url && (
-                      <img
-                        src={sponsor.image_url}
-                        alt={sponsor.name}
-                        className="w-full h-48 object-cover rounded-t-lg border-b-4 border-[#0d2f60]"
-                      />
+                      <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] p-4">
+                        <img
+                          src={sponsor.image_url}
+                          alt={sponsor.name}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
                     )}
                     <CardHeader className="p-4 text-center">
                       <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
