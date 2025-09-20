@@ -2,7 +2,7 @@ import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, LogOut, Settings } from "lucide-react";
+import { Menu } from "lucide-react"; // Removed LogOut, Settings as they are no longer used
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSupabase } from "@/components/SessionContextProvider";
 
@@ -63,16 +63,16 @@ const Header: React.FC = () => {
                 <>
                   <NavLink
                     to="/admin"
-                    className={({ isActive }) => getNavLinkClasses(isActive) + " flex items-center"}
+                    className={({ isActive }) => getNavLinkClasses(isActive)}
                   >
-                    <Settings className="h-5 w-5 mr-1" /> Admin
+                    Admin
                   </NavLink>
                   <NavLink
                     to="#" // Using '#' as a placeholder, onClick will handle navigation
                     onClick={handleLogout}
-                    className={({ isActive }) => getNavLinkClasses(isActive) + " flex items-center"}
+                    className={({ isActive }) => getNavLinkClasses(isActive)}
                   >
-                    <LogOut className="h-5 w-5 mr-1" /> Logout
+                    Logout
                   </NavLink>
                 </>
               )}
@@ -104,16 +104,16 @@ const Header: React.FC = () => {
                   <>
                     <NavLink
                       to="/admin"
-                      className={({ isActive }) => getMobileNavLinkClasses(isActive) + " flex items-center"}
+                      className={({ isActive }) => getMobileNavLinkClasses(isActive)}
                     >
-                      <Settings className="h-5 w-5 mr-2" /> Admin
+                      Admin
                     </NavLink>
                     <NavLink
                       to="#" // Using '#' as a placeholder, onClick will handle navigation
                       onClick={handleLogout}
-                      className={({ isActive }) => getMobileNavLinkClasses(isActive) + " flex items-center"}
+                      className={({ isActive }) => getMobileNavLinkClasses(isActive)}
                     >
-                      <LogOut className="h-5 w-5 mr-2" /> Logout
+                      Logout
                     </NavLink>
                   </>
                 )}
