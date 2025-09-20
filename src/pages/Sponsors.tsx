@@ -94,11 +94,8 @@ const Sponsors: React.FC = () => {
     },
   };
 
-  const renderSponsorsByTier = (tierId: string) => {
-    const filteredSponsors = sponsors.filter(s => getTierForAmount(s.amount) === tierId);
+  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string, imageFitClass: string) => {
     if (filteredSponsors.length === 0) return null;
-
-    const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
 
     return (
       <motion.div
@@ -107,8 +104,8 @@ const Sponsors: React.FC = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h2 className={`text-4xl font-bold text-center mb-8 ${tierStyles[tierId]}`}>
-          {tierName} Sponsors
+        <h2 className={`text-4xl font-bold text-center mb-8 ${titleColorClass}`}>
+          {sectionTitle}
         </h2>
         <motion.div
           className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
@@ -122,11 +119,11 @@ const Sponsors: React.FC = () => {
             >
               <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
                 {sponsor.image_url && (
-                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] p-4"> {/* Added flex, items-center, justify-center, bg-gray-50, and p-4 */}
+                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] p-4">
                     <img
                       src={sponsor.image_url}
                       alt={sponsor.name}
-                      className="max-h-full max-w-full object-contain" // Changed to object-contain
+                      className={`max-h-full max-w-full ${imageFitClass}`} // Dynamically apply image fit class
                     />
                   </div>
                 )}
@@ -193,61 +190,13 @@ const Sponsors: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Valued Sponsors</h1>
 
-        {tierOrder.map(tier => renderSponsorsByTier(tier))}
+        {tierOrder.map(tierId => {
+          const filteredSponsors = tieredSponsors.filter(s => getTierForAmount(s.amount) === tierId);
+          const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
+          return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId], "object-contain"); // Default to object-contain
+        })}
 
-        {/* Render "Other Sponsors" section */}
-        {otherSponsors.length > 0 && (
-          <motion.div
-            className="mb-10"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-          >
-            <h2 className="text-4xl font-bold text-center mb-8 text-gray-700">
-              Other Sponsors
-            </h2>
-            <motion.div
-              className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
-              variants={listVariants}
-            >
-              {otherSponsors.map((sponsor) => (
-                <motion.div
-                  key={sponsor.id}
-                  variants={itemVariants}
-                  className="w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.666rem)]"
-                >
-                  <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
-                    {sponsor.image_url && (
-                      <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] p-4">
-                        <img
-                          src={sponsor.image_url}
-                          alt={sponsor.name}
-                          className="max-h-full max-w-full object-contain"
-                        />
-                      </div>
-                    )}
-                    <CardHeader className="p-4 text-center">
-                      <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
-                      <div>
-                        {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
-                        {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
-                      </div>
-                      {sponsor.website_url && (
-                        <Button asChild className="mt-4 bg-[#0d2f60] hover:bg-[#0a244a] text-white">
-                          <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer">
-                            Visit Website <ExternalLink className="ml-2 h-4 w-4" />
-                          </a>
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        )}
+        {renderSponsors(otherSponsors, "Other Sponsors", "text-gray-700", "object-contain")} {/* Default to object-contain */}
 
         {sponsors.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">
