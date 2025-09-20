@@ -6,7 +6,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
 import Autoplay from "embla-carousel-autoplay";
 
 const teamPhotos = [
@@ -26,27 +25,22 @@ const TeamCarousel: React.FC = () => {
           stopOnMouseEnter: true,
         }),
       ]}
-      className="w-full" // Removed max-w-5xl mx-auto to allow full width
+      className="w-full h-full absolute inset-0" // Make carousel fill its parent container
     >
-      <CarouselContent>
+      <CarouselContent className="h-full">
         {teamPhotos.map((photo, index) => (
-          <CarouselItem key={index}>
-            <div className="p-0"> {/* Removed p-1 for full width */}
-              <Card className="border-none shadow-lg rounded-lg"> {/* Keep card rounded */}
-                <CardContent className="flex aspect-video items-center justify-center p-0">
-                  <img
-                    src={photo}
-                    alt={`Team Photo ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg" // Image fills and matches card's top corners
-                  />
-                </CardContent>
-              </Card>
-            </div>
+          <CarouselItem key={index} className="h-full">
+            <img
+              src={photo}
+              alt={`Team Photo ${index + 1}`}
+              className="w-full h-full object-cover" // Image fills the item
+            />
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="absolute left-4" />
-      <CarouselNext className="absolute right-4" />
+      {/* Navigation buttons for the carousel */}
+      <CarouselPrevious className="absolute left-4 z-20" />
+      <CarouselNext className="absolute right-4 z-20" />
     </Carousel>
   );
 };

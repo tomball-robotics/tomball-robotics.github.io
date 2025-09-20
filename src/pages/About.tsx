@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { teamMembers, achievements } from "@/data/aboutData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Users, Flag } from "lucide-react"; // Added Users and Flag icons
+import { Trophy } from "lucide-react";
 
 import TeamCarousel from "@/components/TeamCarousel"; // Import the new carousel component
 
@@ -46,44 +46,38 @@ const About: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex-grow overflow-hidden pt-16"
-      >
-        {/* Team Photos Slideshow - Moved to top and made full width */}
-        <motion.section
-          className="mb-16 overflow-hidden" // Removed container classes for full width
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+      <main className="flex-grow overflow-hidden pt-16">
+        {/* Hero Section for About Page */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="relative h-[calc(100vh-4rem)] flex items-center justify-center text-center"
         >
-          <h2 className="text-4xl font-bold text-[#0d2f60] text-center mb-8">Team Highlights</h2>
+          {/* Team Carousel as Background */}
           <TeamCarousel />
-        </motion.section>
+          <div className="absolute inset-0 bg-black bg-opacity-50" /> {/* Dark overlay */}
 
-        <div className="container mx-auto px-4 py-12"> {/* Main content container */}
-          <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">About Tomball T3 Robotics</h1>
-
-          {/* Mission Section */}
-          <motion.section
-            className="mb-16 text-center"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
+          {/* Content over the slideshow */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+            className="relative z-10 p-8 max-w-3xl mx-auto"
           >
-            <h2 className="text-4xl font-bold text-[#d92507] mb-6">Our Mission</h2>
-            <p className="text-lg text-gray-700 max-w-4xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
+              About Tomball T3 Robotics
+            </h1>
+            <p className="text-xl text-gray-200 mb-8">
               Tomball T3 Robotics, FRC Team 7312, is dedicated to inspiring young minds in science, technology,
               engineering, and mathematics (STEM) through participation in the FIRST Robotics Competition.
               We aim to build not just robots, but also future leaders, innovators, and problem-solvers,
               fostering a culture of teamwork, Gracious Professionalism, and Coopertition.
             </p>
-          </motion.section>
+          </motion.div>
+        </motion.div>
 
+        <div className="container mx-auto px-4 py-12"> {/* Main content container */}
           {/* Meet the Team Section */}
           <motion.section
             className="mb-16"
