@@ -15,6 +15,7 @@ const sponsorFormSchema = z.object({
   description: z.string().optional(),
   amount: z.coerce.number().min(0, "Amount must be a positive number"),
   notes: z.string().optional(),
+  website_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(), // New field
 });
 
 interface SponsorFormProps {
@@ -32,6 +33,7 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
       description: initialData?.description || '',
       amount: initialData?.amount || 0,
       notes: initialData?.notes || '',
+      website_url: initialData?.website_url || '', // Default value for new field
     },
   });
 
@@ -43,6 +45,7 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
         description: initialData.description || '',
         amount: initialData.amount,
         notes: initialData.notes || '',
+        website_url: initialData.website_url || '', // Reset for new field
       });
     } else {
       form.reset({
@@ -51,6 +54,7 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
         description: '',
         amount: 0,
         notes: '',
+        website_url: '', // Reset for new field
       });
     }
   }, [initialData, form]);
@@ -116,6 +120,19 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
               <FormLabel>Notes</FormLabel>
               <FormControl>
                 <Textarea placeholder="Enter any notes (e.g., 'Donated services')" {...field} disabled={isLoading} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="website_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://www.sponsorwebsite.com" {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>

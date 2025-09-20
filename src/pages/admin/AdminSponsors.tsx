@@ -107,6 +107,17 @@ const AdminSponsors: React.FC = () => {
     { key: 'description', header: 'Description' },
     { key: 'amount', header: 'Amount', render: (sponsor: Sponsor) => `$${sponsor.amount.toLocaleString()}` },
     { key: 'notes', header: 'Notes' },
+    { 
+      key: 'website_url', 
+      header: 'Website', 
+      render: (sponsor: Sponsor) => (
+        sponsor.website_url ? (
+          <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate max-w-[150px] block">
+            {new URL(sponsor.website_url).hostname}
+          </a>
+        ) : 'N/A'
+      ),
+    },
     { key: 'actions', header: 'Actions' },
   ];
 

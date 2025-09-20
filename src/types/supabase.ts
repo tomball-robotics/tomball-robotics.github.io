@@ -15,6 +15,7 @@ export interface Sponsor {
   description: string | null;
   amount: number;
   notes: string | null;
+  website_url: string | null; // New field for sponsor website
   created_at: string;
   updated_at: string;
 }

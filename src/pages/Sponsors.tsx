@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // Import Button
+import { ExternalLink } from "lucide-react"; // Import ExternalLink icon
 import { supabase } from "@/integrations/supabase/client";
 import { Sponsor, SponsorshipTier } from "@/types/supabase"; // Import new types
 
@@ -127,9 +129,18 @@ const Sponsors: React.FC = () => {
                 <CardHeader className="p-0 mb-2">
                   <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex-grow">
-                  {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
-                  {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
+                <CardContent className="p-0 flex-grow flex flex-col justify-between">
+                  <div>
+                    {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
+                    {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
+                  </div>
+                  {sponsor.website_url && (
+                    <Button asChild className="mt-4 bg-[#0d2f60] hover:bg-[#0a244a] text-white">
+                      <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer">
+                        Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
