@@ -4,7 +4,8 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { UnitybotResource, UnitybotInitiative } from "@/types/supabase"; // Import new types
+import { UnitybotResource, UnitybotInitiative } from "@/types/supabase";
+import Spinner from "@/components/Spinner"; // Import Spinner
 
 const Unitybots: React.FC = () => {
   const [resources, setResources] = useState<UnitybotResource[]>([]);
@@ -67,7 +68,7 @@ const Unitybots: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading Unity Bots content...</p>
+          <Spinner text="Loading Unity Bots content..." />
         </main>
         <Footer />
       </div>

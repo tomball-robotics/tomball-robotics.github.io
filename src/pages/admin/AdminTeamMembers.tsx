@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import TeamMemberForm from '@/components/admin/TeamMemberForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminTeamMembers: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -54,13 +55,11 @@ const AdminTeamMembers: React.FC = () => {
 
     let error;
     if (editingTeamMember) {
-      // Update existing team member
       ({ error } = await supabase
         .from('team_members')
         .update(formData)
         .eq('id', editingTeamMember.id));
     } else {
-      // Add new team member
       ({ error } = await supabase
         .from('team_members')
         .insert(formData));
@@ -111,7 +110,7 @@ const AdminTeamMembers: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading team members...</p>
+        <Spinner text="Loading team members..." />
       </div>
     );
   }

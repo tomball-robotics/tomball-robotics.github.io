@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import AchievementForm from '@/components/admin/AchievementForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminAchievements: React.FC = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -55,13 +56,11 @@ const AdminAchievements: React.FC = () => {
 
     let error;
     if (editingAchievement) {
-      // Update existing achievement
       ({ error } = await supabase
         .from('achievements')
         .update(formData)
         .eq('id', editingAchievement.id));
     } else {
-      // Add new achievement
       ({ error } = await supabase
         .from('achievements')
         .insert(formData));
@@ -105,7 +104,7 @@ const AdminAchievements: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading achievements...</p>
+        <Spinner text="Loading achievements..." />
       </div>
     );
   }

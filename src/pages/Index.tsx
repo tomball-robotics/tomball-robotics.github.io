@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
-import { WebsiteSettings, Event, Sponsor } from "@/types/supabase"; // Import new types
+import { WebsiteSettings, Event, Sponsor } from "@/types/supabase";
+import Spinner from "@/components/Spinner"; // Import Spinner
 
 const Index: React.FC = () => {
   const [homePageData, setHomePageData] = useState<WebsiteSettings | null>(null);
@@ -24,20 +25,20 @@ const Index: React.FC = () => {
         .from("website_settings")
         .select("*")
         .limit(1)
-        .single(); // Assuming only one row for website settings
+        .single();
 
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
         .select("*")
         .order("year", { ascending: false })
         .order("created_at", { ascending: false })
-        .limit(3); // Get latest 3 events
+        .limit(3);
 
       const { data: sponsorsData, error: sponsorsError } = await supabase
         .from("sponsors")
         .select("*")
-        .order("amount", { ascending: false }) // Order by amount for featured
-        .limit(3); // Get top 3 sponsors
+        .order("amount", { ascending: false })
+        .limit(3);
 
       if (settingsError) {
         console.error("Error fetching website settings:", settingsError);
@@ -97,7 +98,7 @@ const Index: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading home page content...</p>
+          <Spinner text="Loading home page content..." />
         </main>
         <Footer />
       </div>
@@ -292,7 +293,7 @@ const Index: React.FC = () => {
             </Button>
           </div>
         </motion.section>
-      </main>
+      </motion.main>
       <Footer />
     </div>
   );

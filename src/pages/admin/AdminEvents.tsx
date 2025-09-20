@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import EventForm from '@/components/admin/EventForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -55,13 +56,11 @@ const AdminEvents: React.FC = () => {
 
     let error;
     if (editingEvent) {
-      // Update existing event
       ({ error } = await supabase
         .from('events')
         .update(formData)
         .eq('id', editingEvent.id));
     } else {
-      // Add new event
       ({ error } = await supabase
         .from('events')
         .insert(formData));
@@ -111,7 +110,7 @@ const AdminEvents: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading events...</p>
+        <Spinner text="Loading events..." />
       </div>
     );
   }

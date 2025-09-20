@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SponsorForm from '@/components/admin/SponsorForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminSponsors: React.FC = () => {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -54,13 +55,11 @@ const AdminSponsors: React.FC = () => {
 
     let error;
     if (editingSponsor) {
-      // Update existing sponsor
       ({ error } = await supabase
         .from('sponsors')
         .update(formData)
         .eq('id', editingSponsor.id));
     } else {
-      // Add new sponsor
       ({ error } = await supabase
         .from('sponsors')
         .insert(formData));
@@ -107,9 +106,9 @@ const AdminSponsors: React.FC = () => {
     { key: 'description', header: 'Description' },
     { key: 'amount', header: 'Amount', render: (sponsor: Sponsor) => `$${sponsor.amount.toLocaleString()}` },
     { key: 'notes', header: 'Notes' },
-    { 
-      key: 'website_url', 
-      header: 'Website', 
+    {
+      key: 'website_url',
+      header: 'Website',
       render: (sponsor: Sponsor) => (
         sponsor.website_url ? (
           <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate max-w-[150px] block">
@@ -124,7 +123,7 @@ const AdminSponsors: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading sponsors...</p>
+        <Spinner text="Loading sponsors..." />
       </div>
     );
   }

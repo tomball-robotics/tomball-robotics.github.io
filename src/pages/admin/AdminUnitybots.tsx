@@ -9,6 +9,7 @@ import UnitybotResourceForm from '@/components/admin/UnitybotResourceForm';
 import UnitybotInitiativeForm from '@/components/admin/UnitybotInitiativeForm';
 import { DataTable } from '@/components/admin/DataTable';
 import { Separator } from '@/components/ui/separator';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminUnitybots: React.FC = () => {
   const [resources, setResources] = useState<UnitybotResource[]>([]);
@@ -227,7 +228,7 @@ const AdminUnitybots: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading Unitybot content...</p>
+        <Spinner text="Loading Unitybot content..." />
       </div>
     );
   }

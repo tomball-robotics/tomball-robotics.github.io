@@ -4,7 +4,8 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Robot } from "@/types/supabase"; // Import the new type
+import { Robot } from "@/types/supabase";
+import Spinner from "@/components/Spinner"; // Import Spinner
 
 const Robots: React.FC = () => {
   const [robots, setRobots] = useState<Robot[]>([]);
@@ -17,7 +18,7 @@ const Robots: React.FC = () => {
       const { data, error } = await supabase
         .from("robots")
         .select("*")
-        .order("year", { ascending: false }); // Order by year descending
+        .order("year", { ascending: false });
 
       if (error) {
         console.error("Error fetching robots:", error);
@@ -58,7 +59,7 @@ const Robots: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading robots...</p>
+          <Spinner text="Loading robots..." />
         </main>
         <Footer />
       </div>

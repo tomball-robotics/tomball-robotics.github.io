@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import Spinner from './Spinner'; // Import Spinner
 
 interface SupabaseContextType {
   supabase: SupabaseClient;
@@ -44,7 +45,7 @@ export const SessionContextProvider: React.FC<SessionContextProviderProps> = ({ 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-gray-600">Loading session...</p>
+        <Spinner text="Loading session..." />
       </div>
     );
   }

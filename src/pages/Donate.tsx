@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorshipTier } from "@/types/supabase"; // Import the new type
+import { SponsorshipTier } from "@/types/supabase";
+import Spinner from "@/components/Spinner"; // Import Spinner
 
 const Donate: React.FC = () => {
   const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
@@ -18,13 +19,12 @@ const Donate: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from("sponsorship_tiers")
-        .select("*"); // Fetch without DB sorting, will sort client-side
+        .select("*");
 
       if (error) {
         console.error("Error fetching sponsorship tiers:", error);
         setError("Failed to load sponsorship tiers.");
       } else {
-        // Client-side sort tiers by numeric price in descending order
         const sortedTiers = (data || []).sort((a, b) => {
           const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
           const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
@@ -64,7 +64,7 @@ const Donate: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading sponsorship tiers...</p>
+          <Spinner text="Loading sponsorship tiers..." />
         </main>
         <Footer />
       </div>
@@ -107,7 +107,7 @@ const Donate: React.FC = () => {
         >
           {sponsorshipTiers.map((tier) => (
             <motion.div
-              key={tier.id} // Use tier.id as key
+              key={tier.id}
               variants={itemVariants}
               className="flex"
             >

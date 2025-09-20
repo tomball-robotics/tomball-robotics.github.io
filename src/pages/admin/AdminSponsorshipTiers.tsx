@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SponsorshipTierForm from '@/components/admin/SponsorshipTierForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminSponsorshipTiers: React.FC = () => {
   const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
@@ -25,14 +26,13 @@ const AdminSponsorshipTiers: React.FC = () => {
     setError(null);
     const { data, error } = await supabase
       .from('sponsorship_tiers')
-      .select('*'); // Fetch without DB sorting, will sort client-side
+      .select('*');
 
     if (error) {
       console.error('Error fetching sponsorship tiers:', error);
       setError('Failed to load sponsorship tiers.');
       showError('Failed to load sponsorship tiers.');
     } else {
-      // Client-side sort tiers by numeric price in descending order
       const sortedTiers = (data || []).sort((a, b) => {
         const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
         const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
@@ -59,13 +59,11 @@ const AdminSponsorshipTiers: React.FC = () => {
 
     let error;
     if (editingTier) {
-      // Update existing tier
       ({ error } = await supabase
         .from('sponsorship_tiers')
         .update(formData)
         .eq('id', editingTier.id));
     } else {
-      // Add new tier
       ({ error } = await supabase
         .from('sponsorship_tiers')
         .insert(formData));
@@ -116,7 +114,7 @@ const AdminSponsorshipTiers: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading sponsorship tiers...</p>
+        <Spinner text="Loading sponsorship tiers..." />
       </div>
     );
   }

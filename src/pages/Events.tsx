@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Trophy, Flag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Event } from "@/types/supabase"; // Import the new type
+import { Event } from "@/types/supabase";
+import Spinner from "@/components/Spinner"; // Import Spinner
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -20,7 +21,7 @@ const Events: React.FC = () => {
         .from("events")
         .select("*")
         .order("year", { ascending: false })
-        .order("created_at", { ascending: false }); // Order by creation date for consistent ordering within a year
+        .order("created_at", { ascending: false });
 
       if (error) {
         console.error("Error fetching events:", error);
@@ -75,7 +76,7 @@ const Events: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading events...</p>
+          <Spinner text="Loading events..." />
         </main>
         <Footer />
       </div>
@@ -119,7 +120,7 @@ const Events: React.FC = () => {
 
               {eventsByYear[year].map((event, index) => (
                 <motion.div
-                  key={event.id} // Use event.id as key
+                  key={event.id}
                   variants={itemVariants}
                   className="relative mb-8"
                 >

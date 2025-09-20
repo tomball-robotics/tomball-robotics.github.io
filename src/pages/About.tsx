@@ -6,12 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import SimpleImageCarousel from "@/components/SimpleImageCarousel";
 import { supabase } from "@/integrations/supabase/client";
-import { TeamMember, Achievement, SlideshowImage } from "@/types/supabase"; // Import new types
+import { TeamMember, Achievement, SlideshowImage } from "@/types/supabase";
+import Spinner from "@/components/Spinner"; // Import Spinner
 
 const About: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [carouselImages, setCarouselImages] = useState<string[]>([]); // State for carousel images
+  const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,13 +22,13 @@ const About: React.FC = () => {
       const { data: membersData, error: membersError } = await supabase
         .from("team_members")
         .select("*")
-        .order("created_at", { ascending: true }); // Order for consistent display
+        .order("created_at", { ascending: true });
 
       const { data: achievementsData, error: achievementsError } = await supabase
         .from("achievements")
         .select("*")
-        .order("year", { ascending: false }) // Order by year descending
-        .order("created_at", { ascending: false }); // Consistent order for same year
+        .order("year", { ascending: false })
+        .order("created_at", { ascending: false });
 
       const { data: slideshowImagesData, error: slideshowImagesError } = await supabase
         .from("slideshow_images")
@@ -95,7 +96,7 @@ const About: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading About page content...</p>
+          <Spinner text="Loading About page content..." />
         </main>
         <Footer />
       </div>
@@ -127,7 +128,7 @@ const About: React.FC = () => {
         >
           {/* Simple Image Carousel as Background */}
           <SimpleImageCarousel images={carouselImages} className="absolute inset-0 z-0" />
-          <div className="absolute inset-0 bg-black bg-opacity-70 z-10" /> {/* Dark overlay - changed to 70% opacity */}
+          <div className="absolute inset-0 bg-black bg-opacity-70 z-10" />
 
           {/* Content over the slideshow */}
           <motion.div
@@ -148,7 +149,7 @@ const About: React.FC = () => {
           </motion.div>
         </motion.div>
 
-        <div className="container mx-auto px-4 py-12"> {/* Main content container */}
+        <div className="container mx-auto px-4 py-12">
           {/* Meet the Team Section */}
           <motion.section
             className="mb-16"
@@ -221,7 +222,7 @@ const About: React.FC = () => {
               <p className="text-center text-gray-600 text-xl mt-8">No achievements to display yet.</p>
             )}
           </motion.section>
-        </div> {/* End of main content container */}
+        </div>
       </main>
       <Footer />
     </div>

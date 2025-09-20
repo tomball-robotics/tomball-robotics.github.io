@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import BannerForm from '@/components/admin/BannerForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminBanners: React.FC = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -55,13 +56,11 @@ const AdminBanners: React.FC = () => {
 
     let error;
     if (editingBanner) {
-      // Update existing banner
       ({ error } = await supabase
         .from('banners')
         .update(formData)
         .eq('id', editingBanner.id));
     } else {
-      // Add new banner
       ({ error } = await supabase
         .from('banners')
         .insert(formData));
@@ -105,7 +104,7 @@ const AdminBanners: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading banners...</p>
+        <Spinner text="Loading banners..." />
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import RobotForm from '@/components/admin/RobotForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminRobots: React.FC = () => {
   const [robots, setRobots] = useState<Robot[]>([]);
@@ -54,13 +55,11 @@ const AdminRobots: React.FC = () => {
 
     let error;
     if (editingRobot) {
-      // Update existing robot
       ({ error } = await supabase
         .from('robots')
         .update(formData)
         .eq('id', editingRobot.id));
     } else {
-      // Add new robot
       ({ error } = await supabase
         .from('robots')
         .insert(formData));
@@ -113,7 +112,7 @@ const AdminRobots: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading robots...</p>
+        <Spinner text="Loading robots..." />
       </div>
     );
   }

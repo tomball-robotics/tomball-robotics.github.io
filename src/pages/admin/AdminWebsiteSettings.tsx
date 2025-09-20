@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
 import WebsiteSettingsForm from '@/components/admin/WebsiteSettingsForm';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
-import { Button } from '@/components/ui/button'; // Ensure Button is imported
+import { Button } from '@/components/ui/button';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminWebsiteSettings: React.FC = () => {
   const [settings, setSettings] = useState<WebsiteSettings | null>(null);
@@ -17,7 +18,7 @@ const AdminWebsiteSettings: React.FC = () => {
 
   const fetchSettings = async () => {
     setLoading(true);
-    setError(null); // Clear previous errors
+    setError(null);
     const { data, error } = await supabase
       .from('website_settings')
       .select('*')
@@ -28,7 +29,7 @@ const AdminWebsiteSettings: React.FC = () => {
       console.error('Error fetching website settings:', error);
       setError('Failed to load website settings. Please ensure there is exactly one entry in the "website_settings" table.');
       showError('Failed to load website settings.');
-      setSettings(null); // Ensure settings is null if fetch fails
+      setSettings(null);
     } else {
       setSettings(data);
     }
@@ -59,7 +60,7 @@ const AdminWebsiteSettings: React.FC = () => {
     } else {
       console.log('[AdminWebsiteSettings] Website settings updated successfully.');
       showSuccess('Website settings saved successfully!');
-      fetchSettings(); // Re-fetch to ensure UI is up-to-date with the latest data from DB
+      fetchSettings();
     }
     setIsSubmitting(false);
   };
@@ -67,7 +68,7 @@ const AdminWebsiteSettings: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading website settings...</p>
+        <Spinner text="Loading website settings..." />
       </div>
     );
   }

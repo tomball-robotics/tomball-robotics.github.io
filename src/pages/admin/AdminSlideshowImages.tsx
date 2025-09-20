@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SlideshowImageForm from '@/components/admin/SlideshowImageForm';
 import { DataTable } from '@/components/admin/DataTable';
+import Spinner from '@/components/Spinner'; // Import Spinner
 
 const AdminSlideshowImages: React.FC = () => {
   const [slideshowImages, setSlideshowImages] = useState<SlideshowImage[]>([]);
@@ -27,7 +28,7 @@ const AdminSlideshowImages: React.FC = () => {
       .from('slideshow_images')
       .select('*')
       .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: true }); // Consistent order for same sort_order
+      .order('created_at', { ascending: true });
 
     if (error) {
       console.error('Error fetching slideshow images:', error);
@@ -55,13 +56,11 @@ const AdminSlideshowImages: React.FC = () => {
 
     let error;
     if (editingImage) {
-      // Update existing image
       ({ error } = await supabase
         .from('slideshow_images')
         .update(formData)
         .eq('id', editingImage.id));
     } else {
-      // Add new image
       ({ error } = await supabase
         .from('slideshow_images')
         .insert(formData));
@@ -84,7 +83,6 @@ const AdminSlideshowImages: React.FC = () => {
     const imageToDelete = slideshowImages.find(img => img.id === id);
 
     if (imageToDelete && imageToDelete.image_url) {
-      // Attempt to delete from storage first
       const pathSegments = imageToDelete.image_url.split('/public/website-images/');
       if (pathSegments.length > 1) {
         const filePathInBucket = pathSegments[1];
@@ -93,7 +91,7 @@ const AdminSlideshowImages: React.FC = () => {
           console.error('Error deleting image from storage:', storageDeleteSuccess.error);
           showError(`Failed to delete image from storage: ${storageDeleteSuccess.error.message}`);
           dismissToast(toastId);
-          return; // Stop if storage deletion fails
+          return;
         }
       }
     }
@@ -128,7 +126,7 @@ const AdminSlideshowImages: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-600">Loading slideshow images...</p>
+        <Spinner text="Loading slideshow images..." />
       </div>
     );
   }
