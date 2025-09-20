@@ -26,18 +26,18 @@ const TeamCarousel: React.FC = () => {
           stopOnMouseEnter: true,
         }),
       ]}
-      className="w-full max-w-5xl mx-auto"
+      className="w-full" // Removed max-w-5xl mx-auto to allow full width
     >
       <CarouselContent>
         {teamPhotos.map((photo, index) => (
           <CarouselItem key={index}>
-            <div className="p-1">
-              <Card className="border-none shadow-lg">
+            <div className="p-0"> {/* Removed p-1 for full width */}
+              <Card className="border-none shadow-lg rounded-lg"> {/* Keep card rounded */}
                 <CardContent className="flex aspect-video items-center justify-center p-0">
                   <img
                     src={photo}
                     alt={`Team Photo ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-cover rounded-lg" // Image fills and matches card's top corners
                   />
                 </CardContent>
               </Card>
