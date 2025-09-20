@@ -293,7 +293,7 @@ const Index: React.FC = () => {
             </Button>
           </div>
         </motion.section>
-      </motion.main>
+      </main>
       <Footer />
     </div>
   );
