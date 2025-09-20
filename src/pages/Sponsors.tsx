@@ -64,6 +64,7 @@ const Sponsors: React.FC = () => {
   // Helper function to determine tier from amount
   const getTierForAmount = (amount: number): string => {
     for (const tier of sponsorshipTiers) {
+      // Extract numeric value from price string (e.g., "$50,000" -> 50000)
       const threshold = parseInt(tier.price.replace(/[^0-9]/g, ''), 10);
       if (amount >= threshold) {
         return tier.tier_id;
@@ -93,8 +94,11 @@ const Sponsors: React.FC = () => {
     },
   };
 
-  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string) => {
+  const renderSponsorsByTier = (tierId: string) => {
+    const filteredSponsors = sponsors.filter(s => getTierForAmount(s.amount) === tierId);
     if (filteredSponsors.length === 0) return null;
+
+    const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
 
     return (
       <motion.div
@@ -103,8 +107,8 @@ const Sponsors: React.FC = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h2 className={`text-4xl font-bold text-center mb-8 ${titleColorClass}`}>
-          {sectionTitle}
+        <h2 className={`text-4xl font-bold text-center mb-8 ${tierStyles[tierId]}`}>
+          {tierName} Sponsors
         </h2>
         <motion.div
           className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
@@ -116,18 +120,18 @@ const Sponsors: React.FC = () => {
               variants={itemVariants}
               className="w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.666rem)]"
             >
-              <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg rounded-lg bg-white">
+              <Card className="h-full flex flex-col items-center text-center shadow-lg rounded-lg bg-white overflow-hidden"> {/* Removed p-6, added overflow-hidden */}
                 {sponsor.image_url && (
                   <img
                     src={sponsor.image_url}
                     alt={sponsor.name}
-                    className="w-32 h-32 object-contain mb-4"
+                    className="w-full h-48 object-contain rounded-t-lg border-b-4 border-[#0d2f60] p-4" // Adjusted image styling
                   />
                 )}
-                <CardHeader className="p-0 mb-2">
+                <CardHeader className="p-4 text-center"> {/* Added p-4 */}
                   <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex-grow flex flex-col justify-between">
+                <CardContent className="p-4 flex-grow flex flex-col justify-between"> {/* Added p-4 */}
                   <div>
                     {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
                     {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
@@ -187,13 +191,9 @@ const Sponsors: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Valued Sponsors</h1>
 
-        {tierOrder.map(tierId => {
-          const filteredSponsors = tieredSponsors.filter(s => getTierForAmount(s.amount) === tierId);
-          const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
-          return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId]);
-        })}
+        {tierOrder.map(tier => renderSponsorsByTier(tier))}
 
-        {renderSponsors(otherSponsors, "Other Sponsors", "text-gray-700")}
+        {renderSponsorsByTier("other")} {/* Render "Other Sponsors" section */}
 
         {sponsors.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">
