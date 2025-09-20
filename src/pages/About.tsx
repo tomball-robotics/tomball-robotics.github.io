@@ -55,8 +55,8 @@ const About: React.FC = () => {
           className="relative h-[calc(100vh-4rem)] flex items-center justify-center text-center"
         >
           {/* Team Carousel as Background */}
-          <TeamCarousel />
-          <div className="absolute inset-0 bg-black bg-opacity-50" /> {/* Dark overlay */}
+          <TeamCarousel className="z-0" />
+          <div className="absolute inset-0 bg-black bg-opacity-50 z-1" /> {/* Dark overlay */}
 
           {/* Content over the slideshow */}
           <motion.div

@@ -7,16 +7,18 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { cn } from "@/lib/utils"; // Import cn utility
 
 const teamPhotos = [
   "/indexcollage.jpg",
   "/hero-background.jpeg",
-  // Removed "/RobotTeamPhoto.jpg" as it was not found in the public directory.
-  // If you have a 'RobotTeamPhoto.jpg' or other team photos, please add them to the public directory
-  // and then you can add their paths here, e.g., "/RobotTeamPhoto.jpg".
 ];
 
-const TeamCarousel: React.FC = () => {
+interface TeamCarouselProps {
+  className?: string;
+}
+
+const TeamCarousel: React.FC<TeamCarouselProps> = ({ className }) => {
   return (
     <Carousel
       plugins={[
@@ -26,7 +28,7 @@ const TeamCarousel: React.FC = () => {
           stopOnMouseEnter: true,
         }),
       ]}
-      className="w-full h-full absolute inset-0" // Make carousel fill its parent container
+      className={cn("w-full h-full absolute inset-0", className)}
     >
       <CarouselContent className="h-full">
         {teamPhotos.map((photo, index) => (
@@ -34,7 +36,7 @@ const TeamCarousel: React.FC = () => {
             <img
               src={photo}
               alt={`Team Photo ${index + 1}`}
-              className="absolute inset-0 w-full h-full object-cover" // Image fills the item, cropping as needed
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </CarouselItem>
         ))}
