@@ -94,7 +94,7 @@ const Sponsors: React.FC = () => {
     },
   };
 
-  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string, imageFitClass: string) => {
+  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string) => { // Removed imageFitClass parameter
     if (filteredSponsors.length === 0) return null;
 
     return (
@@ -123,7 +123,7 @@ const Sponsors: React.FC = () => {
                     <img
                       src={sponsor.image_url}
                       alt={sponsor.name}
-                      className={`max-h-full max-w-full ${imageFitClass}`} // Dynamically apply image fit class
+                      className={`max-h-full max-w-full object-${sponsor.image_fit || 'contain'}`} // Dynamically apply image fit class
                     />
                   </div>
                 )}
@@ -193,10 +193,10 @@ const Sponsors: React.FC = () => {
         {tierOrder.map(tierId => {
           const filteredSponsors = tieredSponsors.filter(s => getTierForAmount(s.amount) === tierId);
           const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
-          return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId], "object-contain"); // Default to object-contain
+          return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId]);
         })}
 
-        {renderSponsors(otherSponsors, "Other Sponsors", "text-gray-700", "object-contain")} {/* Default to object-contain */}
+        {renderSponsors(otherSponsors, "Other Sponsors", "text-gray-700")}
 
         {sponsors.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">

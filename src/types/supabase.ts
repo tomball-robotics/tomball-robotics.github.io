@@ -16,6 +16,7 @@ export interface Sponsor {
   amount: number;
   notes: string | null;
   website_url: string | null; // New field for sponsor website
+  image_fit: 'contain' | 'cover' | null; // Added image_fit
   created_at: string;
   updated_at: string;
 }

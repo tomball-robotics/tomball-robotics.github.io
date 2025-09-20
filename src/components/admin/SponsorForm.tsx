@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Sponsor } from '@/types/supabase';
 import ImageUploadField from './ImageUploadField'; // Reusable component for image uploads
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 
 const sponsorFormSchema = z.object({
   name: z.string().min(1, "Sponsor name is required"),
@@ -15,7 +16,8 @@ const sponsorFormSchema = z.object({
   description: z.string().optional(),
   amount: z.coerce.number().min(0, "Amount must be a positive number"),
   notes: z.string().optional(),
-  website_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(), // New field
+  website_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
+  image_fit: z.enum(['contain', 'cover']).default('contain'), // New field for image fit
 });
 
 interface SponsorFormProps {
@@ -33,7 +35,8 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
       description: initialData?.description || '',
       amount: initialData?.amount || 0,
       notes: initialData?.notes || '',
-      website_url: initialData?.website_url || '', // Default value for new field
+      website_url: initialData?.website_url || '',
+      image_fit: initialData?.image_fit || 'contain', // Default value for new field
     },
   });
 
@@ -45,7 +48,8 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
         description: initialData.description || '',
         amount: initialData.amount,
         notes: initialData.notes || '',
-        website_url: initialData.website_url || '', // Reset for new field
+        website_url: initialData.website_url || '',
+        image_fit: initialData.image_fit || 'contain',
       });
     } else {
       form.reset({
@@ -54,7 +58,8 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
         description: '',
         amount: 0,
         notes: '',
-        website_url: '', // Reset for new field
+        website_url: '',
+        image_fit: 'contain',
       });
     }
   }, [initialData, form]);
@@ -85,6 +90,27 @@ const SponsorForm: React.FC<SponsorFormProps> = ({ initialData, onSubmit, isLoad
           label="Sponsor Logo"
           bucketName="website-images"
           folderPath="sponsors"
+        />
+        <FormField
+          control={form.control}
+          name="image_fit"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image Fit</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select how the image should fit" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="contain">Fit (show entire logo)</SelectItem>
+                  <SelectItem value="cover">Fill (cover entire area, may crop)</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
         />
         <FormField
           control={form.control}
