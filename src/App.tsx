@@ -11,9 +11,10 @@ import Robots from "././pages/Robots";
 import About from "./pages/About";
 import Unitybots from "./pages/Unitybots";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/Login"; // Import the new Login page
+import Login from "./pages/Login";
+import Admin from "./pages/Admin"; // Import the new Admin page
 import ScrollToTop from "./components/ScrollToTop";
-import { useSupabase } from "./components/SessionContextProvider"; // Import useSupabase
+import { useSupabase } from "./components/SessionContextProvider";
 
 const queryClient = new QueryClient();
 
@@ -36,15 +37,19 @@ const App = () => {
         <HashRouter>
           <ScrollToTop />
           <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/sponsors" element={<Sponsors />} />
+            <Route path="/donate" element={<Donate />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/robots" element={<Robots />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/unitybots" element={<Unitybots />} />
             <Route path="/login" element={<Login />} />
-            {/* Protected routes */}
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/sponsors" element={<ProtectedRoute><Sponsors /></ProtectedRoute>} />
-            <Route path="/donate" element={<ProtectedRoute><Donate /></ProtectedRoute>} />
-            <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
-            <Route path="/robots" element={<ProtectedRoute><Robots /></ProtectedRoute>} />
-            <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
-            <Route path="/unitybots" element={<ProtectedRoute><Unitybots /></ProtectedRoute>} />
+
+            {/* Protected Admin route */}
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
