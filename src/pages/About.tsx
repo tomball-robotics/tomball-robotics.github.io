@@ -6,7 +6,7 @@ import { teamMembers, achievements } from "@/data/aboutData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 
-import TeamCarousel from "@/components/TeamCarousel"; // Import the new carousel component
+import SimpleImageCarousel from "@/components/SimpleImageCarousel"; // Import the new carousel component
 
 const About: React.FC = () => {
   const sectionVariants = {
@@ -43,6 +43,11 @@ const About: React.FC = () => {
     },
   };
 
+  const carouselImages = [
+    "/indexcollage.jpg",
+    "/hero-background.jpeg",
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -54,16 +59,16 @@ const About: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="relative h-[calc(100vh-4rem)] flex items-center justify-center text-center"
         >
-          {/* Team Carousel as Background */}
-          <TeamCarousel className="z-0" />
-          <div className="absolute inset-0 bg-black bg-opacity-50 z-1" /> {/* Dark overlay */}
+          {/* Simple Image Carousel as Background */}
+          <SimpleImageCarousel images={carouselImages} className="z-0" />
+          <div className="absolute inset-0 bg-black bg-opacity-50 z-10" /> {/* Dark overlay */}
 
           {/* Content over the slideshow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-            className="relative z-10 p-8 max-w-3xl mx-auto"
+            className="relative z-20 p-8 max-w-3xl mx-auto"
           >
             <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
               About Tomball T3 Robotics
