@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';
 import { Clock } from 'lucide-react';
-import { format } = from 'date-fns';
+import { format } from 'date-fns'; // Corrected import statement
 
 interface LatestUpdateInfo {
   table: string;
