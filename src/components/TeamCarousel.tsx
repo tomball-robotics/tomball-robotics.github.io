@@ -11,8 +11,9 @@ import Autoplay from "embla-carousel-autoplay";
 const teamPhotos = [
   "/indexcollage.jpg",
   "/hero-background.jpeg",
-  "/RobotTeamPhoto.jpg", // Assuming this image exists in public
-  // Add more team photos here
+  // Removed "/RobotTeamPhoto.jpg" as it was not found in the public directory.
+  // If you have a 'RobotTeamPhoto.jpg' or other team photos, please add them to the public directory
+  // and then you can add their paths here, e.g., "/RobotTeamPhoto.jpg".
 ];
 
 const TeamCarousel: React.FC = () => {
@@ -29,7 +30,7 @@ const TeamCarousel: React.FC = () => {
     >
       <CarouselContent className="h-full">
         {teamPhotos.map((photo, index) => (
-          <CarouselItem key={index} className="h-full relative overflow-hidden"> {/* Added relative and overflow-hidden */}
+          <CarouselItem key={index} className="h-full relative overflow-hidden">
             <img
               src={photo}
               alt={`Team Photo ${index + 1}`}
