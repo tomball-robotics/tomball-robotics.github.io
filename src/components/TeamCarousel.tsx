@@ -10,8 +10,8 @@ import Autoplay from "embla-carousel-autoplay";
 import { cn } from "@/lib/utils"; // Import cn utility
 
 const teamPhotos = [
-  "/indexcollage.jpg",
-  "/hero-background.jpeg",
+  "/placeholder.svg",
+  "/placeholder.svg",
 ];
 
 interface TeamCarouselProps {
