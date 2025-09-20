@@ -19,7 +19,8 @@ import AdminWebsiteSettings from "./pages/admin/AdminWebsiteSettings";
 import AdminEvents from "./pages/admin/AdminEvents";
 import AdminSponsors from "./pages/admin/AdminSponsors";
 import AdminTeamMembers from "./pages/admin/AdminTeamMembers";
-import AdminSponsorshipTiers from "./pages/admin/AdminSponsorshipTiers"; // Import new admin page
+import AdminSponsorshipTiers from "./pages/admin/AdminSponsorshipTiers";
+import AdminRobots from "./pages/admin/AdminRobots"; // Import new admin page
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => {
               <Route path="events" element={<AdminEvents />} />
               <Route path="sponsors" element={<AdminSponsors />} />
               <Route path="sponsorship-tiers" element={<AdminSponsorshipTiers />} />
+              <Route path="robots" element={<AdminRobots />} /> {/* New admin route */}
               <Route path="team-members" element={<AdminTeamMembers />} />
               {/* Add more admin routes here as we build them */}
             </Route>
