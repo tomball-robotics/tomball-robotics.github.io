@@ -23,8 +23,7 @@ const Sponsors: React.FC = () => {
 
       const { data: tiersData, error: tiersError } = await supabase
         .from("sponsorship_tiers")
-        .select("*")
-        .order("price", { ascending: false }); // Order by price for tier determination
+        .select("*"); // Fetch without DB sorting, will sort client-side
 
       if (sponsorsError) {
         console.error("Error fetching sponsors:", sponsorsError);
@@ -34,7 +33,13 @@ const Sponsors: React.FC = () => {
         setError("Failed to load sponsorship tiers.");
       } else {
         setSponsors(sponsorsData || []);
-        setSponsorshipTiers(tiersData || []);
+        // Client-side sort tiers by numeric price in descending order
+        const sortedTiers = (tiersData || []).sort((a, b) => {
+          const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
+          const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
+          return priceB - priceA;
+        });
+        setSponsorshipTiers(sortedTiers);
       }
       setLoading(false);
     };

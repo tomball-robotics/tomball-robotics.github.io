@@ -18,14 +18,19 @@ const Donate: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from("sponsorship_tiers")
-        .select("*")
-        .order("price", { ascending: false }); // Order by price descending for display
+        .select("*"); // Fetch without DB sorting, will sort client-side
 
       if (error) {
         console.error("Error fetching sponsorship tiers:", error);
         setError("Failed to load sponsorship tiers.");
       } else {
-        setSponsorshipTiers(data || []);
+        // Client-side sort tiers by numeric price in descending order
+        const sortedTiers = (data || []).sort((a, b) => {
+          const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
+          const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
+          return priceB - priceA;
+        });
+        setSponsorshipTiers(sortedTiers);
       }
       setLoading(false);
     };
