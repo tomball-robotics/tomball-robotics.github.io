@@ -110,7 +110,7 @@ const DashboardInsights: React.FC = () => {
 
   return (
     <div className="flex justify-center w-full"> {/* Centering the card */}
-      <Card className="flex flex-col items-center justify-center p-4 text-center h-36 w-full max-w-md"> {/* Added max-w-md for better sizing */}
+      <Card className="flex flex-col items-center justify-center p-4 text-center h-36 w-full max-w-lg"> {/* Changed max-w-md to max-w-lg */}
         <CardHeader className="p-0 pb-2">
           <Clock className="h-8 w-8 text-[#0d2f60] mb-2" />
           <CardTitle className="text-lg font-semibold text-gray-700">Last Edited Item</CardTitle>
@@ -120,9 +120,9 @@ const DashboardInsights: React.FC = () => {
             <Spinner size={20} className="h-8" />
           ) : latestEditedItem ? (
             <>
-              <p className="text-xl font-bold text-[#d92507] break-words px-2">{latestEditedItem.name}</p> {/* Added break-words and horizontal padding */}
-              <p className="text-sm text-gray-600 capitalize break-words px-2">{latestEditedItem.table.replace(/_/g, ' ')}</p> {/* Added break-words and horizontal padding */}
-              <p className="text-xs text-gray-500 px-2">{format(latestEditedItem.updated_at, 'PPP p')}</p> {/* Added horizontal padding */}
+              <p className="text-xl font-bold text-[#d92507] break-words px-2">{latestEditedItem.name}</p>
+              <p className="text-sm text-gray-600 capitalize break-words px-2">{latestEditedItem.table.replace(/_/g, ' ')}</p>
+              <p className="text-xs text-gray-500 px-2">{format(latestEditedItem.updated_at, 'PPP p')}</p>
             </>
           ) : (
             <p className="text-lg text-gray-500">No recent edits</p>
