@@ -10,6 +10,8 @@ import EventForm from '@/components/admin/EventForm';
 import { DataTable } from '@/components/admin/DataTable';
 import Spinner from '@/components/Spinner';
 
+const FOUNDING_YEAR = 2018; // Define the team's founding year
+
 const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +49,10 @@ const AdminEvents: React.FC = () => {
 
     try {
       const currentYear = new Date().getFullYear();
-      const yearsToFetch = [currentYear, currentYear - 1, currentYear - 2]; // Fetch current and past 2 years
+      const yearsToFetch: number[] = [];
+      for (let year = FOUNDING_YEAR; year <= currentYear; year++) {
+        yearsToFetch.push(year);
+      }
 
       const allEventsPromises = yearsToFetch.map(year => fetchTBAEventsByYear(year));
       const results = await Promise.allSettled(allEventsPromises);
@@ -160,7 +165,7 @@ const AdminEvents: React.FC = () => {
       header: 'Date',
       render: (event: Event) => new Date(event.event_date).toLocaleDateString(),
     },
-    { key: 'overall_status_str', header: 'Overall Status' },
+    { key: 'overall_status_str', header: 'Result' },
     {
       key: 'awards',
       header: 'Awards',
