@@ -2,9 +2,11 @@ import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSupabase } from '@/components/SessionContextProvider';
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -12,18 +14,25 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (session) {
-      // User is logged in, redirect to a protected page (e.g., home or a dashboard)
-      navigate('/');
+      // User is logged in, redirect to the admin page
+      navigate('/admin');
     }
   }, [session, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-[#0d2f60] mb-6">Login to Tomball Robotics</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="relative w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-8">
+          <img src="/images/general/t3-logo.png" alt="Tomball Robotics Logo" className="w-24 h-24 mx-auto mb-4" />
+          <h1 className="text-3xl font-bold text-[#0d2f60]">
+            Admin Login
+          </h1>
+          <p className="text-gray-600 mt-2">Access the Tomball Robotics dashboard.</p>
+        </div>
+        
         <Auth
           supabaseClient={supabase}
-          // Removed providers={['google']} to enable email/password by default
+          providers={[]} // Only email/password
           appearance={{
             theme: ThemeSupa,
             variables: {
@@ -36,8 +45,17 @@ const Login: React.FC = () => {
             },
           }}
           theme="light"
-          redirectTo={window.location.origin + '/#/'} // Redirect to home after login
+          redirectTo={window.location.origin} // Redirect to home after magic link login, router will handle the rest
         />
+
+        <div className="mt-8 text-center">
+          <Button asChild variant="ghost" className="text-gray-600 hover:text-[#0d2f60]">
+            <Link to="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );
