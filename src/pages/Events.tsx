@@ -162,31 +162,31 @@ const Events: React.FC = () => {
                               {event.overall_status_str && (
                                 <div className="flex items-start space-x-2">
                                   <CalendarDays className="h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
-                                  <p><span className="font-semibold">Overall Status: </span> {event.overall_status_str.replace(/<[^>]*>/g, '')}</p>
+                                  <p><span className="font-semibold">Overall Status:&nbsp;</span> {event.overall_status_str.replace(/<[^>]*>/g, '')}</p>
                                 </div>
                               )}
                               {event.qual_rank !== null && (
                                 <p className="flex items-center space-x-2">
                                   <ListOrdered className="h-4 w-4 text-[#0d2f60]" />
-                                  <span className="font-semibold">Qualification Rank: </span> {event.qual_rank}
+                                  <span className="font-semibold">Qualification Rank:&nbsp;</span> {event.qual_rank}
                                 </p>
                               )}
                               {event.record_wins !== null && event.record_losses !== null && event.record_ties !== null && (
                                 <p className="flex items-center space-x-2">
                                   <Trophy className="h-4 w-4 text-[#0d2f60]" />
-                                  <span className="font-semibold">Record: </span> {event.record_wins}-{event.record_losses}-{event.record_ties}
+                                  <span className="font-semibold">Record:&nbsp;</span> {event.record_wins}-{event.record_losses}-{event.record_ties}
                                 </p>
                               )}
                               {event.alliance_status && (
                                 <p className="flex items-center space-x-2">
                                   <GitPullRequestArrow className="h-4 w-4 text-[#0d2f60]" />
-                                  <span className="font-semibold">Alliance: </span> {event.alliance_status}
+                                  <span className="font-semibold">Alliance:&nbsp;</span> {event.alliance_status}
                                 </p>
                               )}
                               {event.playoff_status && (
                                 <p className="flex items-center space-x-2">
                                   <ShieldCheck className="h-4 w-4 text-[#0d2f60]" />
-                                  <span className="font-semibold">Playoff Status: </span> {event.playoff_status.charAt(0).toUpperCase() + event.playoff_status.slice(1)}
+                                  <span className="font-semibold">Playoff Status:&nbsp;</span> {event.playoff_status.charAt(0).toUpperCase() + event.playoff_status.slice(1)}
                                 </p>
                               )}
                               {event.awards && event.awards.length > 0 && (
