@@ -3,12 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import EventForm from '@/components/admin/EventForm';
 import { DataTable } from '@/components/admin/DataTable';
 import Spinner from '@/components/Spinner';
-import { Badge } from '@/components/ui/badge'; // Import Badge
+import { Badge } from '@/components/ui/badge';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'; // Import Tooltip components
 
 const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -120,7 +122,64 @@ const AdminEvents: React.FC = () => {
         </Badge>
       ),
     },
-    { key: 'actions', header: 'Actions' },
+    {
+      key: 'actions',
+      header: 'Actions',
+      render: (event: Event) => (
+        <div className="flex space-x-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleEditEvent(event)}
+                disabled={event.source === 'tba'}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            {event.source === 'tba' && (
+              <TooltipContent>
+                <p>TBA-synced events cannot be edited directly. Re-sync from TBA to update.</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+
+          <AlertDialog>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    disabled={event.source === 'tba'}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+              </TooltipTrigger>
+              {event.source === 'tba' && (
+                <TooltipContent>
+                  <p>TBA-synced events cannot be deleted directly. Re-sync from TBA to remove.</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete this event.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleDeleteEvent(event.id)}>Continue</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      ),
+    },
   ];
 
   if (loading) {
@@ -168,8 +227,6 @@ const AdminEvents: React.FC = () => {
         <DataTable
           data={events}
           columns={eventColumns}
-          onEdit={handleEditEvent}
-          onDelete={handleDeleteEvent}
           getKey={(event) => event.id}
         />
       </div>
