@@ -133,6 +133,7 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
       created_at: new Date().toISOString(), // Add default created_at
       updated_at: new Date().toISOString(), // Add default updated_at
       video_url: null, // Default to null, can be updated manually in admin
+      source: 'tba', // Set source to 'tba' for TBA-fetched events
     }));
   } catch (error) {
     console.error(`Error fetching TBA events for year ${year}:`, error);

@@ -13,6 +13,7 @@ export interface Event {
   record_losses: number | null;
   record_ties: number | null;
   video_url: string | null; // New field for event video URL
+  source: 'manual' | 'tba'; // Added source field
   created_at: string;
   updated_at: string;
 }

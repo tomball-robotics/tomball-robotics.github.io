@@ -54,7 +54,9 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
       }
 
       // Insert new events into Supabase
-      const { error: insertError } = await supabase.from('events').insert(fetchedEvents);
+      // Ensure each fetched event has the 'source' property set to 'tba'
+      const eventsToInsert = fetchedEvents.map(event => ({ ...event, source: 'tba' }));
+      const { error: insertError } = await supabase.from('events').insert(eventsToInsert);
       if (insertError) {
         console.error('Error inserting new events:', insertError);
         showError(`Failed to save new events: ${insertError.message}`);

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import EventForm from '@/components/admin/EventForm';
 import { DataTable } from '@/components/admin/DataTable';
 import Spinner from '@/components/Spinner';
+import { Badge } from '@/components/ui/badge'; // Import Badge
 
 const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -55,14 +56,16 @@ const AdminEvents: React.FC = () => {
 
     let error;
     if (editingEvent) {
+      // When editing, we don't change the source
       ({ error } = await supabase
         .from('events')
         .update(formData)
         .eq('id', editingEvent.id));
     } else {
+      // When adding a new event, set source to 'manual'
       ({ error } = await supabase
         .from('events')
-        .insert(formData));
+        .insert({ ...formData, source: 'manual' }));
     }
 
     dismissToast(toastId);
@@ -107,6 +110,15 @@ const AdminEvents: React.FC = () => {
       key: 'awards',
       header: 'Awards',
       render: (event: Event) => (event.awards && event.awards.length > 0 ? event.awards.join(', ') : 'N/A'),
+    },
+    {
+      key: 'source',
+      header: 'Source',
+      render: (event: Event) => (
+        <Badge variant={event.source === 'manual' ? 'default' : 'secondary'}>
+          {event.source === 'manual' ? 'Manual' : 'TBA Sync'}
+        </Badge>
+      ),
     },
     { key: 'actions', header: 'Actions' },
   ];
