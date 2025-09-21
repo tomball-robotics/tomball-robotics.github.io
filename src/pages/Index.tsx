@@ -5,17 +5,19 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Newspaper } from "lucide-react"; // Added Newspaper icon
+import { ArrowRight, Newspaper } from "lucide-react";
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
-import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase"; // Import NewsArticle
-import Spinner from "@/components/Spinner"; // Import Spinner
+import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase";
+import Spinner from "@/components/Spinner";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const Index: React.FC = () => {
   const [homePageData, setHomePageData] = useState<WebsiteSettings | null>(null);
   const [latestEvents, setLatestEvents] = useState<Event[]>([]);
   const [featuredSponsors, setFeaturedSponsors] = useState<Sponsor[]>([]);
-  const [latestNews, setLatestNews] = useState<NewsArticle[]>([]); // New state for news
+  const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +43,7 @@ const Index: React.FC = () => {
         .order("amount", { ascending: false })
         .limit(3);
       
-      const { data: newsData, error: newsError } = await supabase // Fetch latest news
+      const { data: newsData, error: newsError } = await supabase
         .from("news_articles")
         .select("*")
         .order("publish_date", { ascending: false })
@@ -57,7 +59,7 @@ const Index: React.FC = () => {
       } else if (sponsorsError) {
         console.error("Error fetching featured sponsors:", sponsorsError);
         setError("Failed to load featured sponsors.");
-      } else if (newsError) { // Handle news error
+      } else if (newsError) {
         console.error("Error fetching latest news:", newsError);
         setError("Failed to load latest news.");
       }
@@ -65,7 +67,7 @@ const Index: React.FC = () => {
         setHomePageData(settingsData);
         setLatestEvents(eventsData || []);
         setFeaturedSponsors(sponsorsData || []);
-        setLatestNews(newsData || []); // Set news data
+        setLatestNews(newsData || []);
       }
       setLoading(false);
     };
@@ -208,8 +210,12 @@ const Index: React.FC = () => {
                         <CardTitle className="text-xl text-[#0d2f60]">{article.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
-                        <p className="text-gray-700 mb-4 line-clamp-3">{article.content}</p>
-                        <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06]">
+                        <div className="prose prose-sm text-gray-700 mb-4 line-clamp-3">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {article.content}
+                          </ReactMarkdown>
+                        </div>
+                        <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto">
                           <Link to={`/news/${article.id}`}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
                         </Button>
                       </CardContent>

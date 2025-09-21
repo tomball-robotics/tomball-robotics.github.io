@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const NewsIndex: React.FC = () => {
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
@@ -116,8 +118,12 @@ const NewsIndex: React.FC = () => {
                     <CardTitle className="text-xl text-[#0d2f60]">{article.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
-                    <p className="text-gray-700 mb-4 line-clamp-3">{article.content}</p>
-                    <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06]">
+                    <div className="prose prose-sm text-gray-700 mb-4 line-clamp-3">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {article.content}
+                      </ReactMarkdown>
+                    </div>
+                    <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto">
                       <Link to={`/news/${article.id}`}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
                     </Button>
                   </CardContent>

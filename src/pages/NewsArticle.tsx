@@ -6,8 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { NewsArticle } from '@/types/supabase';
 import Spinner from '@/components/Spinner';
 import { motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
-import remarkGfm from 'remark-gfm'; // Import remarkGfm for GitHub Flavored Markdown
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const NewsArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -99,14 +99,15 @@ const NewsArticlePage: React.FC = () => {
           <p className="text-gray-600 text-sm mb-6">Published on: {publishDate}</p>
 
           {article.image_urls && article.image_urls.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
               {article.image_urls.map((url, index) => (
-                <img
-                  key={index}
-                  src={url}
-                  alt={`${article.title} image ${index + 1}`}
-                  className="w-full h-auto object-cover rounded-md shadow-sm"
-                />
+                <div key={index} className="overflow-hidden rounded-md shadow-sm">
+                  <img
+                    src={url}
+                    alt={`${article.title} image ${index + 1}`}
+                    className="w-full h-80 object-cover"
+                  />
+                </div>
               ))}
             </div>
           )}
