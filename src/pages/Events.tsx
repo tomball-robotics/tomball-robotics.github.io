@@ -16,6 +16,13 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 
+// Helper function to extract YouTube video ID
+const getYouTubeVideoId = (url: string): string | null => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -200,7 +207,22 @@ const Events: React.FC = () => {
                                   </div>
                                 </div>
                               )}
-                              {(!event.overall_status_str || (event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date())) && event.qual_rank === null && event.record_wins === null && !event.alliance_status && (!event.awards || event.awards.length === 0) && (
+                              {event.video_url && getYouTubeVideoId(event.video_url) && (
+                                <div className="mt-4">
+                                  <h4 className="font-semibold text-[#0d2f60] mb-2">Match Video:</h4>
+                                  <div className="relative w-full" style={{ paddingBottom: '56.25%' /* 16:9 Aspect Ratio */ }}>
+                                    <iframe
+                                      className="absolute top-0 left-0 w-full h-full rounded-md"
+                                      src={`https://www.youtube.com/embed/${getYouTubeVideoId(event.video_url)}`}
+                                      title="YouTube video player"
+                                      frameBorder="0"
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    ></iframe>
+                                  </div>
+                                </div>
+                              )}
+                              {(!event.overall_status_str || (event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date())) && event.qual_rank === null && event.record_wins === null && !event.alliance_status && (!event.awards || event.awards.length === 0) && !event.video_url && (
                                 <p className="text-gray-500">No additional details available.</p>
                               )}
                               <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-4">

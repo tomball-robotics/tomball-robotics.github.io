@@ -22,6 +22,7 @@ const eventFormSchema = z.object({
   record_wins: z.coerce.number().int().min(0).optional().nullable(),
   record_losses: z.coerce.number().int().min(0).optional().nullable(),
   record_ties: z.coerce.number().int().min(0).optional().nullable(),
+  video_url: z.string().url("Must be a valid URL").or(z.literal("")).optional().nullable(), // New field
 });
 
 interface EventFormProps {
@@ -46,6 +47,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
       record_wins: initialData?.record_wins || null,
       record_losses: initialData?.record_losses || null,
       record_ties: initialData?.record_ties || null,
+      video_url: initialData?.video_url || null, // Default value for new field
     },
   });
 
@@ -64,6 +66,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
         record_wins: initialData.record_wins,
         record_losses: initialData.record_losses,
         record_ties: initialData.record_ties,
+        video_url: initialData.video_url || null, // Reset for new field
       });
     } else {
       form.reset({
@@ -79,6 +82,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
         record_wins: null,
         record_losses: null,
         record_ties: null,
+        video_url: null, // Reset for new field
       });
     }
   }, [initialData, form]);
@@ -231,6 +235,19 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
               <FormLabel>Playoff Status</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., eliminated in quarterfinals" {...field} disabled={isLoading} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="video_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Match Video URL (YouTube)</FormLabel>
+              <FormControl>
+                <Input type="url" placeholder="e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ" {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
