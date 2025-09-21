@@ -28,7 +28,7 @@ const AdminEvents: React.FC = () => {
       .from('events')
       .select('*')
       .order('year', { ascending: false })
-      .order('created_at', { ascending: false });
+      .order('event_date', { ascending: false }); // Order by event_date within each year
 
     if (error) {
       console.error('Error fetching events:', error);
@@ -97,6 +97,11 @@ const AdminEvents: React.FC = () => {
 
   const eventColumns = [
     { key: 'year', header: 'Year' },
+    {
+      key: 'event_date',
+      header: 'Date',
+      render: (event: Event) => new Date(event.event_date).toLocaleDateString(),
+    },
     { key: 'name', header: 'Name' },
     { key: 'location', header: 'Location' },
     {
