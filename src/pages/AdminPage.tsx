@@ -15,9 +15,9 @@ import AdminBanners from './admin/AdminBanners';
 import AdminSlideshowImages from './admin/AdminSlideshowImages';
 import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
-import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiabilities';
+import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives'; // Corrected import path
 import AdminNews from './admin/AdminNews';
-import AdminEvents from './admin/AdminEvents';
+import AdminEvents from './admin/Admin/AdminEvents';
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
@@ -28,7 +28,7 @@ import Spinner from '@/components/Spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Import Card components
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 
 interface AdminSection {
