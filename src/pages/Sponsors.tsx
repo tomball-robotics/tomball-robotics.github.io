@@ -106,8 +106,6 @@ const Sponsors: React.FC = () => {
 
   const tieredSponsors = sponsors.filter(s => s.amount >= MIN_TIER_AMOUNT);
   const otherSponsors = sponsors.filter(s => s.amount < MIN_TIER_AMOUNT);
-  const otherSponsorsWithLogo = otherSponsors.filter(s => s.image_url && s.image_url.trim() !== '' && !s.image_url.includes('placeholder'));
-  const otherSponsorsWithoutLogo = otherSponsors.filter(s => !s.image_url || s.image_url.trim() === '' || s.image_url.includes('placeholder'));
 
   const sponsorsByTier = tieredSponsors.reduce((acc, sponsor) => {
     const tier = getTierForAmount(sponsor.amount);
@@ -174,17 +172,7 @@ const Sponsors: React.FC = () => {
                       )}
                       <CardContent className="p-4 pt-2 flex-grow flex flex-col justify-between w-full">
                         <div>
-                          {config.showName && (
-                            <CardTitle className="text-2xl font-bold text-[#d92507] mt-2">
-                              {!config.showWebsiteButton && sponsor.website_url ? (
-                                <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                                  {sponsor.name}
-                                </a>
-                              ) : (
-                                sponsor.name
-                              )}
-                            </CardTitle>
-                          )}
+                          {config.showName && <CardTitle className="text-2xl font-bold text-[#d92507] mt-2">{sponsor.name}</CardTitle>}
                           {config.showDescription && sponsor.description && <p className="text-gray-700 mt-2">{sponsor.description}</p>}
                           {config.showDescription && sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
                         </div>
@@ -205,7 +193,7 @@ const Sponsors: React.FC = () => {
         })}
 
         {/* Other Sponsors */}
-        {(otherSponsorsWithLogo.length > 0 || otherSponsorsWithoutLogo.length > 0) && (
+        {otherSponsors.length > 0 && (
           <motion.div
             className="mb-10"
             initial="hidden"
@@ -215,63 +203,22 @@ const Sponsors: React.FC = () => {
             <h2 className="text-4xl font-bold text-center mb-8 text-gray-700">
               Other Sponsors
             </h2>
-            {otherSponsorsWithLogo.length > 0 && (
-              <motion.div
-                className="flex flex-wrap justify-center items-stretch gap-4 mb-8"
-                variants={listVariants}
-              >
-                {otherSponsorsWithLogo.map(sponsor => (
-                  <motion.div key={sponsor.id} variants={itemVariants} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] md:w-[calc(25%-1.5rem)] lg:w-[calc(20%-1.6rem)]">
-                    <Card className="h-full flex flex-col items-center text-center p-2 shadow-lg rounded-lg bg-white overflow-hidden">
-                      {sponsor.image_url && (
-                        <div className="w-full flex items-center justify-center bg-gray-50 rounded-t-lg h-24">
-                          <img
-                            src={sponsor.image_url}
-                            alt={sponsor.name}
-                            className="max-h-full max-w-full object-contain p-2"
-                          />
-                        </div>
-                      )}
-                      <CardContent className="p-2 w-full">
-                        <p className="text-md font-bold text-[#d92507] truncate">
-                          {sponsor.website_url ? (
-                            <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                              {sponsor.name}
-                            </a>
-                          ) : (
-                            sponsor.name
-                          )}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-            {otherSponsorsWithoutLogo.length > 0 && (
-              <motion.div
-                className="max-w-4xl mx-auto"
-                variants={listVariants}
-              >
-                <Card className="shadow-lg">
-                  <CardContent className="p-8">
-                    <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
-                      {otherSponsorsWithoutLogo.map((sponsor) => (
-                        <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
-                          {sponsor.website_url ? (
-                            <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                              {sponsor.name}
-                            </a>
-                          ) : (
-                            sponsor.name
-                          )}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
+            <motion.div
+              className="max-w-4xl mx-auto"
+              variants={listVariants}
+            >
+              <Card className="shadow-lg">
+                <CardContent className="p-8">
+                  <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+                    {otherSponsors.map((sponsor) => (
+                      <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
+                        {sponsor.name}
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
         )}
 
