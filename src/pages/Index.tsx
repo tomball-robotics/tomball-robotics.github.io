@@ -300,7 +300,12 @@ const Index: React.FC = () => {
                     <CardContent className="p-4 flex-grow">
                       {event.overall_status_str && (
                         <p className="font-semibold text-gray-800 mb-2">
-                          <span className="text-[#0d2f60]">Status:</span> {event.overall_status_str}
+                          <span className="text-[#0d2f60]">Status:</span>{" "}
+                          <span dangerouslySetInnerHTML={{
+                            __html: event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date()
+                              ? "No official results available for this event."
+                              : event.overall_status_str
+                          }} />
                         </p>
                       )}
                       {event.awards && event.awards.length > 0 ? (

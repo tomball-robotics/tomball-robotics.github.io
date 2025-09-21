@@ -171,9 +171,11 @@ const Events: React.FC = () => {
                                 <p className="flex items-start space-x-2 text-left">
                                   <CalendarDays className="h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
                                   <span className="font-semibold">Result:&nbsp;</span>
-                                  {event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date()
-                                    ? "No official results available for this event."
-                                    : event.overall_status_str.replace(/<[^>]*>/g, '')}
+                                  <span dangerouslySetInnerHTML={{
+                                    __html: event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date()
+                                      ? "No official results available for this event."
+                                      : event.overall_status_str
+                                  }} />
                                 </p>
                               )}
                               {event.qual_rank !== null && (

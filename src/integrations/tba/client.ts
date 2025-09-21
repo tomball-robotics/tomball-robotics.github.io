@@ -112,16 +112,25 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
         console.warn(`Failed to fetch team status for event ${simpleEvent.key}: ${statusResponse.statusText}`);
       }
 
-      return { detailedEvent, teamStatus };
+      // Filter awards to only include those won by TEAM_KEY
+      const teamAwards = detailedEvent.awards
+        ? detailedEvent.awards
+            .filter(award =>
+              award.recipient_list.some(recipient => recipient.team_key === TEAM_KEY)
+            )
+            .map(award => award.name)
+        : [];
+
+      return { detailedEvent, teamStatus, teamAwards };
     });
 
     const results = await Promise.all(detailedEventsPromises);
 
-    return results.map(({ detailedEvent, teamStatus }) => ({
+    return results.map(({ detailedEvent, teamStatus, teamAwards }) => ({
       id: detailedEvent.key,
       name: detailedEvent.name,
       location: `${detailedEvent.city || ''}${detailedEvent.city && detailedEvent.state_prov ? ', ' : ''}${detailedEvent.state_prov || ''}${detailedEvent.state_prov && detailedEvent.country ? ', ' : ''}${detailedEvent.country || ''}`.trim(),
-      awards: detailedEvent.awards ? detailedEvent.awards.map(award => award.name) : [],
+      awards: teamAwards, // Use the filtered teamAwards
       event_date: detailedEvent.start_date,
       qual_rank: teamStatus?.qual?.ranking?.rank || null,
       playoff_status: teamStatus?.playoff?.status || null,
@@ -132,6 +141,7 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
       record_ties: teamStatus?.qual?.ranking?.record?.ties || null,
       created_at: new Date().toISOString(), // Add default created_at
       updated_at: new Date().toISOString(), // Add default updated_at
+      video_url: null, // Default to null, can be updated manually in admin
     }));
   } catch (error) {
     console.error(`Error fetching TBA events for year ${year}:`, error);
