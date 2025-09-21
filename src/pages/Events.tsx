@@ -20,8 +20,7 @@ const Events: React.FC = () => {
       const { data, error } = await supabase
         .from("events")
         .select("*")
-        .order("year", { ascending: false })
-        .order("event_date", { ascending: false }); // Order by event_date within each year
+        .order("event_date", { ascending: false }); // Order solely by event_date
 
       if (error) {
         console.error("Error fetching events:", error);

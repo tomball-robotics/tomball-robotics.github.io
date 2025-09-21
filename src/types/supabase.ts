@@ -1,6 +1,5 @@
 export interface Event {
   id: string;
-  year: number;
   name: string;
   location: string;
   awards: string[] | null; // Supabase TEXT[] can be null

@@ -10,9 +10,8 @@ import ArrayInputField from './ArrayInputField'; // Reusable component for array
 
 const eventFormSchema = z.object({
   name: z.string().min(1, "Event name is required"),
-  year: z.coerce.number().min(1900, "Year must be valid").max(2100, "Year must be valid"),
   location: z.string().min(1, "Location is required"),
-  event_date: z.string().min(1, "Event date is required"), // New field for event date
+  event_date: z.string().min(1, "Event date is required"),
   awards: z.array(z.string()).optional(),
 });
 
@@ -27,7 +26,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
       name: initialData?.name || '',
-      year: initialData?.year || new Date().getFullYear(),
       location: initialData?.location || '',
       event_date: initialData?.event_date ? new Date(initialData.event_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0], // Format date for input
       awards: initialData?.awards || [],
@@ -38,7 +36,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
     if (initialData) {
       form.reset({
         name: initialData.name,
-        year: initialData.year,
         location: initialData.location,
         event_date: new Date(initialData.event_date).toISOString().split('T')[0], // Format date for input
         awards: initialData.awards || [],
@@ -46,7 +43,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
     } else {
       form.reset({
         name: '',
-        year: new Date().getFullYear(),
         location: '',
         event_date: new Date().toISOString().split('T')[0], // Default to today
         awards: [],
@@ -69,19 +65,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, isLoading 
               <FormLabel>Event Name</FormLabel>
               <FormControl>
                 <Input placeholder="Enter event name" {...field} disabled={isLoading} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="year"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Year</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="Enter year" {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
