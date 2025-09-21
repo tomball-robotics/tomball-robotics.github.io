@@ -5,16 +5,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Newspaper } from "lucide-react"; // Added Newspaper icon
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
-import { WebsiteSettings, Event, Sponsor } from "@/types/supabase";
+import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase"; // Import NewsArticle
 import Spinner from "@/components/Spinner"; // Import Spinner
 
 const Index: React.FC = () => {
   const [homePageData, setHomePageData] = useState<WebsiteSettings | null>(null);
   const [latestEvents, setLatestEvents] = useState<Event[]>([]);
   const [featuredSponsors, setFeaturedSponsors] = useState<Sponsor[]>([]);
+  const [latestNews, setLatestNews] = useState<NewsArticle[]>([]); // New state for news
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +40,13 @@ const Index: React.FC = () => {
         .select("*")
         .order("amount", { ascending: false })
         .limit(3);
+      
+      const { data: newsData, error: newsError } = await supabase // Fetch latest news
+        .from("news_articles")
+        .select("*")
+        .order("publish_date", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(3);
 
       if (settingsError) {
         console.error("Error fetching website settings:", settingsError);
@@ -49,10 +57,15 @@ const Index: React.FC = () => {
       } else if (sponsorsError) {
         console.error("Error fetching featured sponsors:", sponsorsError);
         setError("Failed to load featured sponsors.");
-      } else {
+      } else if (newsError) { // Handle news error
+        console.error("Error fetching latest news:", newsError);
+        setError("Failed to load latest news.");
+      }
+      else {
         setHomePageData(settingsData);
         setLatestEvents(eventsData || []);
         setFeaturedSponsors(sponsorsData || []);
+        setLatestNews(newsData || []); // Set news data
       }
       setLoading(false);
     };
@@ -158,6 +171,55 @@ const Index: React.FC = () => {
             </div>
           </motion.div>
         </motion.div>
+
+        {/* News Section Preview */}
+        {latestNews.length > 0 && (
+          <motion.section
+            className="py-20 bg-gray-100"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="text-4xl font-bold text-[#d92507] mb-6">Latest News</h2>
+              <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-10">
+                Stay up-to-date with the latest happenings, achievements, and announcements from Tomball Robotics.
+              </p>
+              <motion.div
+                className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto mb-10"
+                variants={listVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+              >
+                {latestNews.map((article) => (
+                  <motion.div key={article.id} className="w-full md:w-[45%] lg:w-[30%]" variants={itemVariants}>
+                    <Card className="text-left shadow-lg bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
+                      {article.image_urls && article.image_urls.length > 0 && (
+                        <img
+                          src={article.image_urls[0]}
+                          alt={article.title}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                      )}
+                      <CardHeader className="p-4">
+                        <p className="font-semibold text-gray-500 text-sm">{new Date(article.publish_date).toLocaleDateString()}</p>
+                        <CardTitle className="text-xl text-[#0d2f60]">{article.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
+                        <p className="text-gray-700 mb-4 line-clamp-3">{article.content}</p>
+                        <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06]">
+                          <Link to={`/news/${article.id}`}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </motion.section>
+        )}
 
         {/* About Section Preview */}
         <motion.section

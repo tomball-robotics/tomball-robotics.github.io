@@ -13,6 +13,7 @@ import Unitybots from "./pages/Unitybots";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import AdminPage from "./pages/AdminPage"; // Import the new AdminPage
+import NewsArticlePage from "./pages/NewsArticle"; // Import the new NewsArticlePage
 import ScrollToTop from "./components/ScrollToTop";
 import { useSupabase } from "./components/SessionContextProvider";
 
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/unitybots" element={<Unitybots />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/news/:id" element={<NewsArticlePage />} /> {/* New route for news articles */}
 
             {/* Protected Admin route */}
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />

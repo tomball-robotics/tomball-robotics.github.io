@@ -125,3 +125,13 @@ export interface SlideshowImage {
   created_at: string;
   updated_at: string;
 }
+
+export interface NewsArticle {
+  id: string;
+  title: string;
+  publish_date: string; // ISO string for date
+  content: string;
+  image_urls: string[] | null; // Array of image URLs
+  created_at: string;
+  updated_at: string;
+}

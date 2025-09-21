@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSupabase } from '@/components/SessionContextProvider';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home } from 'lucide-react';
+import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminEvents from './admin/AdminEvents';
 import AdminSponsors from './admin/AdminSponsors';
@@ -17,6 +17,7 @@ import AdminSlideshowImages from './admin/AdminSlideshowImages';
 import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
 import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
+import AdminNews from './admin/AdminNews'; // Import the new AdminNews component
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
@@ -110,6 +111,14 @@ const adminSections: AdminSection[] = [
     subTabs: [
       { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotResources /> },
       { value: 'unitybot-initiatives', label: 'Unitybot Initiatives', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotInitiatives /> },
+    ]
+  },
+  {
+    value: 'news-page', // New main tab for News
+    label: 'News',
+    icon: Newspaper,
+    subTabs: [
+      { value: 'news-articles', label: 'News Articles', icon: Newspaper, component: (settings, onSubmit, isLoading) => <AdminNews /> },
     ]
   },
   {
@@ -291,12 +300,17 @@ const AdminPage: React.FC = () => {
 
     if (currentSubTabComponent) {
       // For forms that edit WebsiteSettings, pass initialData, onSubmit, and isLoading
-      // The component function now expects these arguments
-      return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-          {currentSubTabComponent(websiteSettings, handleWebsiteSettingsSubmit, isSubmittingSettings)}
-        </div>
-      );
+      if (['hero-section', 'about-preview', 'events-preview', 'sponsors-preview', 'footer-settings'].includes(activeSubTab!)) {
+        const FormComponent = currentSubTabComponent as React.FC<{ initialData: WebsiteSettings, onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading: boolean }>;
+        return (
+          <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+            <FormComponent initialData={websiteSettings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} />
+          </div>
+        );
+      }
+      // For other admin components (e.g., AdminEvents, AdminTeamMembers, AdminNews)
+      // These components manage their own data and submission logic, so they don't need websiteSettings, onSubmit, isLoading props
+      return currentSubTabComponent(undefined, () => Promise.resolve(), false); // Pass dummy props as they are not used
     }
     return null;
   };

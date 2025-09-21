@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home } from 'lucide-react'; // Added Home icon
+import { ArrowRight, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper } from 'lucide-react'; // Added Newspaper icon
 
 interface DashboardQuickLinksProps {
   onTabChange: (mainTabValue: string, subTabValue?: string) => void;
@@ -13,6 +13,7 @@ const quickLinks = [
   { name: 'Sponsors Page Preview', mainTab: 'home-page', subTab: 'sponsors-preview', icon: Handshake },
   { name: 'Award Banners', mainTab: 'home-page', subTab: 'award-banners', icon: Image },
   { name: 'Slideshow Images', mainTab: 'home-page', subTab: 'slideshow-images', icon: Images },
+  { name: 'News Articles', mainTab: 'news-page', subTab: 'news-articles', icon: Newspaper }, // New quick link
   { name: 'Team Members', mainTab: 'about-page', subTab: 'team-members', icon: Users },
   { name: 'Achievements', mainTab: 'about-page', subTab: 'achievements', icon: Award },
   { name: 'Events List', mainTab: 'events-page', subTab: 'events-list', icon: Calendar },
