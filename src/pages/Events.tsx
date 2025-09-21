@@ -35,9 +35,9 @@ const Events: React.FC = () => {
     fetchEvents();
   }, []);
 
-  // Group events by year and sort by event_date within each year
+  // Group events by year (derived from event_date) and sort by event_date within each year
   const eventsByYear = events.reduce((acc, event) => {
-    const year = event.year;
+    const year = new Date(event.event_date).getFullYear(); // Derive year from event_date
     if (!acc[year]) {
       acc[year] = [];
     }
@@ -138,12 +138,12 @@ const Events: React.FC = () => {
                     <Card className="shadow-lg hover:shadow-xl transition-shadow">
                       <CardHeader className="p-3 sm:p-4">
                         <CardTitle className="text-base sm:text-xl font-bold text-[#0d2f60]">{event.name}</CardTitle>
+                        <p className={`text-xs sm:text-sm text-gray-500 ${index % 2 !== 0 ? "text-left" : "text-right"}`}>
+                          {new Date(event.event_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </p>
                         <p className={`flex items-center text-xs sm:text-sm text-gray-500 ${index % 2 !== 0 ? "justify-start" : "justify-end"}`}>
                           <MapPin className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                           {event.location}
-                        </p>
-                        <p className={`text-xs sm:text-sm text-gray-500 ${index % 2 !== 0 ? "text-left" : "text-right"}`}>
-                          {new Date(event.event_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                         </p>
                       </CardHeader>
                       {event.awards && event.awards.length > 0 && (
