@@ -17,7 +17,7 @@ import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
 import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
 import AdminNews from './admin/AdminNews';
-import AdminEvents from './admin/AdminEvents'; // Import the new AdminEvents component
+import AdminEvents from './admin/AdminEvents';
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
@@ -59,7 +59,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'home-page',
-    label: 'Home Page Content',
+    label: 'Home', // Changed from 'Home Page Content'
     icon: Home,
     subTabs: [
       { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings, onSubmit, isLoading) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
@@ -72,7 +72,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'about-page',
-    label: 'About Page Content',
+    label: 'About', // Changed from 'About Page Content'
     icon: Info,
     subTabs: [
       { value: 'team-members', label: 'Team Members', icon: Users, component: (settings, onSubmit, isLoading) => <AdminTeamMembers /> },
@@ -80,7 +80,7 @@ const adminSections: AdminSection[] = [
     ]
   },
   {
-    value: 'events-page', // New main tab for events
+    value: 'events-page',
     label: 'Events',
     icon: Calendar,
     subTabs: [
@@ -89,7 +89,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'robots-page',
-    label: 'Robots Page Content',
+    label: 'Robots', // Changed from 'Robots Page Content'
     icon: Bot,
     subTabs: [
       { value: 'robots-list', label: 'Robots List', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminRobots /> },
@@ -97,7 +97,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'sponsors-page',
-    label: 'Sponsors Page Content',
+    label: 'Sponsors', // Changed from 'Sponsors Page Content'
     icon: Handshake,
     subTabs: [
       { value: 'sponsors-list', label: 'Sponsors List', icon: Handshake, component: (settings, onSubmit, isLoading) => <AdminSponsors /> },
@@ -106,7 +106,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'unitybots-page',
-    label: 'Unitybots Page Content',
+    label: 'Unitybots', // Changed from 'Unitybots Page Content'
     icon: Bot,
     subTabs: [
       { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotResources /> },
@@ -123,7 +123,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'global-settings',
-    label: 'Global Settings',
+    label: 'Settings', // Changed from 'Global Settings'
     icon: Settings,
     subTabs: [
       { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <AdminFooterSettings initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
