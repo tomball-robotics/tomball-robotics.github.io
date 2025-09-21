@@ -119,14 +119,14 @@ const Sponsors: React.FC = () => {
             >
               <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
                 {sponsor.image_url && (
-                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60]"> {/* Removed p-4 here */}
+                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60]">
                     <img
                       src={sponsor.image_url}
                       alt={sponsor.name}
                       className={
                         sponsor.image_fit === 'cover'
                           ? 'w-full h-full object-cover'
-                          : 'max-h-full max-w-full object-contain p-4' // Added p-4 here for 'contain' only
+                          : 'max-h-full max-w-full object-contain p-4'
                       }
                     />
                   </div>
@@ -182,6 +182,8 @@ const Sponsors: React.FC = () => {
   // Separate sponsors into tiered and other
   const tieredSponsors = sponsors.filter(s => s.amount >= MIN_TIER_AMOUNT);
   const otherSponsors = sponsors.filter(s => s.amount < MIN_TIER_AMOUNT);
+  const otherSponsorsWithLogo = otherSponsors.filter(s => s.image_url);
+  const otherSponsorsWithoutLogo = otherSponsors.filter(s => !s.image_url);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -200,7 +202,41 @@ const Sponsors: React.FC = () => {
           return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId]);
         })}
 
-        {renderSponsors(otherSponsors, "Other Sponsors", "text-gray-700")}
+        {/* Render "Other Sponsors" with logos using the existing large card format */}
+        {renderSponsors(otherSponsorsWithLogo, "Other Sponsors", "text-gray-700")}
+
+        {/* Render "Other Sponsors" without logos in a more compact format */}
+        {otherSponsorsWithoutLogo.length > 0 && (
+            <motion.div
+                className="mb-10"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+            >
+                {/* Only show this title if there were no sponsors with logos in this section */}
+                {otherSponsorsWithLogo.length === 0 && (
+                    <h2 className="text-4xl font-bold text-center mb-8 text-gray-700">
+                        Other Sponsors
+                    </h2>
+                )}
+                <motion.div
+                    className="max-w-4xl mx-auto"
+                    variants={listVariants}
+                >
+                    <Card className="shadow-lg">
+                        <CardContent className="p-8">
+                            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+                                {otherSponsorsWithoutLogo.map((sponsor) => (
+                                    <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
+                                        {sponsor.name}
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </motion.div>
+        )}
 
         {sponsors.length === 0 && (
           <p className="text-center text-gray-600 text-xl mt-8">
