@@ -110,3 +110,16 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Custom Prose styles for markdown content */
+@layer base {
+  .prose {
+    --tw-prose-headings: #0d2f60;
+    --tw-prose-links: #d92507;
+    --tw-prose-bold: theme(colors.gray.800);
+    --tw-prose-bullets: #0d2f60;
+    --tw-prose-hr: theme(colors.gray.200);
+    --tw-prose-quotes: #0d2f60;
+    --tw-prose-quote-borders: theme(colors.gray.200);
+  }
+}
