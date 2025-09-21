@@ -206,16 +206,20 @@ const AdminPage: React.FC = () => {
   };
 
   const handleWebsiteSettingsSubmit = async (formData: Partial<WebsiteSettings>) => {
+    console.log('handleWebsiteSettingsSubmit called. formData:', formData);
     setIsSubmittingSettings(true);
+    console.log('isSubmittingSettings set to TRUE');
     const toastId = showLoading('Saving website settings...');
 
     if (!websiteSettings) {
       showError('No settings found to update. Please ensure an initial entry exists and is correctly fetched.');
       dismissToast(toastId);
       setIsSubmittingSettings(false);
+      console.log('isSubmittingSettings set to FALSE (no settings)');
       return;
     }
 
+    console.log('[AdminPage] Attempting to update website settings with ID:', websiteSettings.id, 'Data:', formData);
     const { error } = await supabase
       .from('website_settings')
       .update(formData)
@@ -227,9 +231,10 @@ const AdminPage: React.FC = () => {
       showError(`Failed to save website settings: ${error.message}`);
     } else {
       showSuccess('Website settings saved successfully!');
-      fetchWebsiteSettings(); // Re-fetch to ensure UI is up-to-date
+      await fetchWebsiteSettings(); // Re-fetch to ensure UI is up-to-date
     }
     setIsSubmittingSettings(false);
+    console.log('isSubmittingSettings set to FALSE (after submission)');
   };
 
   const handleMainTabChange = (value: string) => {
@@ -254,6 +259,8 @@ const AdminPage: React.FC = () => {
 
   const currentSection = adminSections.find(section => section.value === activeMainTab);
   const currentSubTabComponent = currentSection?.subTabs.find(subTab => subTab.value === activeSubTab)?.component;
+
+  console.log('AdminPage render. activeMainTab:', activeMainTab, 'activeSubTab:', activeSubTab, 'isSubmittingSettings:', isSubmittingSettings);
 
   const renderSubpanelContent = () => {
     if (activeMainTab === 'dashboard') {

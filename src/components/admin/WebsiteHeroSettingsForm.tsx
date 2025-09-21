@@ -90,8 +90,12 @@ const WebsiteHeroSettingsForm: React.FC<WebsiteHeroSettingsFormProps> = ({ initi
   };
 
   const handleSubmitForm = async (values: z.infer<typeof formSchema>) => {
+    console.log('WebsiteHeroSettingsForm: handleSubmitForm called. values:', values);
     await onSubmit(values);
+    console.log('WebsiteHeroSettingsForm: onSubmit prop finished.');
   };
+
+  console.log('WebsiteHeroSettingsForm render. isLoading prop:', isLoading);
 
   return (
     <Form {...form}>
