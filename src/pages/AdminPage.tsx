@@ -15,9 +15,9 @@ import AdminBanners from './admin/AdminBanners';
 import AdminSlideshowImages from './admin/AdminSlideshowImages';
 import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
-import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives'; // Corrected import path
+import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
 import AdminNews from './admin/AdminNews';
-import AdminEvents from './admin/Admin/AdminEvents';
+import AdminEvents from './admin/AdminEvents'; // Corrected import path
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
