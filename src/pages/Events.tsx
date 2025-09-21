@@ -160,9 +160,9 @@ const Events: React.FC = () => {
                             </AccordionTrigger>
                             <AccordionContent className="px-4 pb-4 text-gray-700 text-sm space-y-3">
                               {event.overall_status_str && (
-                                <p className="flex items-start space-x-2 text-left"> {/* Added text-left here */}
+                                <p className="flex items-start space-x-2 text-left">
                                   <CalendarDays className="h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
-                                  <span className="font-semibold">Overall Status:&nbsp;</span> {event.overall_status_str.replace(/<[^>]*>/g, '')}
+                                  <span className="font-semibold">Result:&nbsp;</span> {event.overall_status_str.replace(/<[^>]*>/g, '')}
                                 </p>
                               )}
                               {event.qual_rank !== null && (
