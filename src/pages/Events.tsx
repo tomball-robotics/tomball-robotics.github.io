@@ -4,10 +4,10 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react"; // Added ListOrdered for rank, ShieldCheck for playoff status
+import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react";
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
-import { supabase } from "@/integrations/supabase/client"; // Import supabase client
+import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion,
   AccordionContent,
@@ -43,7 +43,7 @@ const Events: React.FC = () => {
 
   // Group events by year (derived from event_date) and sort by event_date within each year
   const eventsByYear = events.reduce((acc, event) => {
-    const year = new Date(event.event_date).getFullYear(); // Derive year from event_date
+    const year = new Date(event.event_date).getFullYear();
     if (!acc[year]) {
       acc[year] = [];
     }
@@ -128,37 +128,37 @@ const Events: React.FC = () => {
                 <motion.div
                   key={event.id}
                   variants={itemVariants}
-                  className="relative mb-8 flex" // Added flex to control alignment
+                  className="relative mb-8 flex"
                 >
                   {/* Timeline dot */}
-                  <div className="absolute top-3 left-1/2 w-4 h-4 bg-[#0d2f60] rounded-full -translate-x-1/2 border-4 border-white z-10" />
+                  <div className="absolute top-3 left-1/2 w-5 h-5 bg-[#0d2f60] rounded-full -translate-x-1/2 border-4 border-white z-10" />
                   
                   {/* Event card container */}
                   <div
-                    className={`w-[calc(50%-1rem)] ${
+                    className={`w-[calc(50%-1.5rem)] ${
                       index % 2 === 0
-                        ? "pr-4 text-right" // Left side
-                        : "pl-4 text-left ml-auto" // Right side
+                        ? "pr-4 text-right"
+                        : "pl-4 text-left ml-auto"
                     }`}
                   >
                     <Card className="shadow-lg hover:shadow-xl transition-shadow">
-                      <CardHeader className="p-3 sm:p-4">
-                        <CardTitle className="text-base sm:text-xl font-bold text-[#0d2f60]">{event.name}</CardTitle>
+                      <CardHeader className="p-4 border-b border-gray-200">
+                        <CardTitle className="text-lg sm:text-2xl font-bold text-[#0d2f60] mb-1">{event.name}</CardTitle>
                         <p className={`text-xs sm:text-sm text-gray-500 ${index % 2 !== 0 ? "text-left" : "text-right"}`}>
-                          {new Date(event.event_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                          {new Date(event.event_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </p>
                         <p className={`flex items-center text-xs sm:text-sm text-gray-500 ${index % 2 !== 0 ? "justify-start" : "justify-end"}`}>
-                          <MapPin className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <MapPin className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
                           {event.location}
                         </p>
                       </CardHeader>
                       <CardContent className="p-0">
                         <Accordion type="single" collapsible className="w-full">
                           <AccordionItem value="item-1" className="border-none">
-                            <AccordionTrigger className="px-3 sm:px-4 py-2 text-sm text-[#d92507] hover:no-underline hover:text-[#b31f06]">
+                            <AccordionTrigger className="px-4 py-3 text-sm sm:text-base text-[#d92507] hover:no-underline hover:text-[#b31f06]">
                               More Details
                             </AccordionTrigger>
-                            <AccordionContent className="px-3 sm:px-4 pb-3 text-gray-700 text-sm space-y-2">
+                            <AccordionContent className="px-4 pb-4 text-gray-700 text-sm space-y-3">
                               {event.overall_status_str && (
                                 <div className="flex items-start space-x-2">
                                   <CalendarDays className="h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
