@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react";
+import { MapPin, Trophy, Flag, CalendarDays, ExternalLink, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react"; // Added ExternalLink
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button"; // Import Button
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -183,7 +184,6 @@ const Events: React.FC = () => {
                                   <span className="font-semibold">Alliance:&nbsp;</span> {event.alliance_status}
                                 </p>
                               )}
-                              {/* Removed Playoff Status */}
                               {event.awards && event.awards.length > 0 && (
                                 <div className="mt-2">
                                   <p className="font-semibold text-[#0d2f60] mb-1">Awards:</p>
@@ -197,9 +197,14 @@ const Events: React.FC = () => {
                                   </div>
                                 </div>
                               )}
-                              {!event.overall_status_str && event.qual_rank === null && event.record_wins === null && !event.alliance_status && !event.playoff_status && (!event.awards || event.awards.length === 0) && (
+                              {(!event.overall_status_str && event.qual_rank === null && event.record_wins === null && !event.alliance_status && (!event.awards || event.awards.length === 0)) && (
                                 <p className="text-gray-500">No additional details available.</p>
                               )}
+                              <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-4">
+                                <a href={`https://www.thebluealliance.com/event/${event.id}`} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                                  View on The Blue Alliance <ExternalLink className="ml-2 h-4 w-4" />
+                                </a>
+                              </Button>
                             </AccordionContent>
                           </AccordionItem>
                         </Accordion>
