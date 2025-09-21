@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
           <p className="text-sm">&copy; {currentYear} Team 7312. All rights reserved.</p>
         </div>
 
-        <div className="flex space-x-6 justify-center"> {/* Added justify-center here */}
+        <div className="flex-grow flex space-x-6 justify-center"> {/* Added flex-grow here */}
           {socialLinksToRender.map((link, index) => {
             const Icon = socialMediaIcons[link.type] || socialMediaIcons.custom;
             return (
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white hover:text-[#d92507] transition-colors flex items-center justify-center" // Added flex items-center justify-center here
+                className="text-white hover:text-[#d92507] transition-colors flex items-center justify-center"
                 aria-label={link.type}
               >
                 <Icon size={24} />
