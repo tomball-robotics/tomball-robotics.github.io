@@ -54,6 +54,11 @@ export interface UnitybotInitiative {
   updated_at: string;
 }
 
+export interface SocialMediaLink {
+  type: 'facebook' | 'instagram' | 'youtube' | 'x' | 'linkedin' | 'github' | 'website' | 'custom';
+  url: string;
+}
+
 export interface WebsiteSettings {
   id: string;
   hero_title: string;
@@ -68,13 +73,10 @@ export interface WebsiteSettings {
   sponsors_preview_description: string;
   created_at: string;
   updated_at: string;
-  // New footer fields
+  // Footer fields
   footer_address: string | null;
   footer_email: string | null;
-  facebook_url: string | null;
-  instagram_url: string | null;
-  youtube_url: string | null;
-  x_url: string | null;
+  social_media_links: SocialMediaLink[] | null; // Updated to dynamic array
 }
 
 export interface Robot {

@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Facebook, Instagram, Youtube, X, LogIn, LogOut } from "lucide-react";
+import { Facebook, Instagram, Youtube, X, LogIn, LogOut, Linkedin, Github, Globe } from "lucide-react";
 import { useSupabase } from "@/components/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { WebsiteSettings } from "@/types/supabase";
+import { WebsiteSettings, SocialMediaLink } from "@/types/supabase";
+
+// Map social media types to Lucide icons
+const socialMediaIcons: { [key: string]: React.ElementType } = {
+  facebook: Facebook,
+  instagram: Instagram,
+  youtube: Youtube,
+  x: X,
+  linkedin: Linkedin,
+  github: Github,
+  website: Globe,
+  custom: Globe, // Default icon for custom or unknown types
+};
 
 const Footer: React.FC = () => {
   const { session, supabase: clientSupabase } = useSupabase(); // Renamed supabase to clientSupabase to avoid conflict
@@ -16,7 +28,7 @@ const Footer: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('website_settings')
-        .select('footer_address, footer_email, facebook_url, instagram_url, youtube_url, x_url')
+        .select('footer_address, footer_email, social_media_links') // Select the new column
         .limit(1)
         .single();
 
@@ -48,10 +60,18 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const defaultAddress = "30330 Quinn Road, Tomball, Texas";
   const defaultEmail = "t3teamad@gmail.com";
-  const defaultFacebook = "https://www.facebook.com/people/T3-Robotics/100061038300043/";
-  const defaultInstagram = "https://www.instagram.com/frc7312/";
-  const defaultYoutube = "https://www.youtube.com/@FRC7312?app=desktop";
-  const defaultX = "https://twitter.com/frc7312";
+
+  // Default social media links if none are configured in Supabase
+  const defaultSocialMediaLinks: SocialMediaLink[] = [
+    { type: 'facebook', url: "https://www.facebook.com/people/T3-Robotics/100061038300043/" },
+    { type: 'instagram', url: "https://www.instagram.com/frc7312/" },
+    { type: 'youtube', url: "https://www.youtube.com/@FRC7312?app=desktop" },
+    { type: 'x', url: "https://twitter.com/frc7312" },
+  ];
+
+  const socialLinksToRender = footerSettings?.social_media_links && footerSettings.social_media_links.length > 0
+    ? footerSettings.social_media_links
+    : defaultSocialMediaLinks;
 
   return (
     <footer className="bg-[#0d2f60] text-white py-8 mt-auto">
@@ -62,43 +82,21 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="flex space-x-6">
-          {/* Social Media Links */}
-          <a
-            href={footerSettings?.facebook_url || defaultFacebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#d92507] transition-colors"
-            aria-label="Facebook"
-          >
-            <Facebook size={24} />
-          </a>
-          <a
-            href={footerSettings?.instagram_url || defaultInstagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#d92507] transition-colors"
-            aria-label="Instagram"
-          >
-            <Instagram size={24} />
-          </a>
-          <a
-            href={footerSettings?.youtube_url || defaultYoutube}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#d92507] transition-colors"
-            aria-label="YouTube"
-          >
-            <Youtube size={24} />
-          </a>
-          <a
-            href={footerSettings?.x_url || defaultX}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#d92507] transition-colors"
-            aria-label="X (Twitter)"
-          >
-            <X size={24} />
-          </a>
+          {socialLinksToRender.map((link, index) => {
+            const Icon = socialMediaIcons[link.type] || socialMediaIcons.custom;
+            return (
+              <a
+                key={index}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-[#d92507] transition-colors"
+                aria-label={link.type}
+              >
+                <Icon size={24} />
+              </a>
+            );
+          })}
         </div>
 
         <div className="text-center md:text-right text-sm space-y-1">

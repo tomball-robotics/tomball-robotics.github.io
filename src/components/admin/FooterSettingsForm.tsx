@@ -6,15 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { WebsiteSettings } from '@/types/supabase';
+import { WebsiteSettings, SocialMediaLink } from '@/types/supabase';
+import SocialMediaInputField from './SocialMediaInputField'; // Import the new component
 
 const footerSettingsFormSchema = z.object({
   footer_address: z.string().optional(),
   footer_email: z.string().email("Must be a valid email address").or(z.literal("")).optional(),
-  facebook_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
-  instagram_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
-  youtube_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
-  x_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
+  social_media_links: z.array(z.object({
+    type: z.enum(['facebook', 'instagram', 'youtube', 'x', 'linkedin', 'github', 'website', 'custom']),
+    url: z.string().url("Must be a valid URL"),
+  })).optional(),
 });
 
 interface FooterSettingsFormProps {
@@ -29,10 +30,7 @@ const FooterSettingsForm: React.FC<FooterSettingsFormProps> = ({ initialData, on
     defaultValues: {
       footer_address: initialData?.footer_address || '',
       footer_email: initialData?.footer_email || '',
-      facebook_url: initialData?.facebook_url || '',
-      instagram_url: initialData?.instagram_url || '',
-      youtube_url: initialData?.youtube_url || '',
-      x_url: initialData?.x_url || '',
+      social_media_links: initialData?.social_media_links || [],
     },
   });
 
@@ -40,10 +38,7 @@ const FooterSettingsForm: React.FC<FooterSettingsFormProps> = ({ initialData, on
     form.reset({
       footer_address: initialData.footer_address || '',
       footer_email: initialData.footer_email || '',
-      facebook_url: initialData.facebook_url || '',
-      instagram_url: initialData.instagram_url || '',
-      youtube_url: initialData.youtube_url || '',
-      x_url: initialData.x_url || '',
+      social_media_links: initialData.social_media_links || [],
     });
   }, [initialData, form]);
 
@@ -83,58 +78,7 @@ const FooterSettingsForm: React.FC<FooterSettingsFormProps> = ({ initialData, on
         />
 
         <h3 className="text-2xl font-bold text-[#0d2f60] mb-4 mt-8">Social Media Links</h3>
-        <FormField
-          control={form.control}
-          name="facebook_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Facebook URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://www.facebook.com/yourpage" {...field} disabled={isLoading} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="instagram_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Instagram URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://www.instagram.com/yourpage" {...field} disabled={isLoading} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="youtube_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>YouTube URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://www.youtube.com/yourchannel" {...field} disabled={isLoading} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="x_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>X (Twitter) URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://twitter.com/yourhandle" {...field} disabled={isLoading} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <SocialMediaInputField form={form} name="social_media_links" label="Social Media Links" />
 
         <Button type="submit" disabled={isLoading} className="bg-[#d92507] hover:bg-[#b31f06]">
           {isLoading ? 'Saving...' : 'Save Changes'}
