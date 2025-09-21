@@ -4,10 +4,16 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag } from "lucide-react";
+import { MapPin, Trophy, Flag, ChevronDown, CalendarDays, Users } from "lucide-react";
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { fetchTBAEventsByYear } from "@/integrations/tba/client"; // Import TBA client
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -160,18 +166,61 @@ const Events: React.FC = () => {
                           {event.location}
                         </p>
                       </CardHeader>
-                      {event.awards && event.awards.length > 0 && (
-                        <CardContent className="p-3 pt-0 sm:p-4 sm:pt-0">
-                          <div className={`flex flex-wrap gap-1 sm:gap-2 mt-2 ${index % 2 !== 0 ? "justify-start" : "justify-end"}`}>
-                            {event.awards.map((award, awardIndex) => (
-                              <Badge key={awardIndex} variant="secondary" className="text-xs sm:text-sm px-2 py-1">
-                                <Trophy className="mr-1 h-3 w-3 sm:h-4 sm:w-4 text-yellow-500" />
-                                {award}
-                              </Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                      )}
+                      <CardContent className="p-0">
+                        <Accordion type="single" collapsible className="w-full">
+                          <AccordionItem value="item-1" className="border-none">
+                            <AccordionTrigger className="px-3 sm:px-4 py-2 text-sm text-[#d92507] hover:no-underline hover:text-[#b31f06]">
+                              More Details
+                            </AccordionTrigger>
+                            <AccordionContent className="px-3 sm:px-4 pb-3 text-gray-700 text-sm space-y-2">
+                              {event.status && (
+                                <div className="space-y-1">
+                                  {event.status.overall_status_str && (
+                                    <p className="flex items-center">
+                                      <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                      <span className="font-semibold">Status:</span> {event.status.overall_status_str}
+                                    </p>
+                                  )}
+                                  {event.status.qual_rank && (
+                                    <p className="flex items-center">
+                                      <Users className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                      <span className="font-semibold">Qualification Rank:</span> {event.status.qual_rank}
+                                    </p>
+                                  )}
+                                  {event.status.record_wins !== null && event.status.record_losses !== null && event.status.record_ties !== null && (
+                                    <p className="flex items-center">
+                                      <Trophy className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                      <span className="font-semibold">Record:</span> {event.status.record_wins}-{event.status.record_losses}-{event.status.record_ties}
+                                    </p>
+                                  )}
+                                  {event.status.playoff_status && (
+                                    <p className="flex items-center">
+                                      <Flag className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                      <span className="font-semibold">Playoff:</span> {event.status.playoff_status}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                              {event.awards && event.awards.length > 0 && (
+                                <div className="mt-2">
+                                  <p className="font-semibold text-[#0d2f60] mb-1">Awards:</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {event.awards.map((award, awardIndex) => (
+                                      <Badge key={awardIndex} variant="secondary" className="text-xs px-2 py-1">
+                                        <Trophy className="mr-1 h-3 w-3 text-yellow-500" />
+                                        {award}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {!event.status && (!event.awards || event.awards.length === 0) && (
+                                <p className="text-gray-500">No additional details available.</p>
+                              )}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      </CardContent>
                     </Card>
                   </div>
                 </motion.div>

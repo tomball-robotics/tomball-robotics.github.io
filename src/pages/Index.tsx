@@ -307,6 +307,11 @@ const Index: React.FC = () => {
                       <CardTitle className="text-xl">{event.name}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 flex-grow">
+                      {event.status?.overall_status_str && (
+                        <p className="font-semibold text-gray-800 mb-2">
+                          <span className="text-[#0d2f60]">Status:</span> {event.status.overall_status_str}
+                        </p>
+                      )}
                       {event.awards && event.awards.length > 0 ? (
                         <>
                           <p className="font-semibold text-gray-800">🏆 Awards:</p>
