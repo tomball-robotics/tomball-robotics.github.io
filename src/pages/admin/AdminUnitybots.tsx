@@ -243,7 +243,7 @@ const AdminUnitybots: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg"> {/* Added wrapper div */}
+    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
       {/* Unitybot Resources Section */}
       <div>
         <div className="flex justify-between items-center mb-6">

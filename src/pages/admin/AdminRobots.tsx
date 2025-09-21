@@ -127,7 +127,7 @@ const AdminRobots: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg"> {/* Added wrapper div */}
+    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Robots</h2>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
