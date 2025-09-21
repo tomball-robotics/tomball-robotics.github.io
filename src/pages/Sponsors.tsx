@@ -172,7 +172,15 @@ const Sponsors: React.FC = () => {
                       )}
                       <CardContent className="p-4 pt-2 flex-grow flex flex-col justify-between w-full">
                         <div>
-                          {config.showName && <CardTitle className="text-2xl font-bold text-[#d92507] mt-2">{sponsor.name}</CardTitle>}
+                          {config.showName && (
+                            !config.showWebsiteButton && sponsor.website_url ? (
+                              <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                <CardTitle className="text-2xl font-bold text-[#d92507] mt-2">{sponsor.name}</CardTitle>
+                              </a>
+                            ) : (
+                              <CardTitle className="text-2xl font-bold text-[#d92507] mt-2">{sponsor.name}</CardTitle>
+                            )
+                          )}
                           {config.showDescription && sponsor.description && <p className="text-gray-700 mt-2">{sponsor.description}</p>}
                           {config.showDescription && sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
                         </div>
@@ -212,7 +220,13 @@ const Sponsors: React.FC = () => {
                   <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
                     {otherSponsors.map((sponsor) => (
                       <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
-                        {sponsor.name}
+                        {sponsor.website_url ? (
+                          <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="text-[#d92507] hover:underline">
+                            {sponsor.name}
+                          </a>
+                        ) : (
+                          sponsor.name
+                        )}
                       </motion.div>
                     ))}
                   </div>
