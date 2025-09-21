@@ -10,9 +10,10 @@ const FOUNDING_YEAR = 2018; // Define the team's founding year
 
 interface RefreshTBAButtonProps {
   onRefreshComplete?: () => void; // Callback to notify parent when refresh is done
+  description?: string; // New prop for description text
 }
 
-const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete }) => {
+const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, description }) => {
   const [isSyncing, setIsSyncing] = useState(false);
 
   const handleRefreshFromTBA = async () => {
@@ -71,9 +72,12 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete }
   };
 
   return (
-    <Button onClick={handleRefreshFromTBA} disabled={isSyncing} className="bg-[#0d2f60] hover:bg-[#0a244a]">
-      <RefreshCw className="mr-2 h-4 w-4" /> {isSyncing ? 'Syncing...' : 'Sync Events from TBA'}
-    </Button>
+    <div className="space-y-2">
+      <Button onClick={handleRefreshFromTBA} disabled={isSyncing} className="bg-[#0d2f60] hover:bg-[#0a244a]">
+        <RefreshCw className="mr-2 h-4 w-4" /> {isSyncing ? 'Syncing...' : 'Sync All Event Data from TBA'}
+      </Button>
+      {description && <p className="text-sm text-gray-600">{description}</p>}
+    </div>
   );
 };
 

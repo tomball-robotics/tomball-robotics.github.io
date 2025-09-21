@@ -59,7 +59,10 @@ const adminSections: AdminSection[] = [
       <div className="space-y-8">
         <h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>
         <p className="text-lg text-gray-700">Use the links below to manage your website content.</p>
-        <RefreshTBAButton onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')} /> {/* Added RefreshTBAButton */}
+        <RefreshTBAButton
+          onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')}
+          description="This button synchronizes your website's event data with The Blue Alliance (TBA). It fetches all past and current event details, including competition results, team rankings, alliance status, and awards for Team 7312. Existing event data in your database will be replaced with the latest information from TBA, ensuring your Events page and About page achievements are always up-to-date."
+        />
         <DashboardQuickLinks onTabChange={onTabChange} />
       </div>
     ),
