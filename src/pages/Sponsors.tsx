@@ -182,8 +182,8 @@ const Sponsors: React.FC = () => {
   // Separate sponsors into tiered and other
   const tieredSponsors = sponsors.filter(s => s.amount >= MIN_TIER_AMOUNT);
   const otherSponsors = sponsors.filter(s => s.amount < MIN_TIER_AMOUNT);
-  const otherSponsorsWithLogo = otherSponsors.filter(s => s.image_url);
-  const otherSponsorsWithoutLogo = otherSponsors.filter(s => !s.image_url);
+  const otherSponsorsWithLogo = otherSponsors.filter(s => s.image_url && s.image_url.trim() !== '');
+  const otherSponsorsWithoutLogo = otherSponsors.filter(s => !s.image_url || s.image_url.trim() === '');
 
   return (
     <div className="min-h-screen flex flex-col">
