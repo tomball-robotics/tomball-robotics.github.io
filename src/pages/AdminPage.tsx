@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSupabase } from '@/components/SessionContextProvider';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper } from 'lucide-react';
+import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen } from 'lucide-react'; // Added BookOpen icon
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminSponsors from './admin/AdminSponsors';
 import AdminTeamMembers from './admin/AdminTeamMembers';
@@ -17,7 +17,7 @@ import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
 import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
 import AdminNews from './admin/AdminNews';
-import AdminEvents from './admin/AdminEvents'; // Corrected import path
+import AdminEvents from './admin/AdminEvents';
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
@@ -29,6 +29,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import AdminHelpAndDocs from './admin/AdminHelpAndDocs'; // Import the new Help & Docs component
 
 
 interface AdminSection {
@@ -149,6 +150,13 @@ const adminSections: AdminSection[] = [
       { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <AdminFooterSettings initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
     ]
   },
+  {
+    value: 'help-docs',
+    label: 'Help & Docs',
+    icon: BookOpen,
+    component: () => <AdminHelpAndDocs />, // Directly render the component
+    subTabs: [] // No sub-tabs for this section
+  },
 ];
 
 const AdminPage: React.FC = () => {
@@ -172,7 +180,7 @@ const AdminPage: React.FC = () => {
     if (currentSection && currentSection.subTabs.length > 0 && !activeSubTab) {
       setActiveSubTab(currentSection.subTabs[0].value);
     } else if (currentSection && currentSection.subTabs.length === 0) {
-      setActiveSubTab(undefined); // No sub-tab for sections without them (e.g., Dashboard)
+      setActiveSubTab(undefined); // No sub-tab for sections without them (e.g., Dashboard, Help & Docs)
     }
   }, [activeMainTab, activeSubTab]);
 
@@ -289,9 +297,13 @@ const AdminPage: React.FC = () => {
   const currentSection = adminSections.find(section => section.value === activeMainTab);
   const currentSubTabComponent = currentSection?.subTabs.find(subTab => subTab.value === activeSubTab)?.component;
 
-  const renderSubpanelContent = () => {
+  const renderContent = () => {
     if (activeMainTab === 'dashboard') {
       return currentSection?.component?.(handleQuickLinkChange);
+    }
+
+    if (activeMainTab === 'help-docs') {
+      return <AdminHelpAndDocs />;
     }
 
     if (settingsLoading) {
@@ -370,11 +382,11 @@ const AdminPage: React.FC = () => {
                     ))}
                   </TabsList>
                   <TabsContent value={activeSubTab || ''} className="mt-0">
-                    {renderSubpanelContent()}
+                    {renderContent()}
                   </TabsContent>
                 </Tabs>
               ) : (
-                renderSubpanelContent()
+                renderContent()
               )}
             </TabsContent>
           ))}
