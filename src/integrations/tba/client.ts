@@ -28,8 +28,7 @@ interface TBAEventRaw {
   end_date: string;
   year: number;
   website: string | null;
-  awards: TBAAward[] | null;
-  // Add other fields if needed, but these are sufficient for current Event type
+  // We no longer need the 'awards' field here as we'll fetch them separately
 }
 
 interface TBATeamEventStatusRaw {
@@ -86,19 +85,6 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
     const rawEvents: TBAEventRaw[] = await response.json();
 
     const detailedEventsPromises = rawEvents.map(async (simpleEvent) => {
-      // Fetch full event details for awards
-      const detailResponse = await fetch(`${TBA_BASE_URL}/event/${simpleEvent.key}`, {
-        headers: {
-          'X-TBA-Auth-Key': TBA_AUTH_KEY,
-        },
-      });
-      let detailedEvent: TBAEventRaw = simpleEvent;
-      if (detailResponse.ok) {
-        detailedEvent = await detailResponse.json();
-      } else {
-        console.warn(`Failed to fetch detailed event for ${simpleEvent.key}: ${detailResponse.statusText}`);
-      }
-
       // Fetch team's status for this event
       const statusResponse = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/event/${simpleEvent.key}/status`, {
         headers: {
@@ -112,26 +98,31 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
         console.warn(`Failed to fetch team status for event ${simpleEvent.key}: ${statusResponse.statusText}`);
       }
 
-      // Filter awards to only include those won by TEAM_KEY
-      const teamAwards = detailedEvent.awards
-        ? detailedEvent.awards
-            .filter(award =>
-              award.recipient_list.some(recipient => recipient.team_key === TEAM_KEY)
-            )
-            .map(award => award.name)
-        : [];
+      // Fetch awards specifically for the team at this event
+      const awardsResponse = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/event/${simpleEvent.key}/awards`, {
+        headers: {
+          'X-TBA-Auth-Key': TBA_AUTH_KEY,
+        },
+      });
+      let teamAwards: string[] = [];
+      if (awardsResponse.ok) {
+        const rawAwards: TBAAward[] = await awardsResponse.json();
+        teamAwards = rawAwards.map(award => award.name);
+      } else {
+        console.warn(`Failed to fetch team awards for event ${simpleEvent.key}: ${awardsResponse.statusText}`);
+      }
 
-      return { detailedEvent, teamStatus, teamAwards };
+      return { simpleEvent, teamStatus, teamAwards };
     });
 
     const results = await Promise.all(detailedEventsPromises);
 
-    return results.map(({ detailedEvent, teamStatus, teamAwards }) => ({
-      id: detailedEvent.key,
-      name: detailedEvent.name,
-      location: `${detailedEvent.city || ''}${detailedEvent.city && detailedEvent.state_prov ? ', ' : ''}${detailedEvent.state_prov || ''}${detailedEvent.state_prov && detailedEvent.country ? ', ' : ''}${detailedEvent.country || ''}`.trim(),
-      awards: teamAwards, // Use the filtered teamAwards
-      event_date: detailedEvent.start_date,
+    return results.map(({ simpleEvent, teamStatus, teamAwards }) => ({
+      id: simpleEvent.key,
+      name: simpleEvent.name,
+      location: `${simpleEvent.city || ''}${simpleEvent.city && simpleEvent.state_prov ? ', ' : ''}${simpleEvent.state_prov || ''}${simpleEvent.state_prov && simpleEvent.country ? ', ' : ''}${simpleEvent.country || ''}`.trim(),
+      awards: teamAwards, // Use the directly fetched teamAwards
+      event_date: simpleEvent.start_date,
       qual_rank: teamStatus?.qual?.ranking?.rank || null,
       playoff_status: teamStatus?.playoff?.status || null,
       alliance_status: teamStatus?.alliance?.name || null, // Using alliance name as status for simplicity
