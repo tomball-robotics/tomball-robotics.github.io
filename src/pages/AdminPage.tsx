@@ -56,10 +56,10 @@ const adminSections: AdminSection[] = [
     label: 'Home Page Content',
     icon: Home,
     subTabs: [
-      { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'about-preview', label: 'About Preview', icon: Info, component: (settings) => settings ? <WebsiteAboutPreviewSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'events-preview', label: 'Events Preview', icon: Calendar, component: (settings) => settings ? <WebsiteEventsPreviewSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: (settings) => settings ? <WebsiteSponsorsPreviewSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
+      { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} /> : <Spinner /> },
+      { value: 'about-preview', label: 'About Preview', icon: Info, component: (settings) => settings ? <WebsiteAboutPreviewSettingsForm initialData={settings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} /> : <Spinner /> },
+      { value: 'events-preview', label: 'Events Preview', icon: Calendar, component: (settings) => settings ? <WebsiteEventsPreviewSettingsForm initialData={settings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} /> : <Spinner /> },
+      { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: (settings) => settings ? <WebsiteSponsorsPreviewSettingsForm initialData={settings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} /> : <Spinner /> },
       { value: 'award-banners', label: 'Award Banners', icon: Image, component: () => <AdminBanners /> },
       { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: () => <AdminSlideshowImages /> },
     ]
@@ -112,7 +112,7 @@ const adminSections: AdminSection[] = [
     label: 'Global Settings',
     icon: Settings,
     subTabs: [
-      { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings) => settings ? <AdminFooterSettings initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
+      { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: () => <AdminFooterSettings /> },
     ]
   },
 ];
@@ -260,43 +260,48 @@ const AdminPage: React.FC = () => {
       return currentSection?.component?.(handleQuickLinkChange);
     }
 
-    if (settingsLoading) {
-      return <Spinner text="Loading website settings..." />;
-    }
+    // List of sub-tabs that are direct forms for WebsiteSettings and need props from AdminPage
+    const websiteSettingsForms = ['hero-section', 'about-preview', 'events-preview', 'sponsors-preview'];
 
-    if (settingsError) {
-      return (
-        <div className="text-center p-4">
-          <p className="text-lg text-red-600">{settingsError}</p>
-          <Button onClick={fetchWebsiteSettings} className="mt-4">Retry Loading</Button>
-        </div>
-      );
-    }
-
-    if (!websiteSettings) {
-      return (
-        <div className="text-center p-4">
-          <p className="text-lg text-gray-600 mb-4">No website settings found. Please initialize them to manage content.</p>
-          <Button onClick={initializeDefaultWebsiteSettings} className="bg-[#d92507] hover:bg-[#b31f06]">
-            Initialize Website Settings
-          </Button>
-        </div>
-      );
-    }
-
-    if (currentSubTabComponent) {
-      // For forms that edit WebsiteSettings, pass initialData and onSubmit
-      if (['hero-section', 'about-preview', 'events-preview', 'sponsors-preview', 'footer-settings'].includes(activeSubTab!)) {
-        const FormComponent = currentSubTabComponent as React.FC<{ initialData: WebsiteSettings, onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading: boolean }>;
+    if (websiteSettingsForms.includes(activeSubTab!)) {
+      if (settingsLoading) {
+        return <Spinner text="Loading website settings..." />;
+      }
+      if (settingsError) {
         return (
-          <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-            <FormComponent initialData={websiteSettings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} />
+          <div className="text-center p-4">
+            <p className="text-lg text-red-600">{settingsError}</p>
+            <Button onClick={fetchWebsiteSettings} className="mt-4">Retry Loading</Button>
           </div>
         );
       }
-      // For other admin components (e.g., AdminEvents, AdminTeamMembers)
-      return currentSubTabComponent(websiteSettings);
+      if (!websiteSettings) {
+        return (
+          <div className="text-center p-4">
+            <p className="text-lg text-gray-600 mb-4">No website settings found. Please initialize them to manage content.</p>
+            <Button onClick={initializeDefaultWebsiteSettings} className="bg-[#d92507] hover:bg-[#b31f06]">
+              Initialize Website Settings
+            </Button>
+          </div>
+        );
+      }
+
+      // Render the specific WebsiteSettings form component
+      const FormComponent = currentSubTabComponent as React.FC<{ initialData: WebsiteSettings, onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading: boolean }>;
+      return (
+        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+          <FormComponent initialData={websiteSettings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} />
+        </div>
+      );
     }
+
+    // For all other admin components (e.g., AdminEvents, AdminTeamMembers, AdminFooterSettings)
+    // These components manage their own data fetching and submission.
+    if (currentSubTabComponent) {
+      const Component = currentSubTabComponent as React.FC; // No props expected from AdminPage
+      return <Component />; // These components already have their own styling and centering
+    }
+
     return null;
   };
 
