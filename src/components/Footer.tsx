@@ -81,22 +81,25 @@ const Footer: React.FC = () => {
           <p className="text-sm">&copy; {currentYear} Team 7312. All rights reserved.</p>
         </div>
 
-        <div className="flex-grow flex space-x-6 justify-center"> {/* Added flex-grow here */}
-          {socialLinksToRender.map((link, index) => {
-            const Icon = socialMediaIcons[link.type] || socialMediaIcons.custom;
-            return (
-              <a
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-[#d92507] transition-colors flex items-center justify-center"
-                aria-label={link.type}
-              >
-                <Icon size={24} />
-              </a>
-            );
-          })}
+        {/* Social Media Links - now explicitly centered within its flex-grow space */}
+        <div className="flex-grow flex justify-center">
+          <div className="flex space-x-6"> {/* This wrapper handles the spacing between icons */}
+            {socialLinksToRender.map((link, index) => {
+              const Icon = socialMediaIcons[link.type] || socialMediaIcons.custom;
+              return (
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-[#d92507] transition-colors flex items-center justify-center"
+                  aria-label={link.type}
+                >
+                  <Icon size={24} />
+                </a>
+              );
+            })}
+          </div>
         </div>
 
         <div className="text-center md:text-right text-sm space-y-1">
