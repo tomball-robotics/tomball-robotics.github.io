@@ -1,35 +1,39 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info } from 'lucide-react';
+import { ArrowRight, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home } from 'lucide-react'; // Added Home icon
 
 interface DashboardQuickLinksProps {
-  onTabChange: (tabValue: string) => void;
+  onTabChange: (mainTabValue: string, subTabValue?: string) => void;
 }
 
 const quickLinks = [
-  { name: 'Website Settings', value: 'website-settings', icon: Settings },
-  { name: 'Footer Settings', value: 'footer-settings', icon: Info },
-  { name: 'Manage Events', value: 'events', icon: Calendar },
-  { name: 'Manage Sponsors', value: 'sponsors', icon: Handshake },
-  { name: 'Manage Sponsorship Tiers', value: 'sponsorship-tiers', icon: DollarSign },
-  { name: 'Manage Robots', value: 'robots', icon: Bot },
-  { name: 'Manage Unitybots', value: 'unitybots', icon: Bot },
-  { name: 'Manage Team Members', value: 'team-members', icon: Users },
-  { name: 'Manage Achievements', value: 'achievements', icon: Award },
-  { name: 'Manage Banners', value: 'banners', icon: Image },
-  { name: 'Manage Slideshow Images', value: 'slideshow-images', icon: Images },
+  { name: 'Hero Section', mainTab: 'home-page', subTab: 'hero-section', icon: Home },
+  { name: 'About Page Preview', mainTab: 'home-page', subTab: 'about-preview', icon: Info },
+  { name: 'Events Page Preview', mainTab: 'home-page', subTab: 'events-preview', icon: Calendar },
+  { name: 'Sponsors Page Preview', mainTab: 'home-page', subTab: 'sponsors-preview', icon: Handshake },
+  { name: 'Award Banners', mainTab: 'home-page', subTab: 'award-banners', icon: Image },
+  { name: 'Slideshow Images', mainTab: 'home-page', subTab: 'slideshow-images', icon: Images },
+  { name: 'Team Members', mainTab: 'about-page', subTab: 'team-members', icon: Users },
+  { name: 'Achievements', mainTab: 'about-page', subTab: 'achievements', icon: Award },
+  { name: 'Events List', mainTab: 'events-page', subTab: 'events-list', icon: Calendar },
+  { name: 'Robots List', mainTab: 'robots-page', subTab: 'robots-list', icon: Bot },
+  { name: 'Sponsors List', mainTab: 'sponsors-page', subTab: 'sponsors-list', icon: Handshake },
+  { name: 'Sponsorship Tiers', mainTab: 'sponsors-page', subTab: 'sponsorship-tiers', icon: DollarSign },
+  { name: 'Unitybot Resources', mainTab: 'unitybots-page', subTab: 'unitybot-resources', icon: Bot },
+  { name: 'Unitybot Initiatives', mainTab: 'unitybots-page', subTab: 'unitybot-initiatives', icon: Bot },
+  { name: 'Footer Settings', mainTab: 'global-settings', subTab: 'footer-settings', icon: Settings },
 ];
 
 const DashboardQuickLinks: React.FC<DashboardQuickLinksProps> = ({ onTabChange }) => {
   return (
-    <div className="max-w-6xl mx-auto"> {/* Added wrapper for centering */}
+    <div className="max-w-6xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {quickLinks.map((link) => (
           <Button
             key={link.name}
             variant="outline"
             className="h-auto p-4 flex flex-col items-start text-left"
-            onClick={() => onTabChange(link.value)} // Call onTabChange instead of using Link
+            onClick={() => onTabChange(link.mainTab, link.subTab)}
           >
             <div className="flex items-center justify-between w-full mb-2">
               <link.icon className="h-6 w-6 text-[#0d2f60]" />
