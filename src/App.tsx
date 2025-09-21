@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; // Changed to BrowserRouter
 import Index from "./pages/Index";
 import Sponsors from "./pages/Sponsors";
 import Donate from "./pages/Donate";
@@ -46,7 +46,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <HashRouter>
+        <BrowserRouter> {/* Changed to BrowserRouter */}
           <ScrollToTop />
           <Routes>
             {/* Public routes */}
@@ -80,7 +80,7 @@ const App = () => {
             
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </HashRouter>
+        </BrowserRouter> {/* Changed to BrowserRouter */}
       </TooltipProvider>
     </QueryClientProvider>
   );
