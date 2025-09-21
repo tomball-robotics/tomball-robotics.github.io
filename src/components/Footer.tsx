@@ -76,14 +76,15 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-[#0d2f60] text-white py-8 mt-auto">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="text-center md:text-left">
+        {/* Copyright and Team Name */}
+        <div className="text-center md:text-left md:flex-1"> {/* Added md:flex-1 */}
           <h3 className="text-xl font-bold mb-2">Tomball T3 Robotics</h3>
           <p className="text-sm">&copy; {currentYear} Team 7312. All rights reserved.</p>
         </div>
 
-        {/* Social Media Links - now explicitly centered within its flex-grow space */}
-        <div className="flex-grow flex justify-center">
-          <div className="flex space-x-6"> {/* This wrapper handles the spacing between icons */}
+        {/* Social Media Links - Centered */}
+        <div className="flex justify-center md:flex-1"> {/* Added md:flex-1 and justify-center */}
+          <div className="flex space-x-6">
             {socialLinksToRender.map((link, index) => {
               const Icon = socialMediaIcons[link.type] || socialMediaIcons.custom;
               return (
@@ -102,7 +103,8 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="text-center md:text-right text-sm space-y-1">
+        {/* Contact Information and Admin/Login */}
+        <div className="text-center md:text-right text-sm space-y-1 md:flex-1"> {/* Added md:flex-1 */}
           <p>{footerSettings?.footer_address || defaultAddress}</p>
           <p>
             <a href={`mailto:${footerSettings?.footer_email || defaultEmail}`} className="hover:underline">
