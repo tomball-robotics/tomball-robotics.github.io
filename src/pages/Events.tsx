@@ -183,12 +183,7 @@ const Events: React.FC = () => {
                                   <span className="font-semibold">Alliance:&nbsp;</span> {event.alliance_status}
                                 </p>
                               )}
-                              {event.playoff_status && (
-                                <p className="flex items-center space-x-2">
-                                  <ShieldCheck className="h-4 w-4 text-[#0d2f60]" />
-                                  <span className="font-semibold">Playoff Status:&nbsp;</span> {event.playoff_status.charAt(0).toUpperCase() + event.playoff_status.slice(1)}
-                                </p>
-                              )}
+                              {/* Removed Playoff Status */}
                               {event.awards && event.awards.length > 0 && (
                                 <div className="mt-2">
                                   <p className="font-semibold text-[#0d2f60] mb-1">Awards:</p>
