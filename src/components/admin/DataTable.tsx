@@ -26,8 +26,8 @@ interface DataTableProps<T> {
 export function DataTable<T extends { id?: string }>({
   data,
   columns,
-  onEdit,
-  onDelete,
+  onEdit, // Keep for potential simpler use cases, but render function takes precedence
+  onDelete, // Keep for potential simpler use cases, but render function takes precedence
   getKey,
 }: DataTableProps<T>) {
   return (
@@ -46,37 +46,43 @@ export function DataTable<T extends { id?: string }>({
               <TableRow key={getKey(item)}>
                 {columns.map((column, colIndex) => (
                   <TableCell key={colIndex}>
-                    {column.key === 'actions' ? (
-                      <div className="flex space-x-2">
-                        {onEdit && (
-                          <Button variant="outline" size="sm" onClick={() => onEdit(item)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {onDelete && item.id && (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="destructive" size="sm">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will permanently delete this item.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => onDelete(item.id!)}>Continue</AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        )}
-                      </div>
+                    {/* Prioritize the custom render function if provided */}
+                    {column.render ? (
+                      column.render(item)
                     ) : (
-                      column.render ? column.render(item) : (item[column.key] as React.ReactNode)
+                      // Fallback to default rendering if no custom render function
+                      column.key === 'actions' ? (
+                        <div className="flex space-x-2">
+                          {onEdit && (
+                            <Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {onDelete && item.id && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="sm">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete this item.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => onDelete(item.id!)}>Continue</AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
+                      ) : (
+                        item[column.key] as React.ReactNode
+                      )
                     )}
                   </TableCell>
                 ))}
