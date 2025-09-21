@@ -23,6 +23,7 @@ import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPrev
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
+import RefreshTBAButton from '@/components/admin/RefreshTBAButton'; // Import the new button
 import Spinner from '@/components/Spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
@@ -54,7 +55,14 @@ const adminSections: AdminSection[] = [
     value: 'dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    component: (onTabChange) => <DashboardQuickLinks onTabChange={onTabChange} />,
+    component: (onTabChange) => (
+      <div className="space-y-8">
+        <h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>
+        <p className="text-lg text-gray-700">Use the links below to manage your website content.</p>
+        <RefreshTBAButton onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')} /> {/* Added RefreshTBAButton */}
+        <DashboardQuickLinks onTabChange={onTabChange} />
+      </div>
+    ),
     subTabs: []
   },
   {

@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { fetchTBAEventsByYear } from '@/integrations/tba/client';
 import { Event } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, RefreshCw } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import EventForm from '@/components/admin/EventForm';
 import { DataTable } from '@/components/admin/DataTable';
 import Spinner from '@/components/Spinner';
-
-const FOUNDING_YEAR = 2018; // Define the team's founding year
 
 const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -40,66 +37,6 @@ const AdminEvents: React.FC = () => {
       setEvents(data || []);
     }
     setLoading(false);
-  };
-
-  const handleRefreshFromTBA = async () => {
-    setIsSubmitting(true);
-    const toastId = showLoading('Refreshing events from The Blue Alliance...');
-    setError(null);
-
-    try {
-      const currentYear = new Date().getFullYear();
-      const yearsToFetch: number[] = [];
-      for (let year = FOUNDING_YEAR; year <= currentYear; year++) {
-        yearsToFetch.push(year);
-      }
-
-      const allEventsPromises = yearsToFetch.map(year => fetchTBAEventsByYear(year));
-      const results = await Promise.allSettled(allEventsPromises);
-
-      const fetchedEvents: Event[] = [];
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          fetchedEvents.push(...result.value);
-        } else {
-          console.error(`Error fetching events for year ${yearsToFetch[index]} from TBA:`, result.reason);
-          showError(`Failed to fetch some events from TBA for year ${yearsToFetch[index]}.`);
-        }
-      });
-
-      if (fetchedEvents.length === 0) {
-        showError('No events fetched from The Blue Alliance. Please check your TBA API key and network.');
-        dismissToast(toastId);
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Clear existing events in Supabase
-      const { error: deleteError } = await supabase.from('events').delete().neq('id', 'dummy_id'); // Delete all rows
-      if (deleteError) {
-        console.error('Error clearing existing events:', deleteError);
-        showError(`Failed to clear existing events: ${deleteError.message}`);
-        dismissToast(toastId);
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Insert new events into Supabase
-      const { error: insertError } = await supabase.from('events').insert(fetchedEvents);
-      if (insertError) {
-        console.error('Error inserting new events:', insertError);
-        showError(`Failed to save new events: ${insertError.message}`);
-      } else {
-        showSuccess('Events refreshed and saved successfully!');
-        fetchEventsFromSupabase(); // Re-fetch from Supabase to update UI
-      }
-    } catch (err) {
-      console.error('Overall error during TBA refresh:', err);
-      showError(`An unexpected error occurred during refresh: ${(err as Error).message}`);
-    } finally {
-      dismissToast(toastId);
-      setIsSubmitting(false);
-    }
   };
 
   const handleAddEvent = () => {
@@ -197,9 +134,6 @@ const AdminEvents: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Events</h2>
           <div className="flex space-x-2">
-            <Button onClick={handleRefreshFromTBA} disabled={isSubmitting} className="bg-[#0d2f60] hover:bg-[#0a244a]">
-              <RefreshCw className="mr-2 h-4 w-4" /> {isSubmitting ? 'Refreshing...' : 'Refresh from TBA'}
-            </Button>
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
               <DialogTrigger asChild>
                 <Button onClick={handleAddEvent} className="bg-[#d92507] hover:bg-[#b31f06]">
