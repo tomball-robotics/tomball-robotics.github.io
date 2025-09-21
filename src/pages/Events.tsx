@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, ChevronDown, CalendarDays, Users } from "lucide-react";
+import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award } from "lucide-react"; // Added Handshake and Award icons
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { fetchTBAEventsByYear } from "@/integrations/tba/client"; // Import TBA client
@@ -178,7 +178,7 @@ const Events: React.FC = () => {
                                   {event.status.overall_status_str && (
                                     <p className="flex items-center">
                                       <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Status:</span> {event.status.overall_status_str}
+                                      <span className="font-semibold">Overall Status:</span> {event.status.overall_status_str.replace(/<[^>]*>/g, '')}
                                     </p>
                                   )}
                                   {event.status.qual_rank && (
@@ -193,10 +193,16 @@ const Events: React.FC = () => {
                                       <span className="font-semibold">Record:</span> {event.status.record_wins}-{event.status.record_losses}-{event.status.record_ties}
                                     </p>
                                   )}
+                                  {event.status.alliance_status && (
+                                    <p className="flex items-center">
+                                      <Handshake className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                      <span className="font-semibold">Alliance:</span> {event.status.alliance_status}
+                                    </p>
+                                  )}
                                   {event.status.playoff_status && (
                                     <p className="flex items-center">
-                                      <Flag className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Playoff:</span> {event.status.playoff_status}
+                                      <Award className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                      <span className="font-semibold">Playoff Status:</span> {event.status.playoff_status}
                                     </p>
                                   )}
                                 </div>
