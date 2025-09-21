@@ -97,14 +97,14 @@ const NewsIndex: React.FC = () => {
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">All News & Updates</h1>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+          className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto"
           variants={listVariants}
           initial="hidden"
           animate="visible"
         >
           {newsArticles.length > 0 ? (
             newsArticles.map((article) => (
-              <motion.div key={article.id} variants={itemVariants}>
+              <motion.div key={article.id} variants={itemVariants} className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]">
                 <Card className="text-left shadow-lg bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                   {article.image_urls && article.image_urls.length > 0 && (
                     <img
