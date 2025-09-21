@@ -178,31 +178,31 @@ const Events: React.FC = () => {
                                   {event.status.overall_status_str && (
                                     <p className="flex items-center">
                                       <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Overall Status:</span> {event.status.overall_status_str.replace(/<[^>]*>/g, '')}
+                                      <span className="font-semibold">Overall Status: </span> {event.status.overall_status_str.replace(/<[^>]*>/g, '')}
                                     </p>
                                   )}
                                   {event.status.qual_rank && (
                                     <p className="flex items-center">
                                       <Users className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Qualification Rank:</span> {event.status.qual_rank}
+                                      <span className="font-semibold">Qualification Rank: </span> {event.status.qual_rank}
                                     </p>
                                   )}
                                   {event.status.record_wins !== null && event.status.record_losses !== null && event.status.record_ties !== null && (
                                     <p className="flex items-center">
                                       <Trophy className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Record:</span> {event.status.record_wins}-{event.status.record_losses}-{event.status.record_ties}
+                                      <span className="font-semibold">Record: </span> {event.status.record_wins}-{event.status.record_losses}-{event.status.record_ties}
                                     </p>
                                   )}
                                   {event.status.alliance_status && (
                                     <p className="flex items-center">
                                       <Handshake className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Alliance:</span> {event.status.alliance_status}
+                                      <span className="font-semibold">Alliance: </span> {event.status.alliance_status}
                                     </p>
                                   )}
                                   {event.status.playoff_status && (
                                     <p className="flex items-center">
                                       <Award className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Playoff Status:</span> {event.status.playoff_status}
+                                      <span className="font-semibold">Playoff Status: </span> {event.status.playoff_status.charAt(0).toUpperCase() + event.status.playoff_status.slice(1)}
                                     </p>
                                   )}
                                 </div>
