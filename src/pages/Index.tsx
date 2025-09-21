@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Newspaper } from "lucide-react";
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchTBAEventsByYear } from "@/integrations/tba/client"; // Import TBA client
 import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import ReactMarkdown from 'react-markdown';
@@ -31,21 +30,12 @@ const Index: React.FC = () => {
         .limit(1)
         .single();
 
-      // Fetch latest events from TBA
-      const currentYear = new Date().getFullYear();
-      let eventsData: Event[] = [];
-      let eventsError: Error | null = null;
-      try {
-        eventsData = await fetchTBAEventsByYear(currentYear);
-        // If current year has no events, try previous year
-        if (eventsData.length === 0 && currentYear > 2018) { // Assuming team founded in 2018
-          eventsData = await fetchTBAEventsByYear(currentYear - 1);
-        }
-        eventsData = eventsData.sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime()).slice(0, 3);
-      } catch (err) {
-        console.error("Error fetching latest events from TBA:", err);
-        eventsError = err as Error;
-      }
+      // Fetch latest events from Supabase
+      const { data: eventsData, error: eventsError } = await supabase
+        .from("events")
+        .select("*")
+        .order("event_date", { ascending: false })
+        .limit(3);
 
       const { data: sponsorsData, error: sponsorsError } = await supabase
         .from("sponsors")
@@ -64,7 +54,8 @@ const Index: React.FC = () => {
         console.error("Error fetching website settings:", settingsError);
         setError("Failed to load home page settings.");
       } else if (eventsError) {
-        setError("Failed to load latest events from The Blue Alliance.");
+        console.error("Error fetching latest events:", eventsError);
+        setError("Failed to load latest events.");
       } else if (sponsorsError) {
         console.error("Error fetching featured sponsors:", sponsorsError);
         setError("Failed to load featured sponsors.");
@@ -307,9 +298,9 @@ const Index: React.FC = () => {
                       <CardTitle className="text-xl">{event.name}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 flex-grow">
-                      {event.status?.overall_status_str && (
+                      {event.overall_status_str && (
                         <p className="font-semibold text-gray-800 mb-2">
-                          <span className="text-[#0d2f60]">Status:</span> {event.status.overall_status_str}
+                          <span className="text-[#0d2f60]">Status:</span> {event.overall_status_str}
                         </p>
                       )}
                       {event.awards && event.awards.length > 0 ? (

@@ -16,7 +16,7 @@ const quickLinks = [
   { name: 'News Articles', mainTab: 'news-page', subTab: 'news-articles', icon: Newspaper },
   { name: 'Team Members', mainTab: 'about-page', subTab: 'team-members', icon: Users },
   { name: 'Achievements', mainTab: 'about-page', subTab: 'achievements', icon: Award },
-  // Removed 'Events List' quick link as events are now fetched from TBA
+  { name: 'Events List', mainTab: 'events-page', subTab: 'events-list', icon: Calendar }, // New quick link
   { name: 'Robots List', mainTab: 'robots-page', subTab: 'robots-list', icon: Bot },
   { name: 'Sponsors List', mainTab: 'sponsors-page', subTab: 'sponsors-list', icon: Handshake },
   { name: 'Sponsorship Tiers', mainTab: 'sponsors-page', subTab: 'sponsorship-tiers', icon: DollarSign },

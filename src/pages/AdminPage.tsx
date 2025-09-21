@@ -17,6 +17,7 @@ import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
 import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
 import AdminNews from './admin/AdminNews';
+import AdminEvents from './admin/AdminEvents'; // Import the new AdminEvents component
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
@@ -78,7 +79,14 @@ const adminSections: AdminSection[] = [
       { value: 'achievements', label: 'Achievements', icon: Award, component: (settings, onSubmit, isLoading) => <AdminAchievements /> },
     ]
   },
-  // Removed 'events-page' as events are now fetched from TBA
+  {
+    value: 'events-page', // New main tab for events
+    label: 'Events',
+    icon: Calendar,
+    subTabs: [
+      { value: 'events-list', label: 'Events List', icon: Calendar, component: (settings, onSubmit, isLoading) => <AdminEvents /> },
+    ]
+  },
   {
     value: 'robots-page',
     label: 'Robots Page Content',
@@ -300,7 +308,7 @@ const AdminPage: React.FC = () => {
           </div>
         );
       }
-      // For other admin components (e.g., AdminTeamMembers, AdminNews)
+      // For other admin components (e.g., AdminTeamMembers, AdminNews, AdminEvents)
       // These components manage their own data and submission logic, so they don't need websiteSettings, onSubmit, isLoading props
       return currentSubTabComponent(undefined, () => Promise.resolve(), false); // Pass dummy props as they are not used
     }

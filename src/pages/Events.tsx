@@ -4,10 +4,10 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award } from "lucide-react"; // Added Handshake and Award icons
+import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award } from "lucide-react";
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
-import { fetchTBAEventsByYear } from "@/integrations/tba/client"; // Import TBA client
+import { supabase } from "@/integrations/supabase/client"; // Import supabase client
 import {
   Accordion,
   AccordionContent,
@@ -21,38 +21,24 @@ const Events: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAllEvents = async () => {
+    const fetchEventsFromSupabase = async () => {
       setLoading(true);
       setError(null);
-      const currentYear = new Date().getFullYear();
-      const yearsToFetch = [currentYear, currentYear - 1, currentYear - 2]; // Fetch current and past 2 years
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('event_date', { ascending: false });
 
-      try {
-        const allEventsPromises = yearsToFetch.map(year => fetchTBAEventsByYear(year));
-        const results = await Promise.allSettled(allEventsPromises);
-
-        const fetchedEvents: Event[] = [];
-        results.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            fetchedEvents.push(...result.value);
-          } else {
-            console.error(`Error fetching events for year ${yearsToFetch[index]}:`, result.reason);
-            // Optionally, set a more specific error or show a toast
-          }
-        });
-
-        // Sort all fetched events by date descending
-        fetchedEvents.sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime());
-        setEvents(fetchedEvents);
-      } catch (err) {
-        console.error("Overall error fetching events:", err);
-        setError("Failed to load events from The Blue Alliance. Please check your API key and network connection.");
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error('Error fetching events from Supabase:', error);
+        setError('Failed to load events from database.');
+      } else {
+        setEvents(data || []);
       }
+      setLoading(false);
     };
 
-    fetchAllEvents();
+    fetchEventsFromSupabase();
   }, []);
 
   // Group events by year (derived from event_date) and sort by event_date within each year
@@ -173,39 +159,35 @@ const Events: React.FC = () => {
                               More Details
                             </AccordionTrigger>
                             <AccordionContent className="px-3 sm:px-4 pb-3 text-gray-700 text-sm space-y-2">
-                              {event.status && (
-                                <div className="space-y-1">
-                                  {event.status.overall_status_str && (
-                                    <p className="flex items-center">
-                                      <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Overall Status: </span> {event.status.overall_status_str.replace(/<[^>]*>/g, '')}
-                                    </p>
-                                  )}
-                                  {event.status.qual_rank && (
-                                    <p className="flex items-center">
-                                      <Users className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Qualification Rank: </span> {event.status.qual_rank}
-                                    </p>
-                                  )}
-                                  {event.status.record_wins !== null && event.status.record_losses !== null && event.status.record_ties !== null && (
-                                    <p className="flex items-center">
-                                      <Trophy className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Record: </span> {event.status.record_wins}-{event.status.record_losses}-{event.status.record_ties}
-                                    </p>
-                                  )}
-                                  {event.status.alliance_status && (
-                                    <p className="flex items-center">
-                                      <Handshake className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Alliance: </span> {event.status.alliance_status}
-                                    </p>
-                                  )}
-                                  {event.status.playoff_status && (
-                                    <p className="flex items-center">
-                                      <Award className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                      <span className="font-semibold">Playoff Status: </span> {event.status.playoff_status.charAt(0).toUpperCase() + event.status.playoff_status.slice(1)}
-                                    </p>
-                                  )}
-                                </div>
+                              {event.overall_status_str && (
+                                <p className="flex items-center">
+                                  <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                  <span className="font-semibold">Overall Status: </span> {event.overall_status_str.replace(/<[^>]*>/g, '')}
+                                </p>
+                              )}
+                              {event.qual_rank && (
+                                <p className="flex items-center">
+                                  <Users className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                  <span className="font-semibold">Qualification Rank: </span> {event.qual_rank}
+                                </p>
+                              )}
+                              {event.record_wins !== null && event.record_losses !== null && event.record_ties !== null && (
+                                <p className="flex items-center">
+                                  <Trophy className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                  <span className="font-semibold">Record: </span> {event.record_wins}-{event.record_losses}-{event.record_ties}
+                                </p>
+                              )}
+                              {event.alliance_status && (
+                                <p className="flex items-center">
+                                  <Handshake className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                  <span className="font-semibold">Alliance: </span> {event.alliance_status}
+                                </p>
+                              )}
+                              {event.playoff_status && (
+                                <p className="flex items-center">
+                                  <Award className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                  <span className="font-semibold">Playoff Status: </span> {event.playoff_status.charAt(0).toUpperCase() + event.playoff_status.slice(1)}
+                                </p>
                               )}
                               {event.awards && event.awards.length > 0 && (
                                 <div className="mt-2">
@@ -220,7 +202,7 @@ const Events: React.FC = () => {
                                   </div>
                                 </div>
                               )}
-                              {!event.status && (!event.awards || event.awards.length === 0) && (
+                              {!event.overall_status_str && !event.qual_rank && !event.record_wins && !event.alliance_status && !event.playoff_status && (!event.awards || event.awards.length === 0) && (
                                 <p className="text-gray-500">No additional details available.</p>
                               )}
                             </AccordionContent>
