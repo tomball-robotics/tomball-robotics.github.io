@@ -40,7 +40,12 @@ interface AdminSubTab {
   value: string;
   label: string;
   icon: React.ElementType;
-  component: (settings?: WebsiteSettings) => React.ReactNode; // Pass settings to relevant forms
+  // Updated component signature to accept onSubmit and isLoading
+  component: (
+    settings: WebsiteSettings | undefined,
+    onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>,
+    isLoading: boolean
+  ) => React.ReactNode;
 }
 
 const adminSections: AdminSection[] = [
@@ -56,12 +61,12 @@ const adminSections: AdminSection[] = [
     label: 'Home Page Content',
     icon: Home,
     subTabs: [
-      { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'about-preview', label: 'About Preview', icon: Info, component: (settings) => settings ? <WebsiteAboutPreviewSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'events-preview', label: 'Events Preview', icon: Calendar, component: (settings) => settings ? <WebsiteEventsPreviewSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: (settings) => settings ? <WebsiteSponsorsPreviewSettingsForm initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
-      { value: 'award-banners', label: 'Award Banners', icon: Image, component: () => <AdminBanners /> },
-      { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: () => <AdminSlideshowImages /> },
+      { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings, onSubmit, isLoading) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
+      { value: 'about-preview', label: 'About Preview', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <WebsiteAboutPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
+      { value: 'events-preview', label: 'Events Preview', icon: Calendar, component: (settings, onSubmit, isLoading) => settings ? <WebsiteEventsPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
+      { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: (settings, onSubmit, isLoading) => settings ? <WebsiteSponsorsPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
+      { value: 'award-banners', label: 'Award Banners', icon: Image, component: (settings, onSubmit, isLoading) => <AdminBanners /> },
+      { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: (settings, onSubmit, isLoading) => <AdminSlideshowImages /> },
     ]
   },
   {
@@ -69,8 +74,8 @@ const adminSections: AdminSection[] = [
     label: 'About Page Content',
     icon: Info,
     subTabs: [
-      { value: 'team-members', label: 'Team Members', icon: Users, component: () => <AdminTeamMembers /> },
-      { value: 'achievements', label: 'Achievements', icon: Award, component: () => <AdminAchievements /> },
+      { value: 'team-members', label: 'Team Members', icon: Users, component: (settings, onSubmit, isLoading) => <AdminTeamMembers /> },
+      { value: 'achievements', label: 'Achievements', icon: Award, component: (settings, onSubmit, isLoading) => <AdminAchievements /> },
     ]
   },
   {
@@ -78,7 +83,7 @@ const adminSections: AdminSection[] = [
     label: 'Events Page Content',
     icon: Calendar,
     subTabs: [
-      { value: 'events-list', label: 'Events List', icon: Calendar, component: () => <AdminEvents /> },
+      { value: 'events-list', label: 'Events List', icon: Calendar, component: (settings, onSubmit, isLoading) => <AdminEvents /> },
     ]
   },
   {
@@ -86,7 +91,7 @@ const adminSections: AdminSection[] = [
     label: 'Robots Page Content',
     icon: Bot,
     subTabs: [
-      { value: 'robots-list', label: 'Robots List', icon: Bot, component: () => <AdminRobots /> },
+      { value: 'robots-list', label: 'Robots List', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminRobots /> },
     ]
   },
   {
@@ -94,8 +99,8 @@ const adminSections: AdminSection[] = [
     label: 'Sponsors Page Content',
     icon: Handshake,
     subTabs: [
-      { value: 'sponsors-list', label: 'Sponsors List', icon: Handshake, component: () => <AdminSponsors /> },
-      { value: 'sponsorship-tiers', label: 'Sponsorship Tiers', icon: DollarSign, component: () => <AdminSponsorshipTiers /> },
+      { value: 'sponsors-list', label: 'Sponsors List', icon: Handshake, component: (settings, onSubmit, isLoading) => <AdminSponsors /> },
+      { value: 'sponsorship-tiers', label: 'Sponsorship Tiers', icon: DollarSign, component: (settings, onSubmit, isLoading) => <AdminSponsorshipTiers /> },
     ]
   },
   {
@@ -103,8 +108,8 @@ const adminSections: AdminSection[] = [
     label: 'Unitybots Page Content',
     icon: Bot,
     subTabs: [
-      { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: () => <AdminUnitybotResources /> },
-      { value: 'unitybot-initiatives', label: 'Unitybot Initiatives', icon: Bot, component: () => <AdminUnitybotInitiatives /> },
+      { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotResources /> },
+      { value: 'unitybot-initiatives', label: 'Unitybot Initiatives', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotInitiatives /> },
     ]
   },
   {
@@ -112,7 +117,7 @@ const adminSections: AdminSection[] = [
     label: 'Global Settings',
     icon: Settings,
     subTabs: [
-      { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings) => settings ? <AdminFooterSettings initialData={settings} onSubmit={() => {}} isLoading={false} /> : <Spinner /> },
+      { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <AdminFooterSettings initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
     ]
   },
 ];
@@ -206,20 +211,16 @@ const AdminPage: React.FC = () => {
   };
 
   const handleWebsiteSettingsSubmit = async (formData: Partial<WebsiteSettings>) => {
-    console.log('handleWebsiteSettingsSubmit called. formData:', formData);
     setIsSubmittingSettings(true);
-    console.log('isSubmittingSettings set to TRUE');
     const toastId = showLoading('Saving website settings...');
 
     if (!websiteSettings) {
       showError('No settings found to update. Please ensure an initial entry exists and is correctly fetched.');
       dismissToast(toastId);
       setIsSubmittingSettings(false);
-      console.log('isSubmittingSettings set to FALSE (no settings)');
       return;
     }
 
-    console.log('[AdminPage] Attempting to update website settings with ID:', websiteSettings.id, 'Data:', formData);
     const { error } = await supabase
       .from('website_settings')
       .update(formData)
@@ -234,7 +235,6 @@ const AdminPage: React.FC = () => {
       await fetchWebsiteSettings(); // Re-fetch to ensure UI is up-to-date
     }
     setIsSubmittingSettings(false);
-    console.log('isSubmittingSettings set to FALSE (after submission)');
   };
 
   const handleMainTabChange = (value: string) => {
@@ -259,8 +259,6 @@ const AdminPage: React.FC = () => {
 
   const currentSection = adminSections.find(section => section.value === activeMainTab);
   const currentSubTabComponent = currentSection?.subTabs.find(subTab => subTab.value === activeSubTab)?.component;
-
-  console.log('AdminPage render. activeMainTab:', activeMainTab, 'activeSubTab:', activeSubTab, 'isSubmittingSettings:', isSubmittingSettings);
 
   const renderSubpanelContent = () => {
     if (activeMainTab === 'dashboard') {
@@ -292,17 +290,13 @@ const AdminPage: React.FC = () => {
     }
 
     if (currentSubTabComponent) {
-      // For forms that edit WebsiteSettings, pass initialData and onSubmit
-      if (['hero-section', 'about-preview', 'events-preview', 'sponsors-preview', 'footer-settings'].includes(activeSubTab!)) {
-        const FormComponent = currentSubTabComponent as React.FC<{ initialData: WebsiteSettings, onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading: boolean }>;
-        return (
-          <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-            <FormComponent initialData={websiteSettings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} />
-          </div>
-        );
-      }
-      // For other admin components (e.g., AdminEvents, AdminTeamMembers)
-      return currentSubTabComponent(websiteSettings);
+      // For forms that edit WebsiteSettings, pass initialData, onSubmit, and isLoading
+      // The component function now expects these arguments
+      return (
+        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+          {currentSubTabComponent(websiteSettings, handleWebsiteSettingsSubmit, isSubmittingSettings)}
+        </div>
+      );
     }
     return null;
   };
