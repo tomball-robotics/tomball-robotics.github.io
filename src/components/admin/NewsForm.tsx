@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { NewsArticle } from '@/types/supabase';
-import ArrayInputField from './ArrayInputField'; // Reusable component for array inputs
+import ImageArrayUploadField from './ImageArrayUploadField'; // Import the new component
 
 const newsArticleFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -89,15 +89,21 @@ const NewsForm: React.FC<NewsArticleFormProps> = ({ initialData, onSubmit, isLoa
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Content</FormLabel>
+              <FormLabel>Content (Markdown supported)</FormLabel>
               <FormControl>
-                <Textarea placeholder="Write your news article content here" {...field} disabled={isLoading} rows={10} />
+                <Textarea placeholder="Write your news article content here (Markdown supported)" {...field} disabled={isLoading} rows={10} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <ArrayInputField form={form} name="image_urls" label="Image URLs" placeholder="e.g., https://example.com/image.jpg" />
+        <ImageArrayUploadField
+          form={form}
+          name="image_urls"
+          label="Images"
+          bucketName="website-images"
+          folderPath="news_articles"
+        />
 
         <Button type="submit" disabled={isLoading} className="bg-[#d92507] hover:bg-[#b31f06]">
           {isLoading ? 'Saving...' : 'Save Changes'}

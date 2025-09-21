@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { NewsArticle } from '@/types/supabase';
 import Spinner from '@/components/Spinner';
 import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
+import remarkGfm from 'remark-gfm'; // Import remarkGfm for GitHub Flavored Markdown
 
 const NewsArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -109,7 +111,11 @@ const NewsArticlePage: React.FC = () => {
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed" dangerouslySetInnerHTML={{ __html: article.content }} />
+          <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {article.content}
+            </ReactMarkdown>
+          </div>
         </article>
       </motion.main>
       <Footer />
