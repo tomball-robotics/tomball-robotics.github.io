@@ -1,5 +1,6 @@
 import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSupabase } from '@/components/SessionContextProvider';
@@ -32,6 +33,7 @@ const Login: React.FC = () => {
           supabaseClient={supabase}
           providers={[]} // Only email/password
           appearance={{
+            theme: ThemeSupa,
             className: {
               container: 'space-y-4',
               button: 'flex justify-center items-center w-full bg-[#d92507] hover:bg-[#b31f06] text-white font-bold py-2 px-4 rounded-md transition-colors',
@@ -41,7 +43,6 @@ const Login: React.FC = () => {
               message: 'text-sm text-red-600',
             },
           }}
-          theme="light"
           redirectTo={window.location.origin} // Redirect to home after magic link login, router will handle the rest
         />
 
