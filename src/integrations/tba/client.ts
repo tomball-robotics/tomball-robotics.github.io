@@ -1,4 +1,4 @@
-import { Event, TeamEventStatus } from '@/types/supabase'; // Import TeamEventStatus
+import { Event } from '@/types/supabase'; // Import Event (now flattened)
 
 const TBA_BASE_URL = "https://www.thebluealliance.com/api/v3";
 const TBA_AUTH_KEY = import.meta.env.VITE_TBA_AUTH_KEY;
@@ -123,15 +123,15 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
       location: `${detailedEvent.city || ''}${detailedEvent.city && detailedEvent.state_prov ? ', ' : ''}${detailedEvent.state_prov || ''}${detailedEvent.state_prov && detailedEvent.country ? ', ' : ''}${detailedEvent.country || ''}`.trim(),
       awards: detailedEvent.awards ? detailedEvent.awards.map(award => award.name) : [],
       event_date: detailedEvent.start_date,
-      status: teamStatus ? {
-        qual_rank: teamStatus.qual?.ranking?.rank || null,
-        playoff_status: teamStatus.playoff?.status || null,
-        alliance_status: teamStatus.alliance?.name || null, // Using alliance name as status for simplicity
-        overall_status_str: teamStatus.overall_status_str || null,
-        record_wins: teamStatus.qual?.ranking?.record?.wins || null,
-        record_losses: teamStatus.qual?.ranking?.record?.losses || null,
-        record_ties: teamStatus.qual?.ranking?.record?.ties || null,
-      } : null,
+      qual_rank: teamStatus?.qual?.ranking?.rank || null,
+      playoff_status: teamStatus?.playoff?.status || null,
+      alliance_status: teamStatus?.alliance?.name || null, // Using alliance name as status for simplicity
+      overall_status_str: teamStatus?.overall_status_str || null,
+      record_wins: teamStatus?.qual?.ranking?.record?.wins || null,
+      record_losses: teamStatus?.qual?.ranking?.record?.losses || null,
+      record_ties: teamStatus?.qual?.ranking?.record?.ties || null,
+      created_at: new Date().toISOString(), // Add default created_at
+      updated_at: new Date().toISOString(), // Add default updated_at
     }));
   } catch (error) {
     console.error(`Error fetching TBA events for year ${year}:`, error);

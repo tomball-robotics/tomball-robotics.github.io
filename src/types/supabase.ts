@@ -1,4 +1,10 @@
-export interface TeamEventStatus {
+export interface Event {
+  id: string;
+  name: string;
+  location: string;
+  awards: string[] | null;
+  event_date: string; // ISO string for date
+  // Flattened status fields
   qual_rank: number | null;
   playoff_status: string | null; // e.g., "eliminated in quarterfinals"
   alliance_status: string | null; // e.g., "captain"
@@ -6,15 +12,8 @@ export interface TeamEventStatus {
   record_wins: number | null;
   record_losses: number | null;
   record_ties: number | null;
-}
-
-export interface Event {
-  id: string;
-  name: string;
-  location: string;
-  awards: string[] | null;
-  event_date: string; // ISO string for date
-  status: TeamEventStatus | null; // New field for team's status at this event
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Sponsor {
