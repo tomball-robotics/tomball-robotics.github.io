@@ -15,12 +15,12 @@ import AdminAchievements from './admin/AdminAchievements';
 import AdminBanners from './admin/AdminBanners';
 import AdminSlideshowImages from './admin/AdminSlideshowImages';
 import AdminFooterSettings from './admin/AdminFooterSettings';
-import AdminUnitybotResources from './admin/AdminUnitybotResources'; // New import
-import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives'; // New import
-import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm'; // New import
-import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm'; // New import
-import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm'; // New import
-import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm'; // New import
+import AdminUnitybotResources from './admin/AdminUnitybotResources';
+import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
+import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
+import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
+import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
+import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import Spinner from '@/components/Spinner';
 import { supabase } from '@/integrations/supabase/client';
@@ -152,7 +152,10 @@ const AdminPage: React.FC = () => {
       .limit(1)
       .single();
 
-    if (error) {
+    if (error && error.code === 'PGRST116') { // No rows found
+      console.warn('No website settings found. Initializing default settings.');
+      await initializeDefaultWebsiteSettings();
+    } else if (error) {
       console.error('Error fetching website settings:', error);
       setSettingsError('Failed to load website settings. Please ensure there is exactly one entry in the "website_settings" table.');
       setWebsiteSettings(null);
@@ -160,6 +163,46 @@ const AdminPage: React.FC = () => {
       setWebsiteSettings(data);
     }
     setSettingsLoading(false);
+  };
+
+  const initializeDefaultWebsiteSettings = async () => {
+    const defaultSettings: Partial<WebsiteSettings> = {
+      hero_title: "Welcome to Tomball Robotics",
+      hero_subtitle: "Building the future of STEM, one robot at a time.",
+      hero_background_image: "/images/general/hero-background.jpeg",
+      about_preview_title: "About Our Team",
+      about_preview_description: "Tomball T3 Robotics, FRC Team 7312, is dedicated to inspiring young minds in science, technology, engineering, and mathematics (STEM) through participation in the FIRST Robotics Competition.",
+      about_preview_image_url: "/images/general/indexcollage.jpg",
+      events_preview_title: "Our Latest Events",
+      events_preview_description: "Discover our recent competitions, awards, and community outreach activities.",
+      sponsors_preview_title: "Our Valued Sponsors",
+      sponsors_preview_description: "We are grateful for the generous support of our sponsors who make our mission possible.",
+      footer_address: "30330 Quinn Road, Tomball, Texas",
+      footer_email: "t3teamad@gmail.com",
+      social_media_links: [
+        { type: 'facebook', url: "https://www.facebook.com/people/T3-Robotics/100061038300043/" },
+        { type: 'instagram', url: "https://www.instagram.com/frc7312/" },
+        { type: 'youtube', url: "https://www.youtube.com/@FRC7312?app=desktop" },
+        { type: 'x', url: "https://twitter.com/frc7312" },
+      ],
+    };
+
+    const toastId = showLoading('Initializing default website settings...');
+    const { data, error } = await supabase
+      .from('website_settings')
+      .insert([defaultSettings])
+      .select()
+      .single();
+
+    dismissToast(toastId);
+    if (error) {
+      console.error('Error inserting default website settings:', error);
+      showError(`Failed to initialize default settings: ${error.message}`);
+      setSettingsError('Failed to initialize default website settings.');
+    } else {
+      showSuccess('Default website settings initialized!');
+      setWebsiteSettings(data);
+    }
   };
 
   const handleWebsiteSettingsSubmit = async (formData: Partial<WebsiteSettings>) => {
@@ -233,7 +276,10 @@ const AdminPage: React.FC = () => {
     if (!websiteSettings) {
       return (
         <div className="text-center p-4">
-          <p className="text-lg text-gray-600">No website settings found. Please ensure an initial entry exists in your Supabase `website_settings` table.</p>
+          <p className="text-lg text-gray-600 mb-4">No website settings found. Please initialize them to manage content.</p>
+          <Button onClick={initializeDefaultWebsiteSettings} className="bg-[#d92507] hover:bg-[#b31f06]">
+            Initialize Website Settings
+          </Button>
         </div>
       );
     }
