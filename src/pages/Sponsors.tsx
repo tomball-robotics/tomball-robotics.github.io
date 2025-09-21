@@ -8,8 +8,18 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Sponsor, SponsorshipTier } from "@/types/supabase";
+import Spinner from "@/components/Spinner";
 
-const MIN_TIER_AMOUNT = 500; // Define the threshold for "Other Sponsors"
+const tierConfig: { [key: string]: { cardClass: string; imageContainerClass: string; showDescription: boolean; showName: boolean; showWebsiteButton: boolean } } = {
+  diamond: { cardClass: 'w-full md:w-3/4 lg:w-2/3', imageContainerClass: 'h-64', showDescription: true, showName: true, showWebsiteButton: true },
+  sapphire: { cardClass: 'w-full md:w-[calc(50%-1rem)]', imageContainerClass: 'h-56', showDescription: true, showName: true, showWebsiteButton: true },
+  platinum: { cardClass: 'w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]', imageContainerClass: 'h-48', showDescription: true, showName: true, showWebsiteButton: true },
+  gold: { cardClass: 'w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.333rem)] lg:w-[calc(25%-1.5rem)]', imageContainerClass: 'h-40', showDescription: false, showName: true, showWebsiteButton: true },
+  silver: { cardClass: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] md:w-[calc(25%-1.5rem)] lg:w-[calc(20%-1.6rem)]', imageContainerClass: 'h-32', showDescription: false, showName: true, showWebsiteButton: false },
+  bronze: { cardClass: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] md:w-[calc(25%-1.5rem)] lg:w-[calc(20%-1.6rem)]', imageContainerClass: 'h-24', showDescription: false, showName: false, showWebsiteButton: false },
+};
+
+const MIN_TIER_AMOUNT = 500;
 
 const Sponsors: React.FC = () => {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -23,11 +33,11 @@ const Sponsors: React.FC = () => {
       const { data: sponsorsData, error: sponsorsError } = await supabase
         .from("sponsors")
         .select("*")
-        .order("amount", { ascending: false }); // Order by amount for tiering
+        .order("amount", { ascending: false });
 
       const { data: tiersData, error: tiersError } = await supabase
         .from("sponsorship_tiers")
-        .select("*"); // Fetch without DB sorting, will sort client-side
+        .select("*");
 
       if (sponsorsError) {
         console.error("Error fetching sponsors:", sponsorsError);
@@ -37,7 +47,6 @@ const Sponsors: React.FC = () => {
         setError("Failed to load sponsorship tiers.");
       } else {
         setSponsors(sponsorsData || []);
-        // Client-side sort tiers by numeric price in descending order
         const sortedTiers = (tiersData || []).sort((a, b) => {
           const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
           const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
@@ -51,108 +60,24 @@ const Sponsors: React.FC = () => {
     fetchData();
   }, []);
 
-  const tierOrder = ["diamond", "sapphire", "platinum", "gold", "silver", "bronze"];
-  const tierStyles: { [key: string]: string } = {
-    diamond: "text-cyan-400",
-    sapphire: "text-blue-500",
-    platinum: "text-slate-400",
-    gold: "text-yellow-500",
-    silver: "text-gray-500",
-    bronze: "text-orange-700",
-  };
-
-  // Helper function to determine tier from amount
-  const getTierForAmount = (amount: number): string => {
+  const getTierForAmount = (amount: number): SponsorshipTier | null => {
     for (const tier of sponsorshipTiers) {
-      // Extract numeric value from price string (e.g., "$50,000" -> 50000)
       const threshold = parseInt(tier.price.replace(/[^0-9]/g, ''), 10);
       if (amount >= threshold) {
-        return tier.tier_id;
+        return tier;
       }
     }
-    return ""; // Default if no tier matches
+    return null;
   };
 
   const listVariants = {
-    visible: {
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
+    visible: { transition: { staggerChildren: 0.1 } },
     hidden: {},
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        duration: 0.8,
-      },
-    },
-  };
-
-  const renderSponsors = (filteredSponsors: Sponsor[], sectionTitle: string, titleColorClass: string) => {
-    if (filteredSponsors.length === 0) return null;
-
-    return (
-      <motion.div
-        className="mb-10"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <h2 className={`text-4xl font-bold text-center mb-8 ${titleColorClass}`}>
-          {sectionTitle}
-        </h2>
-        <motion.div
-          className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto"
-          variants={listVariants}
-        >
-          {filteredSponsors.map((sponsor) => (
-            <motion.div
-              key={sponsor.id}
-              variants={itemVariants}
-              className="w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.666rem)]"
-            >
-              <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
-                {sponsor.image_url && (
-                  <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60]">
-                    <img
-                      src={sponsor.image_url}
-                      alt={sponsor.name}
-                      className={
-                        sponsor.image_fit === 'cover'
-                          ? 'w-full h-full object-cover'
-                          : 'max-h-full max-w-full object-contain p-4'
-                      }
-                    />
-                  </div>
-                )}
-                <CardHeader className="p-4 text-center">
-                  <CardTitle className="text-2xl font-bold text-[#d92507]">{sponsor.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
-                  <div>
-                    {sponsor.description && <p className="text-gray-700">{sponsor.description}</p>}
-                    {sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
-                  </div>
-                  {sponsor.website_url && (
-                    <Button asChild className="mt-4 bg-[#0d2f60] hover:bg-[#0a244a] text-white">
-                      <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer">
-                        Visit Website <ExternalLink className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
-    );
+    visible: { opacity: 1, y: 0, transition: { type: "spring", duration: 0.8 } },
   };
 
   if (loading) {
@@ -160,7 +85,7 @@ const Sponsors: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-gray-600">Loading sponsors...</p>
+          <Spinner text="Loading sponsors..." />
         </main>
         <Footer />
       </div>
@@ -179,11 +104,21 @@ const Sponsors: React.FC = () => {
     );
   }
 
-  // Separate sponsors into tiered and other
   const tieredSponsors = sponsors.filter(s => s.amount >= MIN_TIER_AMOUNT);
   const otherSponsors = sponsors.filter(s => s.amount < MIN_TIER_AMOUNT);
   const otherSponsorsWithLogo = otherSponsors.filter(s => s.image_url && s.image_url.trim() !== '' && !s.image_url.includes('placeholder'));
   const otherSponsorsWithoutLogo = otherSponsors.filter(s => !s.image_url || s.image_url.trim() === '' || s.image_url.includes('placeholder'));
+
+  const sponsorsByTier = tieredSponsors.reduce((acc, sponsor) => {
+    const tier = getTierForAmount(sponsor.amount);
+    if (tier) {
+      if (!acc[tier.tier_id]) {
+        acc[tier.tier_id] = [];
+      }
+      acc[tier.tier_id].push(sponsor);
+    }
+    return acc;
+  }, {} as Record<string, Sponsor[]>);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -196,46 +131,124 @@ const Sponsors: React.FC = () => {
       >
         <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">Our Valued Sponsors</h1>
 
-        {tierOrder.map(tierId => {
-          const filteredSponsors = tieredSponsors.filter(s => getTierForAmount(s.amount) === tierId);
-          const tierName = sponsorshipTiers.find(t => t.tier_id === tierId)?.name || tierId;
-          return renderSponsors(filteredSponsors, `${tierName} Sponsors`, tierStyles[tierId]);
+        {sponsorshipTiers.map(tier => {
+          const sponsorsInTier = sponsorsByTier[tier.tier_id];
+          if (!sponsorsInTier || sponsorsInTier.length === 0) return null;
+
+          const config = tierConfig[tier.tier_id] || tierConfig.gold; // Default to gold style
+
+          return (
+            <motion.div
+              key={tier.id}
+              className="mb-16"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <h2 className={`text-4xl font-bold text-center mb-8 ${tier.color}`}>
+                {tier.name} Sponsors
+              </h2>
+              <motion.div
+                className="flex flex-wrap justify-center items-stretch gap-4"
+                variants={listVariants}
+              >
+                {sponsorsInTier.map(sponsor => (
+                  <motion.div
+                    key={sponsor.id}
+                    variants={itemVariants}
+                    className={config.cardClass}
+                  >
+                    <Card className="h-full flex flex-col items-center text-center p-0 shadow-lg rounded-lg bg-white overflow-hidden">
+                      {sponsor.image_url && (
+                        <div className={`w-full flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] ${config.imageContainerClass}`}>
+                          <img
+                            src={sponsor.image_url}
+                            alt={sponsor.name}
+                            className={
+                              sponsor.image_fit === 'cover'
+                                ? 'w-full h-full object-cover'
+                                : 'max-h-full max-w-full object-contain p-4'
+                            }
+                          />
+                        </div>
+                      )}
+                      <CardContent className="p-4 pt-2 flex-grow flex flex-col justify-between w-full">
+                        <div>
+                          {config.showName && <CardTitle className="text-2xl font-bold text-[#d92507] mt-2">{sponsor.name}</CardTitle>}
+                          {config.showDescription && sponsor.description && <p className="text-gray-700 mt-2">{sponsor.description}</p>}
+                          {config.showDescription && sponsor.notes && <p className="text-gray-500 text-sm mt-2">({sponsor.notes})</p>}
+                        </div>
+                        {config.showWebsiteButton && sponsor.website_url && (
+                          <Button asChild className="mt-4 bg-[#0d2f60] hover:bg-[#0a244a] text-white">
+                            <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer">
+                              Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          );
         })}
 
-        {/* Render "Other Sponsors" with logos using the existing large card format */}
-        {renderSponsors(otherSponsorsWithLogo, "Other Sponsors", "text-gray-700")}
-
-        {/* Render "Other Sponsors" without logos in a more compact format */}
-        {otherSponsorsWithoutLogo.length > 0 && (
-            <motion.div
-                className="mb-10"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-            >
-                {/* Only show this title if there were no sponsors with logos in this section */}
-                {otherSponsorsWithLogo.length === 0 && (
-                    <h2 className="text-4xl font-bold text-center mb-8 text-gray-700">
-                        Other Sponsors
-                    </h2>
-                )}
-                <motion.div
-                    className="max-w-4xl mx-auto"
-                    variants={listVariants}
-                >
-                    <Card className="shadow-lg">
-                        <CardContent className="p-8">
-                            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
-                                {otherSponsorsWithoutLogo.map((sponsor) => (
-                                    <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
-                                        {sponsor.name}
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </CardContent>
+        {/* Other Sponsors */}
+        {(otherSponsorsWithLogo.length > 0 || otherSponsorsWithoutLogo.length > 0) && (
+          <motion.div
+            className="mb-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <h2 className="text-4xl font-bold text-center mb-8 text-gray-700">
+              Other Sponsors
+            </h2>
+            {otherSponsorsWithLogo.length > 0 && (
+              <motion.div
+                className="flex flex-wrap justify-center items-stretch gap-4 mb-8"
+                variants={listVariants}
+              >
+                {otherSponsorsWithLogo.map(sponsor => (
+                  <motion.div key={sponsor.id} variants={itemVariants} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] md:w-[calc(25%-1.5rem)] lg:w-[calc(20%-1.6rem)]">
+                    <Card className="h-full flex flex-col items-center text-center p-2 shadow-lg rounded-lg bg-white overflow-hidden">
+                      {sponsor.image_url && (
+                        <div className="w-full flex items-center justify-center bg-gray-50 rounded-t-lg h-24">
+                          <img
+                            src={sponsor.image_url}
+                            alt={sponsor.name}
+                            className="max-h-full max-w-full object-contain p-2"
+                          />
+                        </div>
+                      )}
+                      <CardContent className="p-2 w-full">
+                        <p className="text-md font-bold text-[#d92507] truncate">{sponsor.name}</p>
+                      </CardContent>
                     </Card>
-                </motion.div>
-            </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+            {otherSponsorsWithoutLogo.length > 0 && (
+              <motion.div
+                className="max-w-4xl mx-auto"
+                variants={listVariants}
+              >
+                <Card className="shadow-lg">
+                  <CardContent className="p-8">
+                    <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+                      {otherSponsorsWithoutLogo.map((sponsor) => (
+                        <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
+                          {sponsor.name}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </motion.div>
         )}
 
         {sponsors.length === 0 && (
