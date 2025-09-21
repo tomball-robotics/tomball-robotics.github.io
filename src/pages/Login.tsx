@@ -32,15 +32,17 @@ const Login: React.FC = () => {
         <Auth
           supabaseClient={supabase}
           providers={[]} // Only email/password
+          view="sign_in"
+          showLinks={false}
           appearance={{
             theme: ThemeSupa,
-            className: {
-              container: 'space-y-4',
-              button: 'flex justify-center items-center w-full bg-[#d92507] hover:bg-[#b31f06] text-white font-bold py-2 px-4 rounded-md transition-colors',
-              input: 'block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0d2f60] focus:border-[#0d2f60]',
-              label: 'block text-sm font-medium text-gray-700',
-              anchor: 'text-sm text-[#0d2f60] hover:underline',
-              message: 'text-sm text-red-600',
+            variables: {
+              default: {
+                colors: {
+                  brand: '#0d2f60',
+                  brandAccent: '#d92507',
+                },
+              },
             },
           }}
           redirectTo={window.location.origin} // Redirect to home after magic link login, router will handle the rest
