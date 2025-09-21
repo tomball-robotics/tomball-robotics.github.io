@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Trophy, Flag } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Event } from "@/types/supabase";
-import Spinner from "@/components/Spinner"; // Import Spinner
+import Spinner from "@/components/Spinner";
+import { fetchTBAEventsByYear } from "@/integrations/tba/client"; // Import TBA client
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -15,23 +15,38 @@ const Events: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchAllEvents = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .order("event_date", { ascending: false }); // Order solely by event_date
+      setError(null);
+      const currentYear = new Date().getFullYear();
+      const yearsToFetch = [currentYear, currentYear - 1, currentYear - 2]; // Fetch current and past 2 years
 
-      if (error) {
-        console.error("Error fetching events:", error);
-        setError("Failed to load events.");
-      } else {
-        setEvents(data || []);
+      try {
+        const allEventsPromises = yearsToFetch.map(year => fetchTBAEventsByYear(year));
+        const results = await Promise.allSettled(allEventsPromises);
+
+        const fetchedEvents: Event[] = [];
+        results.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            fetchedEvents.push(...result.value);
+          } else {
+            console.error(`Error fetching events for year ${yearsToFetch[index]}:`, result.reason);
+            // Optionally, set a more specific error or show a toast
+          }
+        });
+
+        // Sort all fetched events by date descending
+        fetchedEvents.sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime());
+        setEvents(fetchedEvents);
+      } catch (err) {
+        console.error("Overall error fetching events:", err);
+        setError("Failed to load events from The Blue Alliance. Please check your API key and network connection.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    fetchEvents();
+    fetchAllEvents();
   }, []);
 
   // Group events by year (derived from event_date) and sort by event_date within each year

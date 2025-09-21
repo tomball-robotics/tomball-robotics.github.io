@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Newspaper } from "lucide-react";
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchTBAEventsByYear } from "@/integrations/tba/client"; // Import TBA client
 import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import ReactMarkdown from 'react-markdown';
@@ -30,12 +31,21 @@ const Index: React.FC = () => {
         .limit(1)
         .single();
 
-      const { data: eventsData, error: eventsError } = await supabase
-        .from("events")
-        .select("*")
-        .order("year", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(3);
+      // Fetch latest events from TBA
+      const currentYear = new Date().getFullYear();
+      let eventsData: Event[] = [];
+      let eventsError: Error | null = null;
+      try {
+        eventsData = await fetchTBAEventsByYear(currentYear);
+        // If current year has no events, try previous year
+        if (eventsData.length === 0 && currentYear > 2018) { // Assuming team founded in 2018
+          eventsData = await fetchTBAEventsByYear(currentYear - 1);
+        }
+        eventsData = eventsData.sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime()).slice(0, 3);
+      } catch (err) {
+        console.error("Error fetching latest events from TBA:", err);
+        eventsError = err as Error;
+      }
 
       const { data: sponsorsData, error: sponsorsError } = await supabase
         .from("sponsors")
@@ -54,8 +64,7 @@ const Index: React.FC = () => {
         console.error("Error fetching website settings:", settingsError);
         setError("Failed to load home page settings.");
       } else if (eventsError) {
-        console.error("Error fetching latest events:", eventsError);
-        setError("Failed to load latest events.");
+        setError("Failed to load latest events from The Blue Alliance.");
       } else if (sponsorsError) {
         console.error("Error fetching featured sponsors:", sponsorsError);
         setError("Failed to load featured sponsors.");
@@ -294,7 +303,7 @@ const Index: React.FC = () => {
                 <motion.div key={event.id} className="w-full md:w-[45%] lg:w-[30%]" variants={itemVariants}>
                   <Card className="text-left shadow-lg bg-white flex flex-col h-full">
                     <CardHeader className="bg-[#d92507] text-white p-4">
-                      <p className="font-semibold">{event.year}</p>
+                      <p className="font-semibold">{new Date(event.event_date).getFullYear()}</p>
                       <CardTitle className="text-xl">{event.name}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 flex-grow">

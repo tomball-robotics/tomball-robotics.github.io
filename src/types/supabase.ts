@@ -2,10 +2,8 @@ export interface Event {
   id: string;
   name: string;
   location: string;
-  awards: string[] | null; // Supabase TEXT[] can be null
-  event_date: string; // Added new field for event date
-  created_at: string;
-  updated_at: string;
+  awards: string[] | null;
+  event_date: string; // ISO string for date
 }
 
 export interface Sponsor {

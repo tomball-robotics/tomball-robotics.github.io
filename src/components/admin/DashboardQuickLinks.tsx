@@ -13,10 +13,10 @@ const quickLinks = [
   { name: 'Sponsors Page Preview', mainTab: 'home-page', subTab: 'sponsors-preview', icon: Handshake },
   { name: 'Award Banners', mainTab: 'home-page', subTab: 'award-banners', icon: Image },
   { name: 'Slideshow Images', mainTab: 'home-page', subTab: 'slideshow-images', icon: Images },
-  { name: 'News Articles', mainTab: 'news-page', subTab: 'news-articles', icon: Newspaper }, // New quick link
+  { name: 'News Articles', mainTab: 'news-page', subTab: 'news-articles', icon: Newspaper },
   { name: 'Team Members', mainTab: 'about-page', subTab: 'team-members', icon: Users },
   { name: 'Achievements', mainTab: 'about-page', subTab: 'achievements', icon: Award },
-  { name: 'Events List', mainTab: 'events-page', subTab: 'events-list', icon: Calendar },
+  // Removed 'Events List' quick link as events are now fetched from TBA
   { name: 'Robots List', mainTab: 'robots-page', subTab: 'robots-list', icon: Bot },
   { name: 'Sponsors List', mainTab: 'sponsors-page', subTab: 'sponsors-list', icon: Handshake },
   { name: 'Sponsorship Tiers', mainTab: 'sponsors-page', subTab: 'sponsorship-tiers', icon: DollarSign },

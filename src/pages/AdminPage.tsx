@@ -6,7 +6,6 @@ import { useSupabase } from '@/components/SessionContextProvider';
 import { Button } from '@/components/ui/button';
 import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AdminEvents from './admin/AdminEvents';
 import AdminSponsors from './admin/AdminSponsors';
 import AdminTeamMembers from './admin/AdminTeamMembers';
 import AdminSponsorshipTiers from './admin/AdminSponsorshipTiers';
@@ -17,7 +16,7 @@ import AdminSlideshowImages from './admin/AdminSlideshowImages';
 import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
 import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
-import AdminNews from './admin/AdminNews'; // Import the new AdminNews component
+import AdminNews from './admin/AdminNews';
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
@@ -79,14 +78,7 @@ const adminSections: AdminSection[] = [
       { value: 'achievements', label: 'Achievements', icon: Award, component: (settings, onSubmit, isLoading) => <AdminAchievements /> },
     ]
   },
-  {
-    value: 'events-page',
-    label: 'Events Page Content',
-    icon: Calendar,
-    subTabs: [
-      { value: 'events-list', label: 'Events List', icon: Calendar, component: (settings, onSubmit, isLoading) => <AdminEvents /> },
-    ]
-  },
+  // Removed 'events-page' as events are now fetched from TBA
   {
     value: 'robots-page',
     label: 'Robots Page Content',
@@ -114,7 +106,7 @@ const adminSections: AdminSection[] = [
     ]
   },
   {
-    value: 'news-page', // New main tab for News
+    value: 'news-page',
     label: 'News',
     icon: Newspaper,
     subTabs: [
@@ -290,7 +282,7 @@ const AdminPage: React.FC = () => {
     if (!websiteSettings) {
       return (
         <div className="text-center p-4">
-          <p className="text-lg text-gray-600 mb-4">No website settings found. Please initialize them to manage content.</p>
+          <p className="text-lg text-gray-600 mb-4">No website settings found. Please ensure an initial entry exists in your Supabase `website_settings` table.</p>
           <Button onClick={initializeDefaultWebsiteSettings} className="bg-[#d92507] hover:bg-[#b31f06]">
             Initialize Website Settings
           </Button>
@@ -308,7 +300,7 @@ const AdminPage: React.FC = () => {
           </div>
         );
       }
-      // For other admin components (e.g., AdminEvents, AdminTeamMembers, AdminNews)
+      // For other admin components (e.g., AdminTeamMembers, AdminNews)
       // These components manage their own data and submission logic, so they don't need websiteSettings, onSubmit, isLoading props
       return currentSubTabComponent(undefined, () => Promise.resolve(), false); // Pass dummy props as they are not used
     }
