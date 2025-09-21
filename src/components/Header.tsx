@@ -8,7 +8,7 @@ import { useSupabase } from "@/components/SessionContextProvider";
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "News", path: "/news" }, // New News link
+  { name: "News", path: "/news" }, // Now links to the NewsIndex page
   { name: "Sponsors", path: "/sponsors" },
   { name: "Donate", path: "/donate" },
   { name: "Events", path: "/events" },

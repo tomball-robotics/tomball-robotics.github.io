@@ -1,0 +1,139 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { supabase } from '@/integrations/supabase/client';
+import { NewsArticle } from '@/types/supabase';
+import Spinner from '@/components/Spinner';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const NewsIndex: React.FC = () => {
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchNewsArticles = async () => {
+      setLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('*')
+        .order('publish_date', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching news articles:', error);
+        setError('Failed to load news articles.');
+      } else {
+        setNewsArticles(data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchNewsArticles();
+  }, []);
+
+  const listVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+    hidden: {},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+      },
+    },
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <Spinner text="Loading news..." />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
+          <p className="text-lg text-red-600">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex-grow container mx-auto px-4 py-12 pt-24"
+      >
+        <h1 className="text-5xl font-extrabold text-[#0d2f60] text-center mb-12">All News & Updates</h1>
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {newsArticles.length > 0 ? (
+            newsArticles.map((article) => (
+              <motion.div key={article.id} variants={itemVariants}>
+                <Card className="text-left shadow-lg bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
+                  {article.image_urls && article.image_urls.length > 0 && (
+                    <img
+                      src={article.image_urls[0]}
+                      alt={article.title}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                  )}
+                  <CardHeader className="p-4">
+                    <p className="font-semibold text-gray-500 text-sm">{new Date(article.publish_date).toLocaleDateString()}</p>
+                    <CardTitle className="text-xl text-[#0d2f60]">{article.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
+                    <p className="text-gray-700 mb-4 line-clamp-3">{article.content}</p>
+                    <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06]">
+                      <Link to={`/news/${article.id}`}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-600 text-xl mt-8">
+              No news articles to display yet. Check back soon!
+            </div>
+          )}
+        </motion.div>
+      </motion.main>
+      <Footer />
+    </div>
+  );
+};
+
+export default NewsIndex;
