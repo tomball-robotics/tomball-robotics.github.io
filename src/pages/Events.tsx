@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award, GitPullRequestArrow } from "lucide-react"; // Added GitPullRequestArrow for alliance
+import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react"; // Added ListOrdered for rank, ShieldCheck for playoff status
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client"; // Import supabase client
@@ -160,32 +160,32 @@ const Events: React.FC = () => {
                             </AccordionTrigger>
                             <AccordionContent className="px-3 sm:px-4 pb-3 text-gray-700 text-sm space-y-2">
                               {event.overall_status_str && (
-                                <div className="flex items-start">
-                                  <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
+                                <div className="flex items-start space-x-2">
+                                  <CalendarDays className="h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
                                   <p><span className="font-semibold">Overall Status: </span> {event.overall_status_str.replace(/<[^>]*>/g, '')}</p>
                                 </div>
                               )}
                               {event.qual_rank !== null && (
-                                <p className="flex items-center">
-                                  <Users className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                <p className="flex items-center space-x-2">
+                                  <ListOrdered className="h-4 w-4 text-[#0d2f60]" />
                                   <span className="font-semibold">Qualification Rank: </span> {event.qual_rank}
                                 </p>
                               )}
                               {event.record_wins !== null && event.record_losses !== null && event.record_ties !== null && (
-                                <p className="flex items-center">
-                                  <Trophy className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                <p className="flex items-center space-x-2">
+                                  <Trophy className="h-4 w-4 text-[#0d2f60]" />
                                   <span className="font-semibold">Record: </span> {event.record_wins}-{event.record_losses}-{event.record_ties}
                                 </p>
                               )}
                               {event.alliance_status && (
-                                <p className="flex items-center">
-                                  <GitPullRequestArrow className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                <p className="flex items-center space-x-2">
+                                  <GitPullRequestArrow className="h-4 w-4 text-[#0d2f60]" />
                                   <span className="font-semibold">Alliance: </span> {event.alliance_status}
                                 </p>
                               )}
                               {event.playoff_status && (
-                                <p className="flex items-center">
-                                  <Award className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                <p className="flex items-center space-x-2">
+                                  <ShieldCheck className="h-4 w-4 text-[#0d2f60]" />
                                   <span className="font-semibold">Playoff Status: </span> {event.playoff_status.charAt(0).toUpperCase() + event.playoff_status.slice(1)}
                                 </p>
                               )}
