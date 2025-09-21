@@ -91,13 +91,15 @@ const AdminWebsiteSettings: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-4xl mx-auto */}
-      <h2 className="text-3xl font-bold text-[#0d2f60] mb-6">Edit Website Settings</h2>
-      <WebsiteSettingsForm
-        initialData={settings}
-        onSubmit={handleSubmit}
-        isLoading={isSubmitting}
-      />
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-4xl mx-auto"> {/* Inner wrapper for centering content */}
+        <h2 className="text-3xl font-bold text-[#0d2f60] mb-6">Edit Website Settings</h2>
+        <WebsiteSettingsForm
+          initialData={settings}
+          onSubmit={handleSubmit}
+          isLoading={isSubmitting}
+        />
+      </div>
     </div>
   );
 };

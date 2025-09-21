@@ -243,69 +243,71 @@ const AdminUnitybots: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
-      {/* Unitybot Resources Section */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Unitybot Resources</h2>
-          <Dialog open={isResourceFormOpen} onOpenChange={setIsResourceFormOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleAddResource} className="bg-[#d92507] hover:bg-[#b31f06]">
-                <PlusCircle className="mr-2 h-4 w-4" /> Add Resource
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>{editingResource ? 'Edit Resource' : 'Add New Resource'}</DialogTitle>
-              </DialogHeader>
-              <UnitybotResourceForm
-                initialData={editingResource}
-                onSubmit={handleSubmitResource}
-                isLoading={isSubmittingResource}
-              />
-            </DialogContent>
-          </Dialog>
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+        {/* Unitybot Resources Section */}
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Unitybot Resources</h2>
+            <Dialog open={isResourceFormOpen} onOpenChange={setIsResourceFormOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={handleAddResource} className="bg-[#d92507] hover:bg-[#b31f06]">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Resource
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>{editingResource ? 'Edit Resource' : 'Add New Resource'}</DialogTitle>
+                </DialogHeader>
+                <UnitybotResourceForm
+                  initialData={editingResource}
+                  onSubmit={handleSubmitResource}
+                  isLoading={isSubmittingResource}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+          <DataTable
+            data={resources}
+            columns={resourceColumns}
+            onEdit={handleEditResource}
+            onDelete={handleDeleteResource}
+            getKey={(resource) => resource.id}
+          />
         </div>
-        <DataTable
-          data={resources}
-          columns={resourceColumns}
-          onEdit={handleEditResource}
-          onDelete={handleDeleteResource}
-          getKey={(resource) => resource.id}
-        />
-      </div>
 
-      <Separator className="my-8" />
+        <Separator className="my-8" />
 
-      {/* Unitybot Initiatives Section */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Unitybot Initiatives</h2>
-          <Dialog open={isInitiativeFormOpen} onOpenChange={setIsInitiativeFormOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleAddInitiative} className="bg-[#d92507] hover:bg-[#b31f06]">
-                <PlusCircle className="mr-2 h-4 w-4" /> Add Initiative
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>{editingInitiative ? 'Edit Initiative' : 'Add New Initiative'}</DialogTitle>
-              </DialogHeader>
-              <UnitybotInitiativeForm
-                initialData={editingInitiative}
-                onSubmit={handleSubmitInitiative}
-                isLoading={isSubmittingInitiative}
-              />
-            </DialogContent>
-          </Dialog>
+        {/* Unitybot Initiatives Section */}
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Unitybot Initiatives</h2>
+            <Dialog open={isInitiativeFormOpen} onOpenChange={setIsInitiativeFormOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={handleAddInitiative} className="bg-[#d92507] hover:bg-[#b31f06]">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Initiative
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>{editingInitiative ? 'Edit Initiative' : 'Add New Initiative'}</DialogTitle>
+                </DialogHeader>
+                <UnitybotInitiativeForm
+                  initialData={editingInitiative}
+                  onSubmit={handleSubmitInitiative}
+                  isLoading={isSubmittingInitiative}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+          <DataTable
+            data={initiatives}
+            columns={initiativeColumns}
+            onEdit={handleEditInitiative}
+            onDelete={handleDeleteInitiative}
+            getKey={(initiative) => initiative.id}
+          />
         </div>
-        <DataTable
-          data={initiatives}
-          columns={initiativeColumns}
-          onEdit={handleEditInitiative}
-          onDelete={handleDeleteInitiative}
-          getKey={(initiative) => initiative.id}
-        />
       </div>
     </div>
   );

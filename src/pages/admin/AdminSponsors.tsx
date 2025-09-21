@@ -138,35 +138,37 @@ const AdminSponsors: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Sponsors</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddSponsor} className="bg-[#d92507] hover:bg-[#b31f06]">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Sponsor
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{editingSponsor ? 'Edit Sponsor' : 'Add New Sponsor'}</DialogTitle>
-            </DialogHeader>
-            <SponsorForm
-              initialData={editingSponsor}
-              onSubmit={handleSubmit}
-              isLoading={isSubmitting}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Sponsors</h2>
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAddSponsor} className="bg-[#d92507] hover:bg-[#b31f06]">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Sponsor
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>{editingSponsor ? 'Edit Sponsor' : 'Add New Sponsor'}</DialogTitle>
+              </DialogHeader>
+              <SponsorForm
+                initialData={editingSponsor}
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-      <DataTable
-        data={sponsors}
-        columns={sponsorColumns}
-        onEdit={handleEditSponsor}
-        onDelete={handleDeleteSponsor}
-        getKey={(sponsor) => sponsor.id}
-      />
+        <DataTable
+          data={sponsors}
+          columns={sponsorColumns}
+          onEdit={handleEditSponsor}
+          onDelete={handleDeleteSponsor}
+          getKey={(sponsor) => sponsor.id}
+        />
+      </div>
     </div>
   );
 };

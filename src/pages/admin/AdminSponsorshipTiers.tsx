@@ -129,35 +129,37 @@ const AdminSponsorshipTiers: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Sponsorship Tiers</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddTier} className="bg-[#d92507] hover:bg-[#b31f06]">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Tier
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{editingTier ? 'Edit Sponsorship Tier' : 'Add New Sponsorship Tier'}</DialogTitle>
-            </DialogHeader>
-            <SponsorshipTierForm
-              initialData={editingTier}
-              onSubmit={handleSubmit}
-              isLoading={isSubmitting}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Sponsorship Tiers</h2>
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAddTier} className="bg-[#d92507] hover:bg-[#b31f06]">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Tier
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>{editingTier ? 'Edit Sponsorship Tier' : 'Add New Sponsorship Tier'}</DialogTitle>
+              </DialogHeader>
+              <SponsorshipTierForm
+                initialData={editingTier}
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-      <DataTable
-        data={sponsorshipTiers}
-        columns={sponsorshipTierColumns}
-        onEdit={handleEditTier}
-        onDelete={handleDeleteTier}
-        getKey={(tier) => tier.id}
-      />
+        <DataTable
+          data={sponsorshipTiers}
+          columns={sponsorshipTierColumns}
+          onEdit={handleEditTier}
+          onDelete={handleDeleteTier}
+          getKey={(tier) => tier.id}
+        />
+      </div>
     </div>
   );
 };

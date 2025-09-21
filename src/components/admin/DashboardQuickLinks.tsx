@@ -22,21 +22,23 @@ const quickLinks = [
 
 const DashboardQuickLinks: React.FC<DashboardQuickLinksProps> = ({ onTabChange }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {quickLinks.map((link) => (
-        <Button
-          key={link.name}
-          variant="outline"
-          className="h-auto p-4 flex flex-col items-start text-left"
-          onClick={() => onTabChange(link.value)} // Call onTabChange instead of using Link
-        >
-          <div className="flex items-center justify-between w-full mb-2">
-            <link.icon className="h-6 w-6 text-[#0d2f60]" />
-            <ArrowRight className="h-4 w-4 text-gray-500" />
-          </div>
-          <span className="text-lg font-semibold text-gray-800">{link.name}</span>
-        </Button>
-      ))}
+    <div className="max-w-6xl mx-auto"> {/* Added wrapper for centering */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {quickLinks.map((link) => (
+          <Button
+            key={link.name}
+            variant="outline"
+            className="h-auto p-4 flex flex-col items-start text-left"
+            onClick={() => onTabChange(link.value)} // Call onTabChange instead of using Link
+          >
+            <div className="flex items-center justify-between w-full mb-2">
+              <link.icon className="h-6 w-6 text-[#0d2f60]" />
+              <ArrowRight className="h-4 w-4 text-gray-500" />
+            </div>
+            <span className="text-lg font-semibold text-gray-800">{link.name}</span>
+          </Button>
+        ))}
+      </div>
     </div>
   );
 };

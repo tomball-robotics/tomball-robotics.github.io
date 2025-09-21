@@ -125,35 +125,37 @@ const AdminTeamMembers: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Team Members</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddTeamMember} className="bg-[#d92507] hover:bg-[#b31f06]">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Team Member
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{editingTeamMember ? 'Edit Team Member' : 'Add New Team Member'}</DialogTitle>
-            </DialogHeader>
-            <TeamMemberForm
-              initialData={editingTeamMember}
-              onSubmit={handleSubmit}
-              isLoading={isSubmitting}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Team Members</h2>
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAddTeamMember} className="bg-[#d92507] hover:bg-[#b31f06]">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Team Member
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>{editingTeamMember ? 'Edit Team Member' : 'Add New Team Member'}</DialogTitle>
+              </DialogHeader>
+              <TeamMemberForm
+                initialData={editingTeamMember}
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-      <DataTable
-        data={teamMembers}
-        columns={teamMemberColumns}
-        onEdit={handleEditTeamMember}
-        onDelete={handleDeleteTeamMember}
-        getKey={(member) => member.id}
-      />
+        <DataTable
+          data={teamMembers}
+          columns={teamMemberColumns}
+          onEdit={handleEditTeamMember}
+          onDelete={handleDeleteTeamMember}
+          getKey={(member) => member.id}
+        />
+      </div>
     </div>
   );
 };

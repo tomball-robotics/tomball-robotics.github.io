@@ -125,35 +125,37 @@ const AdminEvents: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Events</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddEvent} className="bg-[#d92507] hover:bg-[#b31f06]">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Event
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{editingEvent ? 'Edit Event' : 'Add New Event'}</DialogTitle>
-            </DialogHeader>
-            <EventForm
-              initialData={editingEvent}
-              onSubmit={handleSubmit}
-              isLoading={isSubmitting}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Events</h2>
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAddEvent} className="bg-[#d92507] hover:bg-[#b31f06]">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Event
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>{editingEvent ? 'Edit Event' : 'Add New Event'}</DialogTitle>
+              </DialogHeader>
+              <EventForm
+                initialData={editingEvent}
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-      <DataTable
-        data={events}
-        columns={eventColumns}
-        onEdit={handleEditEvent}
-        onDelete={handleDeleteEvent}
-        getKey={(event) => event.id}
-      />
+        <DataTable
+          data={events}
+          columns={eventColumns}
+          onEdit={handleEditEvent}
+          onDelete={handleDeleteEvent}
+          getKey={(event) => event.id}
+        />
+      </div>
     </div>
   );
 };

@@ -127,35 +127,37 @@ const AdminRobots: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg"> {/* Removed max-w-6xl mx-auto */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Robots</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddRobot} className="bg-[#d92507] hover:bg-[#b31f06]">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Robot
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{editingRobot ? 'Edit Robot' : 'Add New Robot'}</DialogTitle>
-            </DialogHeader>
-            <RobotForm
-              initialData={editingRobot}
-              onSubmit={handleSubmit}
-              isLoading={isSubmitting}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Robots</h2>
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAddRobot} className="bg-[#d92507] hover:bg-[#b31f06]">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Robot
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>{editingRobot ? 'Edit Robot' : 'Add New Robot'}</DialogTitle>
+              </DialogHeader>
+              <RobotForm
+                initialData={editingRobot}
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-      <DataTable
-        data={robots}
-        columns={robotColumns}
-        onEdit={handleEditRobot}
-        onDelete={handleDeleteRobot}
-        getKey={(robot) => robot.id}
-      />
+        <DataTable
+          data={robots}
+          columns={robotColumns}
+          onEdit={handleEditRobot}
+          onDelete={handleDeleteRobot}
+          getKey={(robot) => robot.id}
+        />
+      </div>
     </div>
   );
 };
