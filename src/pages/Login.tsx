@@ -1,6 +1,5 @@
 import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSupabase } from '@/components/SessionContextProvider';
@@ -23,25 +22,23 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="relative w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center mb-8">
-          <img src="/images/general/t3-logo.png" alt="Tomball Robotics Logo" className="w-24 h-24 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-[#0d2f60]">
+          <h1 className="text-3xl font-extrabold text-[#0d2f60]">
             Admin Login
           </h1>
-          <p className="text-gray-600 mt-2">Access the Tomball Robotics dashboard.</p>
+          <p className="text-gray-700 mt-2">Access the Tomball Robotics dashboard.</p>
         </div>
         
         <Auth
           supabaseClient={supabase}
           providers={[]} // Only email/password
           appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#0d2f60', // Primary blue color
-                  brandAccent: '#d92507', // Accent red color
-                },
-              },
+            className: {
+              container: 'space-y-4',
+              button: 'flex justify-center items-center w-full bg-[#d92507] hover:bg-[#b31f06] text-white font-bold py-2 px-4 rounded-md transition-colors',
+              input: 'block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0d2f60] focus:border-[#0d2f60]',
+              label: 'block text-sm font-medium text-gray-700',
+              anchor: 'text-sm text-[#0d2f60] hover:underline',
+              message: 'text-sm text-red-600',
             },
           }}
           theme="light"
