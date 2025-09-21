@@ -15,7 +15,7 @@ import AdminBanners from './admin/AdminBanners';
 import AdminSlideshowImages from './admin/AdminSlideshowImages';
 import AdminFooterSettings from './admin/AdminFooterSettings';
 import AdminUnitybotResources from './admin/AdminUnitybotResources';
-import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiatives';
+import AdminUnitybotInitiatives from './admin/AdminUnitybotInitiabilities';
 import AdminNews from './admin/AdminNews';
 import AdminEvents from './admin/AdminEvents';
 import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm';
@@ -23,11 +23,12 @@ import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPrev
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
-import RefreshTBAButton from '@/components/admin/RefreshTBAButton'; // Import the new button
+import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Import Card components
 
 
 interface AdminSection {
@@ -42,7 +43,6 @@ interface AdminSubTab {
   value: string;
   label: string;
   icon: React.ElementType;
-  // Updated component signature to accept onSubmit and isLoading
   component: (
     settings: WebsiteSettings | undefined,
     onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>,
@@ -59,10 +59,19 @@ const adminSections: AdminSection[] = [
       <div className="space-y-8">
         <h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>
         <p className="text-lg text-gray-700">Use the links below to manage your website content.</p>
-        <RefreshTBAButton
-          onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')}
-          description="This button synchronizes your website's event data with The Blue Alliance (TBA). It fetches all past and current event details, including competition results, team rankings, alliance status, and awards for Team 7312. Existing event data in your database will be replaced with the latest information from TBA, ensuring your Events page and About page achievements are always up-to-date."
-        />
+        
+        <Card className="p-6 shadow-md">
+          <CardHeader className="p-0 mb-4">
+            <CardTitle className="text-2xl font-bold text-[#0d2f60]">Event Data Synchronization</CardTitle>
+            <CardDescription className="text-gray-700 mt-2">
+              This button synchronizes your website's event data with The Blue Alliance (TBA). It fetches all past and current event details, including competition results, team rankings, alliance status, and awards for Team 7312. Existing event data in your database will be replaced with the latest information from TBA, ensuring your Events page and About page achievements are always up-to-date.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <RefreshTBAButton onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')} />
+          </CardContent>
+        </Card>
+
         <DashboardQuickLinks onTabChange={onTabChange} />
       </div>
     ),
@@ -70,7 +79,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'home-page',
-    label: 'Home', // Changed from 'Home Page Content'
+    label: 'Home',
     icon: Home,
     subTabs: [
       { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings, onSubmit, isLoading) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
@@ -83,7 +92,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'about-page',
-    label: 'About', // Changed from 'About Page Content'
+    label: 'About',
     icon: Info,
     subTabs: [
       { value: 'team-members', label: 'Team Members', icon: Users, component: (settings, onSubmit, isLoading) => <AdminTeamMembers /> },
@@ -100,7 +109,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'robots-page',
-    label: 'Robots', // Changed from 'Robots Page Content'
+    label: 'Robots',
     icon: Bot,
     subTabs: [
       { value: 'robots-list', label: 'Robots List', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminRobots /> },
@@ -108,7 +117,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'sponsors-page',
-    label: 'Sponsors', // Changed from 'Sponsors Page Content'
+    label: 'Sponsors',
     icon: Handshake,
     subTabs: [
       { value: 'sponsors-list', label: 'Sponsors List', icon: Handshake, component: (settings, onSubmit, isLoading) => <AdminSponsors /> },
@@ -117,7 +126,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'unitybots-page',
-    label: 'Unitybots', // Changed from 'Unitybots Page Content'
+    label: 'Unitybots',
     icon: Bot,
     subTabs: [
       { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotResources /> },
@@ -134,7 +143,7 @@ const adminSections: AdminSection[] = [
   },
   {
     value: 'global-settings',
-    label: 'Settings', // Changed from 'Global Settings'
+    label: 'Settings',
     icon: Settings,
     subTabs: [
       { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <AdminFooterSettings initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
@@ -365,7 +374,6 @@ const AdminPage: React.FC = () => {
                   </TabsContent>
                 </Tabs>
               ) : (
-                // Render content directly for sections without sub-tabs (e.g., Dashboard)
                 renderSubpanelContent()
               )}
             </TabsContent>
