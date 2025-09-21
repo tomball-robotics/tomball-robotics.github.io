@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, CalendarDays, ExternalLink, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react"; // Added ExternalLink
+import { MapPin, Trophy, Flag, CalendarDays, ExternalLink, GitPullRequestArrow, ListOrdered, ShieldCheck } from "lucide-react";
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button"; // Import Button
+import { Button } from "@/components/ui/button";
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -163,7 +163,10 @@ const Events: React.FC = () => {
                               {event.overall_status_str && (
                                 <p className="flex items-start space-x-2 text-left">
                                   <CalendarDays className="h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
-                                  <span className="font-semibold">Result:&nbsp;</span> {event.overall_status_str.replace(/<[^>]*>/g, '')}
+                                  <span className="font-semibold">Result:&nbsp;</span>
+                                  {event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date()
+                                    ? "No official results available for this event."
+                                    : event.overall_status_str.replace(/<[^>]*>/g, '')}
                                 </p>
                               )}
                               {event.qual_rank !== null && (
@@ -197,7 +200,7 @@ const Events: React.FC = () => {
                                   </div>
                                 </div>
                               )}
-                              {(!event.overall_status_str && event.qual_rank === null && event.record_wins === null && !event.alliance_status && (!event.awards || event.awards.length === 0)) && (
+                              {(!event.overall_status_str || (event.overall_status_str.includes("waiting for the event to begin") && new Date(event.event_date) < new Date())) && event.qual_rank === null && event.record_wins === null && !event.alliance_status && (!event.awards || event.awards.length === 0) && (
                                 <p className="text-gray-500">No additional details available.</p>
                               )}
                               <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-4">
