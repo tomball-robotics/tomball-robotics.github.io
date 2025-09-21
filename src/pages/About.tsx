@@ -6,12 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import SimpleImageCarousel from "@/components/SimpleImageCarousel";
 import { supabase } from "@/integrations/supabase/client";
-import { TeamMember, Achievement, SlideshowImage } from "@/types/supabase";
+import { TeamMember, Achievement, SlideshowImage, Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner"; // Import Spinner
+
+interface CombinedAchievement {
+  id: string; // Unique ID for key prop
+  year: string;
+  description: string;
+  source: 'manual' | 'tba';
+}
 
 const About: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [combinedAchievements, setCombinedAchievements] = useState<CombinedAchievement[]>([]);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +26,8 @@ const About: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setError(null);
+
       const { data: membersData, error: membersError } = await supabase
         .from("team_members")
         .select("*")
@@ -26,9 +35,12 @@ const About: React.FC = () => {
 
       const { data: achievementsData, error: achievementsError } = await supabase
         .from("achievements")
-        .select("*")
-        .order("year", { ascending: false })
-        .order("created_at", { ascending: false });
+        .select("*");
+
+      const { data: eventsData, error: eventsError } = await supabase
+        .from("events")
+        .select("id, event_date, awards")
+        .not("awards", "is", null); // Only fetch events with awards
 
       const { data: slideshowImagesData, error: slideshowImagesError } = await supabase
         .from("slideshow_images")
@@ -40,16 +52,53 @@ const About: React.FC = () => {
         console.error("Error fetching team members:", membersError);
         setError("Failed to load team members.");
       } else if (achievementsError) {
-        console.error("Error fetching achievements:", achievementsError);
-        setError("Failed to load achievements.");
+        console.error("Error fetching manual achievements:", achievementsError);
+        setError("Failed to load manual achievements.");
+      } else if (eventsError) {
+        console.error("Error fetching event awards:", eventsError);
+        setError("Failed to load event awards.");
       } else if (slideshowImagesError) {
         console.error("Error fetching slideshow images:", slideshowImagesError);
         setError("Failed to load slideshow images for carousel.");
       }
       else {
         setTeamMembers(membersData || []);
-        setAchievements(achievementsData || []);
         setCarouselImages(slideshowImagesData?.map(img => img.image_url) || []);
+
+        // Process and combine achievements
+        const tbaAwards: CombinedAchievement[] = [];
+        eventsData?.forEach((event: Event) => {
+          const year = new Date(event.event_date).getFullYear().toString();
+          event.awards?.forEach(award => {
+            tbaAwards.push({
+              id: `${event.id}-${award}`, // Create a unique ID for TBA awards
+              year: year,
+              description: award,
+              source: 'tba',
+            });
+          });
+        });
+
+        const manualAchievements: CombinedAchievement[] = (achievementsData || []).map(a => ({
+          id: a.id,
+          year: a.year,
+          description: a.description,
+          source: 'manual',
+        }));
+
+        const combined = [...manualAchievements, ...tbaAwards];
+
+        // Sort combined achievements: by year descending, then by description alphabetically
+        combined.sort((a, b) => {
+          const yearA = parseInt(a.year, 10);
+          const yearB = parseInt(b.year, 10);
+          if (yearA !== yearB) {
+            return yearB - yearA; // Sort by year descending
+          }
+          return a.description.localeCompare(b.description); // Then by description alphabetically
+        });
+
+        setCombinedAchievements(combined);
       }
       setLoading(false);
     };
@@ -200,7 +249,7 @@ const About: React.FC = () => {
               className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
               variants={listVariants}
             >
-              {achievements.map((achievement) => (
+              {combinedAchievements.map((achievement) => (
                 <motion.div
                   key={achievement.id}
                   variants={itemVariants}
@@ -218,7 +267,7 @@ const About: React.FC = () => {
                 </motion.div>
               ))}
             </motion.div>
-            {achievements.length === 0 && (
+            {combinedAchievements.length === 0 && (
               <p className="text-center text-gray-600 text-xl mt-8">No achievements to display yet.</p>
             )}
           </motion.section>
