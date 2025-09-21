@@ -3,12 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Achievement, Event } from '@/types/supabase'; // Import Event type
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react'; // Import Edit and Trash2 icons
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import AchievementForm from '@/components/admin/AchievementForm';
 import { DataTable } from '@/components/admin/DataTable';
 import Spinner from '@/components/Spinner';
 import { Badge } from '@/components/ui/badge'; // Import Badge
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+
 
 interface CombinedAchievement {
   id: string;
@@ -192,32 +194,32 @@ const AdminAchievements: React.FC = () => {
             disabled={item.source === 'tba'}
             title={item.source === 'tba' ? "Edit via Events List" : "Edit achievement"}
           >
-            <PlusCircle className="h-4 w-4" />
+            <Edit className="h-4 w-4" />
           </Button>
-          <Dialog>
-            <DialogTrigger asChild>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
               <Button
                 variant="destructive"
                 size="sm"
                 disabled={item.source === 'tba'}
                 title={item.source === 'tba' ? "Delete via Events List" : "Delete achievement"}
               >
-                <PlusCircle className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-              </DialogHeader>
-              <p>This action cannot be undone. This will permanently delete this item.</p>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline">Cancel</Button>
-                <Button variant="destructive" onClick={() => handleDeleteAchievement(item.id)}>
-                  Continue
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete this item.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleDeleteAchievement(item.id)}>Continue</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       ),
     },
