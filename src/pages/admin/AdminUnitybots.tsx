@@ -9,7 +9,7 @@ import UnitybotResourceForm from '@/components/admin/UnitybotResourceForm';
 import UnitybotInitiativeForm from '@/components/admin/UnitybotInitiativeForm';
 import { DataTable } from '@/components/admin/DataTable';
 import { Separator } from '@/components/ui/separator';
-import Spinner from '@/components/Spinner'; // Import Spinner
+import Spinner from '@/components/Spinner';
 
 const AdminUnitybots: React.FC = () => {
   const [resources, setResources] = useState<UnitybotResource[]>([]);
@@ -243,7 +243,7 @@ const AdminUnitybots: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg space-y-10">
+    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg"> {/* Added wrapper div */}
       {/* Unitybot Resources Section */}
       <div>
         <div className="flex justify-between items-center mb-6">

@@ -91,7 +91,7 @@ const AdminFooterSettings: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg"> {/* Added wrapper div */}
       <h2 className="text-3xl font-bold text-[#0d2f60] mb-6">Edit Footer Settings</h2>
       <FooterSettingsForm
         initialData={settings}

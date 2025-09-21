@@ -4,7 +4,7 @@ import { WebsiteSettings } from '@/types/supabase';
 import WebsiteSettingsForm from '@/components/admin/WebsiteSettingsForm';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
-import Spinner from '@/components/Spinner'; // Import Spinner
+import Spinner from '@/components/Spinner';
 
 const AdminWebsiteSettings: React.FC = () => {
   const [settings, setSettings] = useState<WebsiteSettings | null>(null);
@@ -91,7 +91,7 @@ const AdminWebsiteSettings: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg"> {/* Added wrapper div */}
       <h2 className="text-3xl font-bold text-[#0d2f60] mb-6">Edit Website Settings</h2>
       <WebsiteSettingsForm
         initialData={settings}

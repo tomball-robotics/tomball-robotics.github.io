@@ -7,7 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import EventForm from '@/components/admin/EventForm';
 import { DataTable } from '@/components/admin/DataTable';
-import Spinner from '@/components/Spinner'; // Import Spinner
+import Spinner from '@/components/Spinner';
 
 const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -125,7 +125,7 @@ const AdminEvents: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg"> {/* Added wrapper div */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Events</h2>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

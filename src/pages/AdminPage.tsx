@@ -20,18 +20,18 @@ import AdminFooterSettings from './admin/AdminFooterSettings';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 
 const adminTabs = [
-  { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, component: <DashboardQuickLinks /> },
-  { value: 'website-settings', label: 'Website Settings', icon: Settings, component: <AdminWebsiteSettings /> },
-  { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: <AdminFooterSettings /> },
-  { value: 'events', label: 'Events', icon: Calendar, component: <AdminEvents /> },
-  { value: 'sponsors', label: 'Sponsors', icon: Handshake, component: <AdminSponsors /> },
-  { value: 'sponsorship-tiers', label: 'Sponsorship Tiers', icon: DollarSign, component: <AdminSponsorshipTiers /> },
-  { value: 'robots', label: 'Robots', icon: Bot, component: <AdminRobots /> },
-  { value: 'unitybots', label: 'Unitybots', icon: Bot, component: <AdminUnitybots /> },
-  { value: 'team-members', label: 'Team Members', icon: Users, component: <AdminTeamMembers /> },
-  { value: 'achievements', label: 'Achievements', icon: Award, component: <AdminAchievements /> },
-  { value: 'banners', label: 'Banners', icon: Image, component: <AdminBanners /> },
-  { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: <AdminSlideshowImages /> },
+  { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, component: (onTabChange: (tabValue: string) => void) => <DashboardQuickLinks onTabChange={onTabChange} /> },
+  { value: 'website-settings', label: 'Website Settings', icon: Settings, component: () => <AdminWebsiteSettings /> },
+  { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: () => <AdminFooterSettings /> },
+  { value: 'events', label: 'Events', icon: Calendar, component: () => <AdminEvents /> },
+  { value: 'sponsors', label: 'Sponsors', icon: Handshake, component: () => <AdminSponsors /> },
+  { value: 'sponsorship-tiers', label: 'Sponsorship Tiers', icon: DollarSign, component: () => <AdminSponsorshipTiers /> },
+  { value: 'robots', label: 'Robots', icon: Bot, component: () => <AdminRobots /> },
+  { value: 'unitybots', label: 'Unitybots', icon: Bot, component: () => <AdminUnitybots /> },
+  { value: 'team-members', label: 'Team Members', icon: Users, component: () => <AdminTeamMembers /> },
+  { value: 'achievements', label: 'Achievements', icon: Award, component: () => <AdminAchievements /> },
+  { value: 'banners', label: 'Banners', icon: Image, component: () => <AdminBanners /> },
+  { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: () => <AdminSlideshowImages /> },
 ];
 
 const AdminPage: React.FC = () => {
@@ -66,7 +66,8 @@ const AdminPage: React.FC = () => {
           </TabsList>
           {adminTabs.map((tab) => (
             <TabsContent key={tab.value} value={tab.value} className="mt-6">
-              {tab.component}
+              {/* Render component, passing setActiveTab if it's the dashboard */}
+              {tab.value === 'dashboard' ? (tab.component(setActiveTab)) : (tab.component(null))}
             </TabsContent>
           ))}
         </Tabs>
