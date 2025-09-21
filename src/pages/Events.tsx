@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award } from "lucide-react";
+import { MapPin, Trophy, Flag, CalendarDays, Users, Handshake, Award, GitPullRequestArrow } from "lucide-react"; // Added GitPullRequestArrow for alliance
 import { Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client"; // Import supabase client
@@ -160,12 +160,12 @@ const Events: React.FC = () => {
                             </AccordionTrigger>
                             <AccordionContent className="px-3 sm:px-4 pb-3 text-gray-700 text-sm space-y-2">
                               {event.overall_status_str && (
-                                <p className="flex items-center">
-                                  <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60]" />
-                                  <span className="font-semibold">Overall Status: </span> {event.overall_status_str.replace(/<[^>]*>/g, '')}
-                                </p>
+                                <div className="flex items-start">
+                                  <CalendarDays className="mr-2 h-4 w-4 text-[#0d2f60] flex-shrink-0 mt-1" />
+                                  <p><span className="font-semibold">Overall Status: </span> {event.overall_status_str.replace(/<[^>]*>/g, '')}</p>
+                                </div>
                               )}
-                              {event.qual_rank && (
+                              {event.qual_rank !== null && (
                                 <p className="flex items-center">
                                   <Users className="mr-2 h-4 w-4 text-[#0d2f60]" />
                                   <span className="font-semibold">Qualification Rank: </span> {event.qual_rank}
@@ -179,7 +179,7 @@ const Events: React.FC = () => {
                               )}
                               {event.alliance_status && (
                                 <p className="flex items-center">
-                                  <Handshake className="mr-2 h-4 w-4 text-[#0d2f60]" />
+                                  <GitPullRequestArrow className="mr-2 h-4 w-4 text-[#0d2f60]" />
                                   <span className="font-semibold">Alliance: </span> {event.alliance_status}
                                 </p>
                               )}
@@ -202,7 +202,7 @@ const Events: React.FC = () => {
                                   </div>
                                 </div>
                               )}
-                              {!event.overall_status_str && !event.qual_rank && !event.record_wins && !event.alliance_status && !event.playoff_status && (!event.awards || event.awards.length === 0) && (
+                              {!event.overall_status_str && event.qual_rank === null && event.record_wins === null && !event.alliance_status && !event.playoff_status && (!event.awards || event.awards.length === 0) && (
                                 <p className="text-gray-500">No additional details available.</p>
                               )}
                             </AccordionContent>
