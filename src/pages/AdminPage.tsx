@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSupabase } from '@/components/SessionContextProvider';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen } from 'lucide-react'; // Added BookOpen icon
+import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminSponsors from './admin/AdminSponsors';
 import AdminTeamMembers from './admin/AdminTeamMembers';
@@ -22,7 +22,7 @@ import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm'
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
-import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm'; // Import new form
+import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
@@ -30,8 +30,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import AdminHelpAndDocs from './admin/AdminHelpAndDocs'; // Import the new Help & Docs component
-import { Helmet } from 'react-helmet-async'; // Import Helmet
+import AdminHelpAndDocs from './admin/AdminHelpAndDocs';
+import { Helmet } from 'react-helmet-async';
 
 
 interface AdminSection {
@@ -46,11 +46,9 @@ interface AdminSubTab {
   value: string;
   label: string;
   icon: React.ElementType;
-  component: (
-    settings: WebsiteSettings | undefined,
-    onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>,
-    isLoading: boolean
-  ) => React.ReactNode;
+  // The component function now only needs to return the JSX,
+  // as the props will be explicitly passed in renderContent
+  component: React.FC<{ initialData?: WebsiteSettings, onSubmit?: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading?: boolean }>;
 }
 
 const adminSections: AdminSection[] = [
@@ -85,13 +83,13 @@ const adminSections: AdminSection[] = [
     label: 'Home',
     icon: Home,
     subTabs: [
-      { value: 'hero-section', label: 'Hero Section', icon: Image, component: (settings, onSubmit, isLoading) => settings ? <WebsiteHeroSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
-      { value: 'about-preview', label: 'About Preview', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <WebsiteAboutPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
-      { value: 'events-preview', label: 'Events Preview', icon: Calendar, component: (settings, onSubmit, isLoading) => settings ? <WebsiteEventsPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
-      { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: (settings, onSubmit, isLoading) => settings ? <WebsiteSponsorsPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
-      { value: 'award-banners', label: 'Award Banners', icon: Image, component: (settings, onSubmit, isLoading) => <AdminBanners /> },
-      { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: (settings, onSubmit, isLoading) => <AdminSlideshowImages /> },
-      { value: 'calendar-settings', label: 'Calendar Settings', icon: Calendar, component: (settings, onSubmit, isLoading) => settings ? <WebsiteCalendarSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> }, // New sub-tab
+      { value: 'hero-section', label: 'Hero Section', icon: Image, component: WebsiteHeroSettingsForm },
+      { value: 'about-preview', label: 'About Preview', icon: Info, component: WebsiteAboutPreviewSettingsForm },
+      { value: 'events-preview', label: 'Events Preview', icon: Calendar, component: WebsiteEventsPreviewSettingsForm },
+      { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: WebsiteSponsorsPreviewSettingsForm },
+      { value: 'award-banners', label: 'Award Banners', icon: Image, component: AdminBanners },
+      { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: AdminSlideshowImages },
+      { value: 'calendar-settings', label: 'Calendar Settings', icon: Calendar, component: WebsiteCalendarSettingsForm },
     ]
   },
   {
@@ -99,8 +97,8 @@ const adminSections: AdminSection[] = [
     label: 'About',
     icon: Info,
     subTabs: [
-      { value: 'team-members', label: 'Team Members', icon: Users, component: (settings, onSubmit, isLoading) => <AdminTeamMembers /> },
-      { value: 'achievements', label: 'Achievements', icon: Award, component: (settings, onSubmit, isLoading) => <AdminAchievements /> },
+      { value: 'team-members', label: 'Team Members', icon: Users, component: AdminTeamMembers },
+      { value: 'achievements', label: 'Achievements', icon: Award, component: AdminAchievements },
     ]
   },
   {
@@ -108,7 +106,7 @@ const adminSections: AdminSection[] = [
     label: 'Events',
     icon: Calendar,
     subTabs: [
-      { value: 'events-list', label: 'Events List', icon: Calendar, component: (settings, onSubmit, isLoading) => <AdminEvents /> },
+      { value: 'events-list', label: 'Events List', icon: Calendar, component: AdminEvents },
     ]
   },
   {
@@ -116,7 +114,7 @@ const adminSections: AdminSection[] = [
     label: 'Robots',
     icon: Bot,
     subTabs: [
-      { value: 'robots-list', label: 'Robots List', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminRobots /> },
+      { value: 'robots-list', label: 'Robots List', icon: Bot, component: AdminRobots },
     ]
   },
   {
@@ -124,8 +122,8 @@ const adminSections: AdminSection[] = [
     label: 'Sponsors',
     icon: Handshake,
     subTabs: [
-      { value: 'sponsors-list', label: 'Sponsors List', icon: Handshake, component: (settings, onSubmit, isLoading) => <AdminSponsors /> },
-      { value: 'sponsorship-tiers', label: 'Sponsorship Tiers', icon: DollarSign, component: (settings, onSubmit, isLoading) => <AdminSponsorshipTiers /> },
+      { value: 'sponsors-list', label: 'Sponsors List', icon: Handshake, component: AdminSponsors },
+      { value: 'sponsorship-tiers', label: 'Sponsorship Tiers', icon: DollarSign, component: AdminSponsorshipTiers },
     ]
   },
   {
@@ -133,8 +131,8 @@ const adminSections: AdminSection[] = [
     label: 'Unitybots',
     icon: Bot,
     subTabs: [
-      { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotResources /> },
-      { value: 'unitybot-initiatives', label: 'Unitybot Initiatives', icon: Bot, component: (settings, onSubmit, isLoading) => <AdminUnitybotInitiatives /> },
+      { value: 'unitybot-resources', label: 'Unitybot Resources', icon: Bot, component: AdminUnitybotResources },
+      { value: 'unitybot-initiatives', label: 'Unitybot Initiatives', icon: Bot, component: AdminUnitybotInitiatives },
     ]
   },
   {
@@ -142,7 +140,7 @@ const adminSections: AdminSection[] = [
     label: 'News',
     icon: Newspaper,
     subTabs: [
-      { value: 'news-articles', label: 'News Articles', icon: Newspaper, component: (settings, onSubmit, isLoading) => <AdminNews /> },
+      { value: 'news-articles', label: 'News Articles', icon: Newspaper, component: AdminNews },
     ]
   },
   {
@@ -150,15 +148,15 @@ const adminSections: AdminSection[] = [
     label: 'Settings',
     icon: Settings,
     subTabs: [
-      { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: (settings, onSubmit, isLoading) => settings ? <AdminFooterSettings initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
+      { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: AdminFooterSettings },
     ]
   },
   {
     value: 'help-docs',
     label: 'Help & Docs',
     icon: BookOpen,
-    component: () => <AdminHelpAndDocs />, // Directly render the component
-    subTabs: [] // No sub-tabs for this section
+    component: () => <AdminHelpAndDocs />,
+    subTabs: []
   },
 ];
 
@@ -298,10 +296,10 @@ const AdminPage: React.FC = () => {
     navigate('/login');
   };
 
-  const currentSection = adminSections.find(section => section.value === activeMainTab);
-  const currentSubTabComponent = currentSection?.subTabs.find(subTab => subTab.value === activeSubTab)?.component;
-
   const renderContent = () => {
+    const currentSection = adminSections.find(section => section.value === activeMainTab);
+    const currentSubTab = currentSection?.subTabs.find(subTab => subTab.value === activeSubTab);
+
     if (activeMainTab === 'dashboard') {
       return currentSection?.component?.(handleQuickLinkChange);
     }
@@ -334,20 +332,35 @@ const AdminPage: React.FC = () => {
       );
     }
 
-    if (currentSubTabComponent) {
-      // For forms that edit WebsiteSettings, pass initialData, onSubmit, and isLoading
-      if (['hero-section', 'about-preview', 'events-preview', 'sponsors-preview', 'footer-settings', 'calendar-settings'].includes(activeSubTab!)) {
-        const FormComponent = currentSubTabComponent as React.FC<{ initialData: WebsiteSettings, onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading: boolean }>;
+    if (currentSubTab) {
+      const ComponentToRender = currentSubTab.component;
+      
+      // Check if the component is one of the WebsiteSettings forms
+      const isWebsiteSettingsForm = [
+        WebsiteHeroSettingsForm,
+        WebsiteAboutPreviewSettingsForm,
+        WebsiteEventsPreviewSettingsForm,
+        WebsiteSponsorsPreviewSettingsForm,
+        WebsiteCalendarSettingsForm,
+        AdminFooterSettings, // AdminFooterSettings also uses WebsiteSettings
+      ].includes(ComponentToRender as any); // Using 'any' for type comparison
+
+      if (isWebsiteSettingsForm) {
         return (
           <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-            <FormComponent initialData={websiteSettings} onSubmit={handleWebsiteSettingsSubmit} isLoading={isSubmittingSettings} />
+            <ComponentToRender
+              initialData={websiteSettings}
+              onSubmit={handleWebsiteSettingsSubmit}
+              isLoading={isSubmittingSettings}
+            />
           </div>
         );
+      } else {
+        // For other admin components that manage their own data (e.g., AdminTeamMembers, AdminNews)
+        return <ComponentToRender />;
       }
-      // For other admin components (e.g., AdminTeamMembers, AdminNews, AdminEvents)
-      // These components manage their own data and submission logic, so they don't need websiteSettings, onSubmit, isLoading props
-      return currentSubTabComponent(undefined, () => Promise.resolve(), false); // Pass dummy props as they are not used
     }
+
     return null;
   };
 
