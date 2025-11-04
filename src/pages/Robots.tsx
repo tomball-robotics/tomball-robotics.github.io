@@ -114,6 +114,7 @@ const Robots: React.FC = () => {
                     className="w-full h-96 object-cover"
                     width={400} // Example width, adjust as needed
                     height={384} // Example height (h-96 = 384px)
+                    loading="lazy" // Lazy load robot images
                   />
                 )}
                 <CardHeader className="p-4">

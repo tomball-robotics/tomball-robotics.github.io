@@ -230,6 +230,7 @@ const About: React.FC = () => {
                         className="w-full h-48 object-cover rounded-t-lg border-b-4 border-[#0d2f60]"
                         width={300} // Example width, adjust as needed
                         height={192} // Example height (h-48 = 192px)
+                        loading="lazy" // Lazy load team member images
                       />
                     )}
                     <CardHeader className="p-4 text-center">

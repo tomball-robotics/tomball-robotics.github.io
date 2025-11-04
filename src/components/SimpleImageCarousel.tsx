@@ -29,7 +29,7 @@ const SimpleImageCarousel: React.FC<SimpleImageCarouselProps> = ({
   }
 
   return (
-    <div className={cn("overflow-hidden", className)}> {/* Removed relative w-full h-full */}
+    <div className={cn("overflow-hidden", className)}>
       {images.map((image, index) => (
         <img
           key={index}
@@ -39,6 +39,7 @@ const SimpleImageCarousel: React.FC<SimpleImageCarouselProps> = ({
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out",
             index === currentIndex ? "opacity-100" : "opacity-0"
           )}
+          loading={index === 0 ? "eager" : "lazy"} // Eager load first image, lazy load others
         />
       ))}
     </div>

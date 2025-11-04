@@ -118,6 +118,7 @@ const NewsIndex: React.FC = () => {
                       className="w-full h-48 object-cover rounded-t-lg"
                       width={400} // Explicit width
                       height={192} // Explicit height (h-48 = 192px)
+                      loading="lazy" // Lazy load news article preview images
                     />
                   )}
                   <CardHeader className="p-4">

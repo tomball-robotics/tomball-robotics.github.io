@@ -174,6 +174,7 @@ const Sponsors: React.FC = () => {
                             }
                             width={200} // Example width, adjust as needed
                             height={config.imageContainerClass.includes('h-64') ? 256 : config.imageContainerClass.includes('h-56') ? 224 : config.imageContainerClass.includes('h-48') ? 192 : config.imageContainerClass.includes('h-40') ? 160 : config.imageContainerClass.includes('h-32') ? 128 : 96} // Dynamic height based on class
+                            loading="lazy" // Lazy load sponsor images
                           />
                         </div>
                       )}

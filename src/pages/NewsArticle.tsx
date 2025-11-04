@@ -113,6 +113,7 @@ const NewsArticlePage: React.FC = () => {
                     className="w-full h-80 object-cover"
                     width={600} // Example width, adjust as needed
                     height={320} // Example height (h-80 = 320px)
+                    loading="lazy" // Lazy load news article images
                   />
                 </div>
               ))}

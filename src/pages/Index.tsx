@@ -210,6 +210,7 @@ const Index: React.FC = () => {
                   scrolling="no"
                   className="absolute top-0 left-0 w-full h-full"
                   title="Tomball Robotics Calendar"
+                  loading="lazy" // Lazy load iframe
                 ></iframe>
               </motion.div>
               <Button asChild size="lg" className="bg-[#d92507] hover:bg-[#b31f06] text-white group mt-10">
@@ -252,6 +253,7 @@ const Index: React.FC = () => {
                           className="w-full h-48 object-cover rounded-t-lg"
                           width={400} // Explicit width
                           height={192} // Explicit height (h-48 = 192px)
+                          loading="lazy" // Lazy load news images
                         />
                       )}
                       <CardHeader className="p-4">
@@ -325,6 +327,7 @@ const Index: React.FC = () => {
                   className="rounded-lg shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-300"
                   width={600} // Example width, adjust as needed
                   height={400} // Example height, adjust as needed
+                  loading="lazy" // Lazy load about preview image
                 />
               </motion.div>
             </div>
@@ -423,6 +426,7 @@ const Index: React.FC = () => {
                           className="w-24 h-24 mx-auto object-contain mb-4"
                           width={96} // Explicit width (w-24 = 96px)
                           height={96} // Explicit height (h-24 = 96px)
+                          loading="lazy" // Lazy load sponsor logos
                         />
                       )}
                       <CardTitle className="text-xl text-[#d92507]">{sponsor.name}</CardTitle>

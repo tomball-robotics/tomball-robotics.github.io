@@ -183,6 +183,7 @@ const Unitybots: React.FC = () => {
                         className="max-h-full max-w-full object-contain"
                         width={300} // Example width, adjust as needed
                         height={192} // Example height (h-48 = 192px)
+                        loading="lazy" // Lazy load initiative images
                       />
                     </div>
                   )}
