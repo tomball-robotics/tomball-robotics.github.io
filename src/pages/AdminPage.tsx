@@ -25,7 +25,6 @@ import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponso
 import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
-import OptimizeImagesButton from '@/components/admin/OptimizeImagesButton'; // New import
 import Spinner from '@/components/Spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { WebsiteSettings } from '@/types/supabase';
@@ -71,19 +70,6 @@ const adminSections: AdminSection[] = [
           </CardHeader>
           <CardContent className="p-0">
             <RefreshTBAButton onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')} />
-          </CardContent>
-        </Card>
-
-        {/* New Card for Image Optimization */}
-        <Card className="p-6 shadow-md">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-2xl font-bold text-[#0d2f60]">Image Optimization</CardTitle>
-            <CardDescription className="text-gray-700 mt-2">
-              This button will attempt to convert all images stored in Supabase Storage (linked in your database) to the modern AVIF format. AVIF offers superior compression and quality, leading to faster website loading times. Images already in AVIF format will be skipped.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <OptimizeImagesButton onOptimizationComplete={() => console.log('All images optimization completed.')} />
           </CardContent>
         </Card>
 

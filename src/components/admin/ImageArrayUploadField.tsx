@@ -3,10 +3,10 @@ import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, XCircle, ImageUp } from 'lucide-react'; // Import ImageUp icon
+import { PlusCircle, XCircle } from 'lucide-react'; // Removed ImageUp icon
 import { uploadFile, deleteFile } from '@/integrations/supabase/storage';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
-import { supabase } from '@/integrations/supabase/client'; // Import supabase client
+// Removed import for supabase client as AVIF conversion is removed
 
 interface ImageArrayUploadFieldProps {
   form: UseFormReturn<any>;
@@ -76,55 +76,7 @@ const ImageArrayUploadField: React.FC<ImageArrayUploadFieldProps> = ({ form, nam
     dismissToast(toastId);
   };
 
-  const handleConvertToAvif = async (index: number) => {
-    const currentUrl = form.getValues(`${name}.${index}`);
-    if (!currentUrl) {
-      showError("No image URL found to convert.");
-      return;
-    }
-
-    const url = new URL(currentUrl);
-    const pathParts = url.pathname.split('/');
-    const originalFileNameWithExtension = pathParts[pathParts.length - 1];
-    const originalFileName = originalFileNameWithExtension.split('.').slice(0, -1).join('.');
-    const fileExtension = originalFileNameWithExtension.split('.').pop()?.toLowerCase();
-
-    if (fileExtension === 'avif') {
-      showSuccess("Image is already in AVIF format.");
-      return;
-    }
-
-    const confirmConvert = window.confirm("This will convert the current image to AVIF format and update its URL. The original image will remain in storage. Do you want to proceed?");
-    if (!confirmConvert) return;
-
-    const toastId = showLoading(`Converting ${label} image to AVIF...`);
-    try {
-      const { data, error } = await supabase.functions.invoke('convert-to-avif', {
-        body: JSON.stringify({
-          imageUrl: currentUrl,
-          bucketName: bucketName,
-          folderPath: folderPath,
-          originalFileName: originalFileNameWithExtension,
-        }),
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data && data.avifUrl) {
-        form.setValue(`${name}.${index}`, data.avifUrl, { shouldValidate: true });
-        showSuccess(`${label} image successfully converted to AVIF!`);
-      } else {
-        throw new Error("Conversion failed: No AVIF URL returned.");
-      }
-    } catch (err: any) {
-      console.error("Error converting to AVIF:", err);
-      showError(`Failed to convert ${label} image to AVIF: ${err.message || 'Unknown error'}`);
-    } finally {
-      dismissToast(toastId);
-    }
-  };
+  // Removed handleConvertToAvif function
 
   return (
     <FormItem>
@@ -132,7 +84,7 @@ const ImageArrayUploadField: React.FC<ImageArrayUploadFieldProps> = ({ form, nam
       <div className="space-y-4">
         {fields.map((field, index) => {
           const currentImageUrl = form.watch(`${name}.${index}`);
-          const isAvif = currentImageUrl?.toLowerCase().endsWith('.avif');
+          // Removed isAvif check
 
           return (
             <div key={field.id} className="flex flex-col sm:flex-row items-end sm:items-center gap-2 p-3 border rounded-md bg-gray-50">
@@ -166,17 +118,7 @@ const ImageArrayUploadField: React.FC<ImageArrayUploadFieldProps> = ({ form, nam
                 {currentImageUrl && (
                   <div className="flex items-center justify-between mt-2">
                     <p className="text-sm text-gray-500 break-all">Current URL: {currentImageUrl}</p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleConvertToAvif(index)}
-                      disabled={form.formState.isSubmitting || !currentImageUrl || isAvif}
-                      className="ml-2 flex-shrink-0"
-                    >
-                      <ImageUp className="h-4 w-4 mr-2" />
-                      {isAvif ? 'Already AVIF' : 'Convert to AVIF'}
-                    </Button>
+                    {/* Removed Convert to AVIF button */}
                   </div>
                 )}
               </div>
