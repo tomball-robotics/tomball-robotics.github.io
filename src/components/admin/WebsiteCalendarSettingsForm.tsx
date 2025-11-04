@@ -32,6 +32,7 @@ const WebsiteCalendarSettingsForm: React.FC<WebsiteCalendarSettingsFormProps> = 
   }, [initialData, form]);
 
   const handleSubmitForm = async (values: z.infer<typeof formSchema>) => {
+    console.log('[WebsiteCalendarSettingsForm] Submitting values:', values);
     await onSubmit(values);
   };
 
@@ -46,7 +47,7 @@ const WebsiteCalendarSettingsForm: React.FC<WebsiteCalendarSettingsFormProps> = 
               <FormLabel>Google Calendar Embed URL</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Paste your Google Calendar embed iframe src URL here"
+                  placeholder="Paste ONLY the 'src' URL from your Google Calendar embed iframe here (e.g., https://calendar.google.com/calendar/embed?src=...)"
                   {...field}
                   disabled={isLoading}
                   rows={5}
