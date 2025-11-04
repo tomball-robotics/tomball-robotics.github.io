@@ -222,8 +222,13 @@ const Index: React.FC = () => {
                             {article.content}
                           </ReactMarkdown>
                         </div>
-                        <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto">
-                          <Link to={`/news/${article.id}`}>Read More about "{article.title}" <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto w-full">
+                          <Link to={`/news/${article.id}`} className="flex items-center w-full">
+                            <span className="flex-grow whitespace-nowrap overflow-hidden text-ellipsis">
+                              Read More about "{article.title}"
+                            </span>
+                            <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
+                          </Link>
                         </Button>
                       </CardContent>
                     </Card>
