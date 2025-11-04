@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Newspaper } from "lucide-react";
+import { ArrowRight, Newspaper, CalendarDays } from "lucide-react"; // Added CalendarDays icon
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
 import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase";
@@ -178,6 +178,48 @@ const Index: React.FC = () => {
             </div>
           </motion.div>
         </motion.div>
+
+        {/* Calendar Section */}
+        {homePageData.calendar_embed_url && (
+          <motion.section
+            className="py-20 bg-white"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="text-4xl font-bold text-[#0d2f60] mb-6">Events & Volunteer Opportunities</h2>
+              <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-10">
+                Stay up-to-date with our upcoming events, competitions, and volunteer opportunities.
+              </p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                viewport={{ once: true, amount: 0.3 }}
+                className="relative w-full max-w-5xl mx-auto rounded-lg overflow-hidden shadow-2xl"
+                style={{ paddingBottom: '75%' /* 4:3 Aspect Ratio for calendar */ }}
+              >
+                <iframe
+                  src={homePageData.calendar_embed_url}
+                  style={{ border: 0 }}
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  scrolling="no"
+                  className="absolute top-0 left-0 w-full h-full"
+                  title="Tomball Robotics Calendar"
+                ></iframe>
+              </motion.div>
+              <Button asChild size="lg" className="bg-[#d92507] hover:bg-[#b31f06] text-white group mt-10">
+                <a href={homePageData.calendar_embed_url} target="_blank" rel="noopener noreferrer">
+                  View Full Calendar <CalendarDays className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </a>
+              </Button>
+            </div>
+          </motion.section>
+        )}
 
         {/* News Section Preview */}
         {latestNews.length > 0 && (

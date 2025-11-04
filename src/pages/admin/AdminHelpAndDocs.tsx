@@ -71,7 +71,7 @@ const AdminHelpAndDocs: React.FC = () => {
               <li><strong>Where to go in the Admin Panel</strong>: Main Tab: <span className="font-semibold">Events</span> &gt; Sub-Tab: <span className="font-semibold">Events List</span></li>
               <li><strong>How to update</strong>:
                 <ol className="list-decimal list-inside pl-6 space-y-1">
-                  <li><strong>Sync with The Blue Alliance (TBA)</strong>: Find the "Sync All Event Data from TBA" button on the Dashboard or Events List. Click it! This automatically pulls in our team's event details, rankings, and awards from The Blue Alliance. **Important**: This replaces existing TBA-sourced event data.</li>
+                  <li><strong>Sync with The Blue Alliance (TBA)</strong>: Find the "Sync All Event Data from TBA" button on the Dashboard or Events List. Click it! This automatically pulls in our team's event details, rankings, alliance status, and awards from The Blue Alliance. **Important**: This replaces existing TBA-sourced event data.</li>
                   <li><strong>Add Manual Events (if needed)</strong>: For events not on TBA, use the "Add Event" button and fill in details.</li>
                   <li><strong>Manage Manual Achievements</strong>: Go to <span className="font-semibold">About</span> &gt; <span className="font-semibold">Achievements</span>. Use "Add Manual Achievement" for non-event awards. TBA-synced awards cannot be changed here.</li>
                 </ol>
@@ -162,6 +162,7 @@ const AdminHelpAndDocs: React.FC = () => {
                 <ol className="list-decimal list-inside pl-6 space-y-1">
                   <li><strong>Home Page Sections</strong>: Go to the <span className="font-semibold">Home</span> tab, then select sub-tabs like "Hero Section," "About Preview," "Events Preview," and "Sponsors Preview." Update titles, descriptions, and images.</li>
                   <li><strong>Footer Settings</strong>: Go to the <span className="font-semibold">Settings</span> tab, then the <span className="font-semibold">Footer Settings</span> sub-tab. Update address, email, and manage social media links.</li>
+                  <li><strong>Calendar Settings</strong>: Go to the <span className="font-semibold">Home</span> tab, then the <span className="font-semibold">Calendar Settings</span> sub-tab. Paste the Google Calendar embed `src` URL.</li>
                   <li><strong>Save Changes</strong>: Always click "Save Changes" after updating a form.</li>
                 </ol>
               </li>

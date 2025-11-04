@@ -22,6 +22,7 @@ import WebsiteHeroSettingsForm from '@/components/admin/WebsiteHeroSettingsForm'
 import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPreviewSettingsForm';
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
+import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm'; // Import new form
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
@@ -90,6 +91,7 @@ const adminSections: AdminSection[] = [
       { value: 'sponsors-preview', label: 'Sponsors Preview', icon: Handshake, component: (settings, onSubmit, isLoading) => settings ? <WebsiteSponsorsPreviewSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> },
       { value: 'award-banners', label: 'Award Banners', icon: Image, component: (settings, onSubmit, isLoading) => <AdminBanners /> },
       { value: 'slideshow-images', label: 'Slideshow Images', icon: Images, component: (settings, onSubmit, isLoading) => <AdminSlideshowImages /> },
+      { value: 'calendar-settings', label: 'Calendar Settings', icon: Calendar, component: (settings, onSubmit, isLoading) => settings ? <WebsiteCalendarSettingsForm initialData={settings} onSubmit={onSubmit} isLoading={isLoading} /> : <Spinner /> }, // New sub-tab
     ]
   },
   {
@@ -228,6 +230,7 @@ const AdminPage: React.FC = () => {
         { type: 'youtube', url: "https://www.youtube.com/@FRC7312?app=desktop" },
         { type: 'x', url: "https://twitter.com/frc7312" },
       ],
+      calendar_embed_url: "https://calendar.google.com/calendar/embed?src=c_1c19550a800e65db313120e4fbd5f807a1a4ee37818794cefd2f920ca14dbf7b%40group.calendar.google.com&ctz=America%2FChicago", // Default calendar URL
     };
 
     const toastId = showLoading('Initializing default website settings...');
@@ -333,7 +336,7 @@ const AdminPage: React.FC = () => {
 
     if (currentSubTabComponent) {
       // For forms that edit WebsiteSettings, pass initialData, onSubmit, and isLoading
-      if (['hero-section', 'about-preview', 'events-preview', 'sponsors-preview', 'footer-settings'].includes(activeSubTab!)) {
+      if (['hero-section', 'about-preview', 'events-preview', 'sponsors-preview', 'footer-settings', 'calendar-settings'].includes(activeSubTab!)) {
         const FormComponent = currentSubTabComponent as React.FC<{ initialData: WebsiteSettings, onSubmit: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading: boolean }>;
         return (
           <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">

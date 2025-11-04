@@ -13,6 +13,7 @@ const quickLinks = [
   { name: 'Sponsors Page Preview', mainTab: 'home-page', subTab: 'sponsors-preview', icon: Handshake },
   { name: 'Award Banners', mainTab: 'home-page', subTab: 'award-banners', icon: Image },
   { name: 'Slideshow Images', mainTab: 'home-page', subTab: 'slideshow-images', icon: Images },
+  { name: 'Calendar Settings', mainTab: 'home-page', subTab: 'calendar-settings', icon: Calendar }, // New quick link
   { name: 'News Articles', mainTab: 'news-page', subTab: 'news-articles', icon: Newspaper },
   { name: 'Team Members', mainTab: 'about-page', subTab: 'team-members', icon: Users },
   { name: 'Achievements', mainTab: 'about-page', subTab: 'achievements', icon: Award },

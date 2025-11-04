@@ -87,6 +87,7 @@ export interface WebsiteSettings {
   footer_address: string | null;
   footer_email: string | null;
   social_media_links: SocialMediaLink[] | null; // Updated to dynamic array
+  calendar_embed_url: string | null; // New field for Google Calendar embed URL
 }
 
 export interface Robot {
