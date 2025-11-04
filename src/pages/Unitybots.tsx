@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { UnitybotResource, UnitybotInitiative } from "@/types/supabase";
 import Spinner from "@/components/Spinner"; // Import Spinner
 import { Helmet } from 'react-helmet-async'; // Import Helmet
+import { ExternalLink } from "lucide-react"; // Import ExternalLink
 
 const Unitybots: React.FC = () => {
   const [resources, setResources] = useState<UnitybotResource[]>([]);
