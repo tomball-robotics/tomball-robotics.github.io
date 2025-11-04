@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-[#d92507] transition-colors flex items-center justify-center"
-                  aria-label={link.type}
+                  aria-label={`Visit our ${link.type} page`}
                 >
                   <Icon size={24} />
                 </a>
@@ -107,17 +107,17 @@ const Footer: React.FC = () => {
         <div className="text-center md:text-right text-sm space-y-1 md:flex-1"> {/* Added md:flex-1 */}
           <p>{footerSettings?.footer_address || defaultAddress}</p>
           <p>
-            <a href={`mailto:${footerSettings?.footer_email || defaultEmail}`} className="hover:underline">
+            <a href={`mailto:${footerSettings?.footer_email || defaultEmail}`} className="hover:underline" aria-label="Email Tomball Robotics">
               {footerSettings?.footer_email || defaultEmail}
             </a>
           </p>
-          <Link to="/donate" className="text-[#d92507] hover:underline mt-1 block">Support Us</Link>
+          <Link to="/donate" className="text-[#d92507] hover:underline mt-1 block" aria-label="Support Tomball Robotics">Support Us</Link>
           {session ? (
-            <button onClick={handleLogout} className="text-[#d92507] hover:underline mt-1 block w-full text-center md:text-right">
+            <button onClick={handleLogout} className="text-[#d92507] hover:underline mt-1 block w-full text-center md:text-right" aria-label="Log out from Admin Panel">
               <LogOut className="inline-block h-4 w-4 mr-1" /> Logout
             </button>
           ) : (
-            <Link to="/login" className="text-[#d92507] hover:underline mt-1 block">
+            <Link to="/login" className="text-[#d92507] hover:underline mt-1 block" aria-label="Log in to Admin Panel">
               <LogIn className="inline-block h-4 w-4 mr-1" /> Login
             </Link>
           )}

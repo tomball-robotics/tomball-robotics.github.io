@@ -9,6 +9,7 @@ import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Sponsor, SponsorshipTier } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const tierConfig: { [key: string]: { cardClass: string; imageContainerClass: string; showDescription: boolean; showName: boolean; showWebsiteButton: boolean } } = {
   diamond: { cardClass: 'w-full md:w-3/4 lg:w-2/3', imageContainerClass: 'h-64', showDescription: true, showName: true, showWebsiteButton: true },
@@ -120,6 +121,10 @@ const Sponsors: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Our Sponsors - Tomball T3 Robotics</title>
+        <meta name="description" content="Meet the generous sponsors who support Tomball T3 Robotics, FRC Team 7312, and learn how you can contribute." />
+      </Helmet>
       <Header />
       <motion.main
         initial={{ opacity: 0 }}
@@ -161,12 +166,14 @@ const Sponsors: React.FC = () => {
                         <div className={`w-full flex items-center justify-center bg-gray-50 rounded-t-lg border-b-4 border-[#0d2f60] ${config.imageContainerClass}`}>
                           <img
                             src={sponsor.image_url}
-                            alt={sponsor.name}
+                            alt={`Logo for ${sponsor.name}`}
                             className={
                               sponsor.image_fit === 'cover'
                                 ? 'w-full h-full object-cover'
                                 : 'max-h-full max-w-full object-contain p-4'
                             }
+                            width={200} // Example width, adjust as needed
+                            height={config.imageContainerClass.includes('h-64') ? 256 : config.imageContainerClass.includes('h-56') ? 224 : config.imageContainerClass.includes('h-48') ? 192 : config.imageContainerClass.includes('h-40') ? 160 : config.imageContainerClass.includes('h-32') ? 128 : 96} // Dynamic height based on class
                           />
                         </div>
                       )}
@@ -187,7 +194,7 @@ const Sponsors: React.FC = () => {
                         {config.showWebsiteButton && sponsor.website_url && (
                           <Button asChild className="mt-4 bg-[#0d2f60] hover:bg-[#0a244a] text-white">
                             <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer">
-                              Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                              Visit {sponsor.name}'s Website <ExternalLink className="ml-2 h-4 w-4" />
                             </a>
                           </Button>
                         )}

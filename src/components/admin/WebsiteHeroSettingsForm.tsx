@@ -132,7 +132,13 @@ const WebsiteHeroSettingsForm: React.FC<WebsiteHeroSettingsFormProps> = ({ initi
                 <div className="space-y-2">
                   {field.value && (
                     <div className="relative w-48 h-32 rounded-md overflow-hidden border border-gray-200">
-                      <img src={field.value} alt="Hero Background" className="w-full h-full object-cover" />
+                      <img
+                        src={field.value}
+                        alt="Hero Background"
+                        className="w-full h-full object-cover"
+                        width={192} // w-48 = 192px
+                        height={128} // h-32 = 128px
+                      />
                       <Button
                         type="button"
                         variant="destructive"

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsorshipTier } from "@/types/supabase";
 import Spinner from "@/components/Spinner"; // Import Spinner
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const Donate: React.FC = () => {
   const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
@@ -85,6 +86,10 @@ const Donate: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Donate & Sponsor - Tomball T3 Robotics</title>
+        <meta name="description" content="Become a sponsor of Tomball T3 Robotics, FRC Team 7312, and support STEM education. View our sponsorship tiers and donation options." />
+      </Helmet>
       <Header />
       <motion.main
         initial={{ opacity: 0 }}
@@ -139,7 +144,7 @@ const Donate: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
             <Button asChild size="lg" className="bg-[#00457C] hover:bg-[#003057] text-white font-bold py-3 px-6 rounded-lg">
               <a href="https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA" target="_blank" rel="noopener noreferrer">
-                Donate with PayPal
+                Donate to Tomball Robotics with PayPal
               </a>
             </Button>
             <div className="text-center">

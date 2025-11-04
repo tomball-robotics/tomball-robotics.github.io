@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const NewsIndex: React.FC = () => {
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
@@ -87,6 +88,10 @@ const NewsIndex: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>News & Updates - Tomball T3 Robotics</title>
+        <meta name="description" content="Stay updated with the latest news, announcements, and achievements from Tomball T3 Robotics, FRC Team 7312." />
+      </Helmet>
       <Header />
       <motion.main
         initial={{ opacity: 0 }}
@@ -109,8 +114,10 @@ const NewsIndex: React.FC = () => {
                   {article.image_urls && article.image_urls.length > 0 && (
                     <img
                       src={article.image_urls[0]}
-                      alt={article.title}
+                      alt={`Image for ${article.title}`}
                       className="w-full h-48 object-cover rounded-t-lg"
+                      width={400} // Explicit width
+                      height={192} // Explicit height (h-48 = 192px)
                     />
                   )}
                   <CardHeader className="p-4">
@@ -124,7 +131,7 @@ const NewsIndex: React.FC = () => {
                       </ReactMarkdown>
                     </div>
                     <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto">
-                      <Link to={`/news/${article.id}`}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                      <Link to={`/news/${article.id}`}>Read More about "{article.title}" <ArrowRight className="ml-2 h-4 w-4" /></Link>
                     </Button>
                   </CardContent>
                 </Card>

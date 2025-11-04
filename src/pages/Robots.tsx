@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Robot } from "@/types/supabase";
 import Spinner from "@/components/Spinner"; // Import Spinner
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const Robots: React.FC = () => {
   const [robots, setRobots] = useState<Robot[]>([]);
@@ -80,6 +81,10 @@ const Robots: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Our Robots - Tomball T3 Robotics</title>
+        <meta name="description" content="Discover the robots built by Tomball T3 Robotics, FRC Team 7312, through the years, including their specifications and awards." />
+      </Helmet>
       <Header />
       <motion.main
         initial={{ opacity: 0 }}
@@ -105,8 +110,10 @@ const Robots: React.FC = () => {
                 {robot.image_url && (
                   <img
                     src={robot.image_url}
-                    alt={robot.name}
+                    alt={`Image of ${robot.name}`}
                     className="w-full h-96 object-cover"
+                    width={400} // Example width, adjust as needed
+                    height={384} // Example height (h-96 = 384px)
                   />
                 )}
                 <CardHeader className="p-4">

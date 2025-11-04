@@ -15,6 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 // Helper function to extract YouTube video ID
 const getYouTubeVideoId = (url: string): string | null => {
@@ -111,6 +112,10 @@ const Events: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Events - Tomball T3 Robotics</title>
+        <meta name="description" content="Explore Tomball T3 Robotics' competition history, event results, and achievements." />
+      </Helmet>
       <Header />
       <motion.main
         initial="hidden"
@@ -164,7 +169,7 @@ const Events: React.FC = () => {
                         <Accordion type="single" collapsible className="w-full">
                           <AccordionItem value="item-1" className="border-none">
                             <AccordionTrigger className="px-4 py-3 text-sm sm:text-base text-[#d92507] hover:no-underline hover:text-[#b31f06]">
-                              More Details
+                              More Details for {event.name}
                             </AccordionTrigger>
                             <AccordionContent className="px-4 pb-4 text-gray-700 text-sm space-y-3">
                               {event.overall_status_str && (
@@ -216,7 +221,7 @@ const Events: React.FC = () => {
                                     <iframe
                                       className="absolute top-0 left-0 w-full h-full rounded-md"
                                       src={`https://www.youtube.com/embed/${getYouTubeVideoId(event.video_url)}`}
-                                      title="YouTube video player"
+                                      title={`YouTube video for ${event.name}`}
                                       frameBorder="0"
                                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                       allowFullScreen
@@ -228,8 +233,8 @@ const Events: React.FC = () => {
                                 <p className="text-gray-500">No additional details available.</p>
                               )}
                               <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-4">
-                                <a href={`https://www.thebluealliance.com/event/${event.id}`} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                                  View on The Blue Alliance <ExternalLink className="ml-2 h-4 w-4" />
+                                <a href={`https://www.thebluealliance.com/event/${event.id}`} target="_blank" rel="noopener noreferrer">
+                                  View {event.name} on The Blue Alliance <ExternalLink className="ml-2 h-4 w-4" />
                                 </a>
                               </Button>
                             </AccordionContent>

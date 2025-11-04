@@ -84,7 +84,13 @@ const ImageArrayUploadField: React.FC<ImageArrayUploadFieldProps> = ({ form, nam
             <div className="flex-grow w-full">
               {form.watch(`${name}.${index}`) && (
                 <div className="relative w-full h-32 mb-2 rounded-md overflow-hidden border border-gray-200">
-                  <img src={form.watch(`${name}.${index}`)} alt={`${label} ${index + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={form.watch(`${name}.${index}`)}
+                    alt={`${label} ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    width={400} // Example width, adjust as needed
+                    height={128} // h-32 = 128px
+                  />
                 </div>
               )}
               <FormField

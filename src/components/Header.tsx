@@ -41,7 +41,7 @@ const Header: React.FC = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0d2f60] text-white shadow-lg h-16 flex items-center">
       <div className="w-full flex items-center justify-between px-4">
         {/* Team Name */}
-        <Link to="/" className="flex items-center gap-3 text-white hover:text-white/90 transition-colors">
+        <Link to="/" className="flex items-center gap-3 text-white hover:text-white/90 transition-colors" aria-label="Tomball Robotics Home">
           <span className="text-2xl sm:text-3xl font-bold"> {/* Adjusted font size here */}
             Tomball Robotics
           </span>
@@ -56,6 +56,7 @@ const Header: React.FC = () => {
                   key={link.name}
                   to={link.path}
                   className={({ isActive }) => getNavLinkClasses(isActive)}
+                  aria-label={`Navigate to ${link.name} page`}
                 >
                   {link.name}
                 </NavLink>
@@ -65,6 +66,7 @@ const Header: React.FC = () => {
                   <NavLink
                     to="/admin"
                     className={({ isActive }) => getNavLinkClasses(isActive)}
+                    aria-label="Go to Admin Panel"
                   >
                     Admin
                   </NavLink>
@@ -72,6 +74,7 @@ const Header: React.FC = () => {
                     to="#" // Using '#' as a placeholder, onClick will handle navigation
                     onClick={handleLogout}
                     className={({ isActive }) => getNavLinkClasses(isActive)}
+                    aria-label="Log out from Admin Panel"
                   >
                     Logout
                   </NavLink>
@@ -85,7 +88,7 @@ const Header: React.FC = () => {
         {isMobile && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden text-white">
+              <Button variant="ghost" size="icon" className="md:hidden text-white" aria-label="Toggle navigation menu">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
@@ -97,6 +100,7 @@ const Header: React.FC = () => {
                     key={link.name}
                     to={link.path}
                     className={({ isActive }) => getMobileNavLinkClasses(isActive)}
+                    aria-label={`Navigate to ${link.name} page`}
                   >
                     {link.name}
                   </NavLink>
@@ -106,6 +110,7 @@ const Header: React.FC = () => {
                     <NavLink
                       to="/admin"
                       className={({ isActive }) => getMobileNavLinkClasses(isActive)}
+                      aria-label="Go to Admin Panel"
                     >
                       Admin
                     </NavLink>
@@ -113,6 +118,7 @@ const Header: React.FC = () => {
                       to="#" // Using '#' as a placeholder, onClick will handle navigation
                       onClick={handleLogout}
                       className={({ isActive }) => getMobileNavLinkClasses(isActive)}
+                      aria-label="Log out from Admin Panel"
                     >
                       Logout
                     </NavLink>

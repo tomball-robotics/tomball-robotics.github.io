@@ -8,6 +8,7 @@ import SimpleImageCarousel from "@/components/SimpleImageCarousel";
 import { supabase } from "@/integrations/supabase/client";
 import { TeamMember, Achievement, SlideshowImage, Event } from "@/types/supabase";
 import Spinner from "@/components/Spinner"; // Import Spinner
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 interface CombinedAchievement {
   id: string; // Unique ID for key prop
@@ -166,6 +167,10 @@ const About: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>About Us - Tomball T3 Robotics</title>
+        <meta name="description" content="Learn about Tomball T3 Robotics, FRC Team 7312, our mission, team members, and achievements in STEM." />
+      </Helmet>
       <Header />
       <main className="flex-grow overflow-hidden pt-16">
         {/* Hero Section for About Page */}
@@ -221,8 +226,10 @@ const About: React.FC = () => {
                     {member.image_url && (
                       <img
                         src={member.image_url}
-                        alt={member.name}
+                        alt={`Profile image of ${member.name}`}
                         className="w-full h-48 object-cover rounded-t-lg border-b-4 border-[#0d2f60]"
+                        width={300} // Example width, adjust as needed
+                        height={192} // Example height (h-48 = 192px)
                       />
                     )}
                     <CardHeader className="p-4 text-center">

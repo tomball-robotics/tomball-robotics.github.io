@@ -7,6 +7,7 @@ import { useSupabase } from '@/components/SessionContextProvider';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <Helmet>
+        <title>Admin Login - Tomball T3 Robotics</title>
+        <meta name="description" content="Log in to the Tomball T3 Robotics website administration panel." />
+      </Helmet>
       <div className="relative w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-[#0d2f60]">

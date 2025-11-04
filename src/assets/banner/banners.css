@@ -5,6 +5,7 @@
     font-family: 'Adam';
     src: url('adam.otf') format('opentype');
     unicode-range: U+0000-00FF;
+    font-display: swap; /* Added for performance */
 }
 /* To be standard-compliant, this rule should be applied to *, but for compat it's restricted here. */
 .banners,

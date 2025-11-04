@@ -12,6 +12,7 @@ import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const Index: React.FC = () => {
   const [homePageData, setHomePageData] = useState<WebsiteSettings | null>(null);
@@ -134,6 +135,10 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>{homePageData.hero_title} - Tomball Robotics</title>
+        <meta name="description" content={homePageData.hero_subtitle} />
+      </Helmet>
       <Header />
       <main className="flex-grow overflow-hidden pt-16">
         {/* Hero Section */}
@@ -162,12 +167,12 @@ const Index: React.FC = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button asChild size="lg" className="bg-[#d92507] hover:bg-[#b31f06] text-white text-lg px-8 py-4 rounded-full transition-colors group">
                 <Link to="/about">
-                  Learn More <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  Learn More About Our Team <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white hover:text-[#0d2f60] text-lg px-8 py-4 rounded-full transition-colors group">
                 <Link to="/donate">
-                  Support Us <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  Support Tomball Robotics <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </div>
@@ -201,8 +206,10 @@ const Index: React.FC = () => {
                       {article.image_urls && article.image_urls.length > 0 && (
                         <img
                           src={article.image_urls[0]}
-                          alt={article.title}
+                          alt={`Image for ${article.title}`}
                           className="w-full h-48 object-cover rounded-t-lg"
+                          width={400} // Explicit width
+                          height={192} // Explicit height (h-48 = 192px)
                         />
                       )}
                       <CardHeader className="p-4">
@@ -216,13 +223,18 @@ const Index: React.FC = () => {
                           </ReactMarkdown>
                         </div>
                         <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto">
-                          <Link to={`/news/${article.id}`}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                          <Link to={`/news/${article.id}`}>Read More about "{article.title}" <ArrowRight className="ml-2 h-4 w-4" /></Link>
                         </Button>
                       </CardContent>
                     </Card>
                   </motion.div>
                 ))}
               </motion.div>
+              <Button asChild size="lg" className="bg-[#d92507] hover:bg-[#b31f06] text-white group">
+                <Link to="/news">
+                  View All News <Newspaper className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
             </div>
           </motion.section>
         )}
@@ -264,6 +276,8 @@ const Index: React.FC = () => {
                   src={homePageData.about_preview_image_url}
                   alt="T3 Robotics Team"
                   className="rounded-lg shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-300"
+                  width={600} // Example width, adjust as needed
+                  height={400} // Example height, adjust as needed
                 />
               </motion.div>
             </div>
@@ -356,7 +370,13 @@ const Index: React.FC = () => {
                   <Card className="text-center shadow-md hover:shadow-xl transition-shadow h-full">
                     <CardHeader>
                       {sponsor.image_url && (
-                        <img src={sponsor.image_url} alt={sponsor.name} className="w-24 h-24 mx-auto object-contain mb-4" />
+                        <img
+                          src={sponsor.image_url}
+                          alt={`Logo for ${sponsor.name}`}
+                          className="w-24 h-24 mx-auto object-contain mb-4"
+                          width={96} // Explicit width (w-24 = 96px)
+                          height={96} // Explicit height (h-24 = 96px)
+                        />
                       )}
                       <CardTitle className="text-xl text-[#d92507]">{sponsor.name}</CardTitle>
                     </CardHeader>

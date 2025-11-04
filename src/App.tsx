@@ -1,22 +1,26 @@
+import React, { Suspense } from "react"; // Added Suspense
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Index from "./pages/Index";
-import Sponsors from "./pages/Sponsors";
-import Donate from "./pages/Donate";
-import Events from "./pages/Events";
-import Robots from "././pages/Robots";
-import About from "./pages/About";
-import Unitybots from "./pages/Unitybots";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import AdminPage from "./pages/AdminPage"; // Import the new AdminPage
-import NewsIndex from "./pages/NewsIndex"; // Import the new NewsIndex page
-import NewsArticlePage from "./pages/NewsArticle"; // Import the new NewsArticlePage
 import ScrollToTop from "./components/ScrollToTop";
 import { useSupabase } from "./components/SessionContextProvider";
+import { HelmetProvider } from 'react-helmet-async'; // Import HelmetProvider
+
+// Lazy load page components for code splitting
+const Index = React.lazy(() => import("./pages/Index"));
+const Sponsors = React.lazy(() => import("./pages/Sponsors"));
+const Donate = React.lazy(() => import("./pages/Donate"));
+const Events = React.lazy(() => import("./pages/Events"));
+const Robots = React.lazy(() => import("./pages/Robots"));
+const About = React.lazy(() => import("./pages/About"));
+const Unitybots = React.lazy(() => import("./pages/Unitybots"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+const Login = React.lazy(() => import("./pages/Login"));
+const AdminPage = React.lazy(() => import("./pages/AdminPage"));
+const NewsIndex = React.lazy(() => import("./pages/NewsIndex"));
+const NewsArticlePage = React.lazy(() => import("./pages/NewsArticle"));
 
 const queryClient = new QueryClient();
 
@@ -36,27 +40,31 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/sponsors" element={<Sponsors />} />
-            <Route path="/donate" element={<Donate />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/robots" element={<Robots />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/unitybots" element={<Unitybots />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/news" element={<NewsIndex />} /> {/* Route for all news articles */}
-            <Route path="/news/:id" element={<NewsArticlePage />} /> {/* Route for a single news article */}
+        <HelmetProvider> {/* Wrap the entire app with HelmetProvider */}
+          <BrowserRouter>
+            <ScrollToTop />
+            <Suspense fallback={<div>Loading...</div>}> {/* Add Suspense for lazy loaded components */}
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/sponsors" element={<Sponsors />} />
+                <Route path="/donate" element={<Donate />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/robots" element={<Robots />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/unitybots" element={<Unitybots />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/news" element={<NewsIndex />} />
+                <Route path="/news/:id" element={<NewsArticlePage />} />
 
-            {/* Protected Admin route */}
-            <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+                {/* Protected Admin route */}
+                <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </HelmetProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

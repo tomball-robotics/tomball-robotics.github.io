@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { UnitybotResource, UnitybotInitiative } from "@/types/supabase";
 import Spinner from "@/components/Spinner"; // Import Spinner
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const Unitybots: React.FC = () => {
   const [resources, setResources] = useState<UnitybotResource[]>([]);
@@ -89,6 +90,10 @@ const Unitybots: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Unity Bots - Tomball T3 Robotics</title>
+        <meta name="description" content="Explore the Unity Bots Project by Tomball T3 Robotics, fostering inclusion and diversity in FIRST through resources and community initiatives." />
+      </Helmet>
       <Header />
       <motion.main
         initial={{ opacity: 0 }}
@@ -137,7 +142,7 @@ const Unitybots: React.FC = () => {
                           rel="noopener noreferrer"
                           className="block bg-[#d92507] hover:bg-[#b31f06] text-white text-center py-2 px-4 rounded-md transition-colors"
                         >
-                          {link.text}
+                          {link.text} <ExternalLink className="inline-block ml-1 h-4 w-4" />
                         </a>
                       ))}
                     </div>
@@ -175,6 +180,8 @@ const Unitybots: React.FC = () => {
                         src={initiative.image_url}
                         alt={initiative.title}
                         className="max-h-full max-w-full object-contain"
+                        width={300} // Example width, adjust as needed
+                        height={192} // Example height (h-48 = 192px)
                       />
                     </div>
                   )}
@@ -192,7 +199,7 @@ const Unitybots: React.FC = () => {
                           rel="noopener noreferrer"
                           className="block bg-[#d92507] hover:bg-[#b31f06] text-white text-center py-2 px-4 rounded-md transition-colors"
                         >
-                          {link.text}
+                          {link.text} <ExternalLink className="inline-block ml-1 h-4 w-4" />
                         </a>
                       ))}
                     </div>

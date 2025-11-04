@@ -8,6 +8,7 @@ import Spinner from '@/components/Spinner';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const NewsArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -87,6 +88,10 @@ const NewsArticlePage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>{article.title} - Tomball T3 Robotics News</title>
+        <meta name="description" content={article.content.substring(0, 160) + '...'} /> {/* Truncate content for meta description */}
+      </Helmet>
       <Header />
       <motion.main
         initial={{ opacity: 0 }}
@@ -106,6 +111,8 @@ const NewsArticlePage: React.FC = () => {
                     src={url}
                     alt={`${article.title} image ${index + 1}`}
                     className="w-full h-80 object-cover"
+                    width={600} // Example width, adjust as needed
+                    height={320} // Example height (h-80 = 320px)
                   />
                 </div>
               ))}

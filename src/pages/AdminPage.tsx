@@ -30,6 +30,7 @@ import { WebsiteSettings } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import AdminHelpAndDocs from './admin/AdminHelpAndDocs'; // Import the new Help & Docs component
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 
 interface AdminSection {
@@ -350,6 +351,10 @@ const AdminPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Admin Panel - Tomball T3 Robotics</title>
+        <meta name="description" content="Manage website content for Tomball T3 Robotics, FRC Team 7312." />
+      </Helmet>
       <Header />
       <main className="flex-grow container mx-auto px-4 py-12 pt-24">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
