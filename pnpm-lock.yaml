@@ -98,6 +98,9 @@ importers:
       '@supabase/auth-ui-shared':
         specifier: ^0.1.8
         version: 0.1.8(@supabase/supabase-js@2.57.4)
+      '@supabase/functions-js':
+        specifier: ^2.79.0
+        version: 2.79.0
       '@supabase/supabase-js':
         specifier: ^2.57.4
         version: 2.57.4
@@ -1269,6 +1272,10 @@ packages:
 
   '@supabase/functions-js@2.4.6':
     resolution: {integrity: sha512-bhjZ7rmxAibjgmzTmQBxJU6ZIBCCJTc3Uwgvdi4FewueUTAGO5hxZT1Sj6tiD+0dSXf9XI87BDdJrg12z8Uaew==}
+
+  '@supabase/functions-js@2.79.0':
+    resolution: {integrity: sha512-WaiU6b+Z+ZfJOjFhpMKdajt42weiFUrA6TVW5oGd6WfPGajFiKZJJIAvuK0g7KDKaYowtQrOo5+Ais+PcuZ1qA==}
+    engines: {node: '>=20.0.0'}
 
   '@supabase/node-fetch@2.6.15':
     resolution: {integrity: sha512-1ibVeYUacxWYi9i0cf5efil6adJ9WRyZBLivgjs+AUpewx1F3xPi7gLgaASI2SmIQxPoCEjAsLAzKPgMJVgOUQ==}
@@ -3986,6 +3993,10 @@ snapshots:
   '@supabase/functions-js@2.4.6':
     dependencies:
       '@supabase/node-fetch': 2.6.15
+
+  '@supabase/functions-js@2.79.0':
+    dependencies:
+      tslib: 2.8.1
 
   '@supabase/node-fetch@2.6.15':
     dependencies:
