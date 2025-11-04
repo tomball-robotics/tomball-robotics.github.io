@@ -32,30 +32,63 @@ serve(async (req) => {
     );
 
     // 1. Download the original image
+    console.log(`[Edge Function] Downloading image from: ${imageUrl}`);
     const response = await fetch(imageUrl);
     if (!response.ok) {
       throw new Error(`Failed to download image from ${imageUrl}: ${response.statusText}`);
     }
-    const imageBlob = await response.blob();
+    const imageBuffer = await response.arrayBuffer(); // Get as ArrayBuffer for potential processing
 
-    // 2. *** Placeholder for AVIF Conversion Logic ***
-    // In a real-world scenario, you would integrate a robust image processing library here
-    // to convert `imageBlob` to AVIF format.
-    // For Deno, this might involve using a WebAssembly-based library or an external service.
-    // For now, we'll simulate a conversion by just renaming the file and assuming it's AVIF.
-    // This part needs to be replaced with actual conversion code.
-    console.warn("AVIF conversion is a placeholder. Implement actual image processing here.");
-    const avifBlob = imageBlob; // Simulate conversion: for now, just use the original blob
-    // const avifBlob = await convertToAvif(imageBlob); // This function would need to be implemented
+    // 2. *** ACTUAL AVIF CONVERSION LOGIC GOES HERE ***
+    // This is the most challenging part due to Deno's current ecosystem for image processing.
+    //
+    // Conceptual steps for a real conversion:
+    // a. Decode the input image (e.g., JPEG, PNG) from `imageBuffer` into raw pixel data.
+    // b. (Optional) Perform any desired resizing, cropping, or other manipulations on the pixel data.
+    // c. Encode the raw pixel data into AVIF format, resulting in a new binary buffer.
+    //
+    // --- Practical Approaches for AVIF Conversion in a Serverless/Edge Environment ---
+    //
+    // Option A (Recommended for simplicity and robustness): Use a third-party image optimization API.
+    //    Instead of doing the conversion directly in this function, you would send the `imageUrl`
+    //    to a service like Cloudinary, Imgix, or imgproxy. These services are highly optimized
+    //    for image transformations and can return an AVIF version of your image.
+    //
+    //    Example (conceptual, using a hypothetical external API):
+    //    const externalApiUrl = `https://api.imageoptimizer.com/convert?url=${encodeURIComponent(imageUrl)}&format=avif`;
+    //    const externalApiResponse = await fetch(externalApiUrl);
+    //    if (!externalApiResponse.ok) {
+    //      throw new Error('External image conversion failed.');
+    //    }
+    //    const avifOutputBuffer = await externalApiResponse.arrayBuffer();
+    //
+    // Option B (Advanced): Integrate a WebAssembly (Wasm) compiled image library.
+    //    You could compile a C/C++ image library (like `libavif` or a subset of `ImageMagick`)
+    //    to WebAssembly and load/run it within this Deno function. This is a complex setup
+    //    involving Wasm compilation, module loading, and careful memory management.
+    //
+    //    Example (conceptual, highly simplified):
+    //    import { init, encodeAvif } from 'path/to/your/wasm_avif_encoder.js'; // Wasm module
+    //    await init(); // Initialize Wasm module
+    //    const decodedImage = decodeImage(imageBuffer); // Decode original (e.g., JPEG/PNG)
+    //    const avifOutputBuffer = encodeAvif(decodedImage, { quality: 70 }); // Encode to AVIF
+    //
+    // --- Current Placeholder Implementation ---
+    // For now, the function will simply take the original image buffer and rename its extension
+    // to `.avif`. This will NOT actually convert the image data to AVIF format, but it allows
+    // the frontend button and URL update logic to function.
+    console.warn("[Edge Function] AVIF conversion is currently a placeholder. Actual image processing library integration is required here for true AVIF encoding.");
+    const avifOutputBuffer = imageBuffer; // In a real scenario, this would be the AVIF encoded buffer
 
     const newFileName = originalFileName.split('.').slice(0, -1).join('.') + '.avif';
     const newFilePath = `${folderPath}/${newFileName}`;
 
-    // 3. Upload the converted AVIF image
+    // 3. Upload the (simulated) converted AVIF image
+    console.log(`[Edge Function] Uploading AVIF image to: ${bucketName}/${newFilePath}`);
     const { data: uploadData, error: uploadError } = await supabaseClient.storage
       .from(bucketName)
-      .upload(newFilePath, avifBlob, {
-        contentType: 'image/avif',
+      .upload(newFilePath, avifOutputBuffer, {
+        contentType: 'image/avif', // Ensure correct content type for the *intended* AVIF file
         cacheControl: '3600',
         upsert: true,
       });
@@ -73,13 +106,14 @@ serve(async (req) => {
       throw new Error(`Failed to get public URL for AVIF image: ${publicUrlError.message}`);
     }
 
+    console.log(`[Edge Function] AVIF image uploaded. Public URL: ${publicUrlData.publicUrl}`);
     return new Response(JSON.stringify({ avifUrl: publicUrlData.publicUrl }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
 
   } catch (error) {
-    console.error('Error in convert-to-avif function:', error.message);
+    console.error('[Edge Function] Error in convert-to-avif function:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
