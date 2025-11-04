@@ -67,12 +67,6 @@ serve(async (req) => {
     //    to WebAssembly and load/run it within this Deno function. This is a complex setup
     //    involving Wasm compilation, module loading, and careful memory management.
     //
-    //    Example (conceptual, highly simplified):
-    //    import { init, encodeAvif } from 'path/to/your/wasm_avif_encoder.js'; // Wasm module
-    //    await init(); // Initialize Wasm module
-    //    const decodedImage = decodeImage(imageBuffer); // Decode original (e.g., JPEG/PNG)
-    //    const avifOutputBuffer = encodeAvif(decodedImage, { quality: 70 }); // Encode to AVIF
-    //
     // --- Current Placeholder Implementation ---
     // For now, the function will simply take the original image buffer and rename its extension
     // to `.avif`. This will NOT actually convert the image data to AVIF format, but it allows

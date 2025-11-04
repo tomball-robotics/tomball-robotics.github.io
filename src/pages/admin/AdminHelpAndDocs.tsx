@@ -253,6 +253,27 @@ const AdminHelpAndDocs: React.FC = () => {
               <li><strong>After updating</strong>: Visit the "Unitybots" page on the public website.</li>
             </ul>
           </div>
+
+          {/* Image Optimization */}
+          <div className="mb-8 p-4 border rounded-md bg-gray-50">
+            <div className="flex items-center mb-3">
+              <ImageUp className="h-5 w-5 text-[#0d2f60] mr-2" />
+              <h4 className="text-xl font-semibold text-[#0d2f60]">10. Image Optimization</h4>
+            </div>
+            <p className="text-gray-700 mb-2">Improve website loading speed by converting images to AVIF format.</p>
+            <ul className="list-disc list-inside text-gray-700 pl-4 space-y-1">
+              <li><strong>What it does</strong>: Converts all images linked in your database (from Supabase Storage) to the AVIF format, which offers better compression and quality.</li>
+              <li><strong>Where to go in the Admin Panel</strong>: Main Tab: <span className="font-semibold">Dashboard</span></li>
+              <li><strong>How to use</strong>:
+                <ol className="list-decimal list-inside pl-6 space-y-1">
+                  <li><strong>Click "Optimize All Images to AVIF"</strong>: This button will start a process that goes through all relevant image fields in your database.</li>
+                  <li><strong>Automatic Conversion</strong>: For each image that is not already AVIF, it will attempt to convert it and update the URL in the database.</li>
+                  <li><strong>Status Updates</strong>: You will see toast notifications indicating the progress and outcome of the optimization.</li>
+                </ol>
+              </li>
+              <li><strong>After optimizing</strong>: All pages with images should load faster.</li>
+            </ul>
+          </div>
         </section>
 
         {/* Important Reminders */}
