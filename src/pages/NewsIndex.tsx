@@ -131,7 +131,9 @@ const NewsIndex: React.FC = () => {
                       </ReactMarkdown>
                     </div>
                     <Button asChild variant="link" className="p-0 h-auto justify-start text-[#d92507] hover:text-[#b31f06] mt-auto">
-                      <Link to={`/news/${article.id}`}>Read More about "{article.title}" <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                      <Link to={`/news/${article.id}`} className="block text-wrap"> {/* Added block and text-wrap */}
+                        Read More about "{article.title}" <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
