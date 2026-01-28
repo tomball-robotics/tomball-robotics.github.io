@@ -420,16 +420,35 @@ const Index: React.FC = () => {
                   <Card className="text-center shadow-md hover:shadow-xl transition-shadow h-full">
                     <CardHeader>
                       {sponsor.image_url && (
-                        <img
-                          src={sponsor.image_url}
-                          alt={`Logo for ${sponsor.name}`}
-                          className="w-24 h-24 mx-auto object-contain mb-4"
-                          width={96} // Explicit width (w-24 = 96px)
-                          height={96} // Explicit height (h-24 = 96px)
-                          loading="lazy" // Lazy load sponsor logos
-                        />
+                        sponsor.website_url ? (
+                          <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="block">
+                            <img
+                              src={sponsor.image_url}
+                              alt={`Logo for ${sponsor.name}`}
+                              className="w-24 h-24 mx-auto object-contain mb-4"
+                              width={96} // Explicit width (w-24 = 96px)
+                              height={96} // Explicit height (h-24 = 96px)
+                              loading="lazy" // Lazy load sponsor logos
+                            />
+                          </a>
+                        ) : (
+                          <img
+                            src={sponsor.image_url}
+                            alt={`Logo for ${sponsor.name}`}
+                            className="w-24 h-24 mx-auto object-contain mb-4"
+                            width={96} // Explicit width (w-24 = 96px)
+                            height={96} // Explicit height (h-24 = 96px)
+                            loading="lazy" // Lazy load sponsor logos
+                          />
+                        )
                       )}
-                      <CardTitle className="text-xl text-[#d92507]">{sponsor.name}</CardTitle>
+                      {sponsor.website_url ? (
+                        <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="block">
+                          <CardTitle className="text-xl text-[#d92507] hover:underline">{sponsor.name}</CardTitle>
+                        </a>
+                      ) : (
+                        <CardTitle className="text-xl text-[#d92507]">{sponsor.name}</CardTitle>
+                      )}
                     </CardHeader>
                   </Card>
                 </motion.div>
