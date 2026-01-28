@@ -4,7 +4,7 @@ import firstLogo from '@/assets/banner/first.svg';
 import { supabase } from '@/integrations/supabase/client';
 import { Banner } from '@/types/supabase'; // Import the new type
 
-const BANNER_WIDTH_WITH_MARGIN = 104; // 100px width + 4px margin
+const BANNER_WIDTH_WITH_MARGIN = 84; // 80px width + 4px margin (2px on each side)
 const CONTAINER_HORIZONTAL_PADDING = 32; // 1rem (16px) on each side
 
 const AwardBanners: React.FC = () => {

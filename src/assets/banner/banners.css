@@ -31,17 +31,17 @@
     vertical-align: top;
     display: inline-block;
     margin: 0 2px 25px;
-    width: 100px;
+    width: 80px; /* Reduced from 100px */
     position: relative;
     background: #0f4bcb;
     color: white;
-    padding: 8px;
+    padding: 6px; /* Reduced from 8px */
     white-space: normal;
-    font-size: 0.875rem;
+    font-size: 0.75rem; /* Reduced from 0.875rem */
 }
 .banners img,
 .banner img {
-    width: 60px;
+    width: 45px; /* Reduced from 60px */
     margin-bottom: 5px;
     display: block;
     margin-left: auto;
@@ -52,9 +52,9 @@
     content: '';
     position: absolute;
     display: block;
-    border: 50px solid #0f4bcb;
+    border: 40px solid #0f4bcb; /* Reduced from 50px */
     border-top-width: 5px;
-    border-bottom: 15px transparent solid;
+    border-bottom: 12px transparent solid; /* Reduced from 15px */
     top: 100%;
     left: 0;
 }
