@@ -23,6 +23,7 @@ import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPrev
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
 import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm';
+import WebsiteDonateSettingsForm from '@/components/admin/WebsiteDonateSettingsForm'; // Import new form
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
@@ -149,6 +150,7 @@ const adminSections: AdminSection[] = [
     icon: Settings,
     subTabs: [
       { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: AdminFooterSettings },
+      { value: 'donate-page-settings', label: 'Donate Page Settings', icon: DollarSign, component: WebsiteDonateSettingsForm }, // New sub-tab
     ]
   },
   {
@@ -229,6 +231,8 @@ const AdminPage: React.FC = () => {
         { type: 'x', url: "https://twitter.com/frc7312" },
       ],
       calendar_embed_url: "https://calendar.google.com/calendar/embed?src=c_1c19550a800e65db313120e4fbd5f807a1a4ee37818794cefd2f920ca14dbf7b%40group.calendar.google.com&ctz=America%2FChicago", // Default calendar URL
+      donate_button_text: "Donate to Tomball Robotics with PayPal", // Default donate button text
+      donate_button_url: "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA", // Default donate button URL
     };
 
     const toastId = showLoading('Initializing default website settings...');
@@ -342,6 +346,7 @@ const AdminPage: React.FC = () => {
         WebsiteEventsPreviewSettingsForm,
         WebsiteSponsorsPreviewSettingsForm,
         WebsiteCalendarSettingsForm,
+        WebsiteDonateSettingsForm, // Include new form here
         AdminFooterSettings, // AdminFooterSettings also uses WebsiteSettings
       ].includes(ComponentToRender as any); // Using 'any' for type comparison
 

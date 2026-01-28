@@ -6,37 +6,48 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorshipTier } from "@/types/supabase";
+import { SponsorshipTier, WebsiteSettings } from "@/types/supabase"; // Import WebsiteSettings
 import Spinner from "@/components/Spinner"; // Import Spinner
 import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 const Donate: React.FC = () => {
   const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
+  const [websiteSettings, setWebsiteSettings] = useState<WebsiteSettings | null>(null); // State for website settings
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSponsorshipTiers = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data: tiersData, error: tiersError } = await supabase
         .from("sponsorship_tiers")
         .select("*");
 
-      if (error) {
-        console.error("Error fetching sponsorship tiers:", error);
+      const { data: settingsData, error: settingsError } = await supabase // Fetch website settings
+        .from("website_settings")
+        .select("donate_button_text, donate_button_url")
+        .limit(1)
+        .single();
+
+      if (tiersError) {
+        console.error("Error fetching sponsorship tiers:", tiersError);
         setError("Failed to load sponsorship tiers.");
+      } else if (settingsError) {
+        console.error("Error fetching website settings:", settingsError);
+        setError("Failed to load website settings for donate page.");
       } else {
-        const sortedTiers = (data || []).sort((a, b) => {
+        const sortedTiers = (tiersData || []).sort((a, b) => {
           const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
           const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
           return priceB - priceA;
         });
         setSponsorshipTiers(sortedTiers);
+        setWebsiteSettings(settingsData); // Set website settings
       }
       setLoading(false);
     };
 
-    fetchSponsorshipTiers();
+    fetchData();
   }, []);
 
   const listVariants = {
@@ -83,6 +94,9 @@ const Donate: React.FC = () => {
       </div>
     );
   }
+
+  const donateButtonText = websiteSettings?.donate_button_text || "Donate to Tomball Robotics with PayPal";
+  const donateButtonUrl = websiteSettings?.donate_button_url || "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -143,8 +157,8 @@ const Donate: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
             <Button asChild size="lg" className="bg-[#00457C] hover:bg-[#003057] text-white font-bold py-3 px-6 rounded-lg">
-              <a href="https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA" target="_blank" rel="noopener noreferrer">
-                Donate to Tomball Robotics with PayPal
+              <a href={donateButtonUrl} target="_blank" rel="noopener noreferrer">
+                {donateButtonText}
               </a>
             </Button>
             <div className="text-center">

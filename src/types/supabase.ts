@@ -88,6 +88,9 @@ export interface WebsiteSettings {
   footer_email: string | null;
   social_media_links: SocialMediaLink[] | null; // Updated to dynamic array
   calendar_embed_url: string | null; // New field for Google Calendar embed URL
+  // Donate page fields
+  donate_button_text: string | null; // New field for donate button text
+  donate_button_url: string | null; // New field for donate button URL
 }
 
 export interface Robot {
