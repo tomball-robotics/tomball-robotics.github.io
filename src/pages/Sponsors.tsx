@@ -11,6 +11,8 @@ import { Sponsor, SponsorshipTier } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import { Helmet } from 'react-helmet-async'; // Import Helmet
 
+// Removed MIN_TIER_AMOUNT as it's no longer needed with the new grouping logic
+
 const tierConfig: { [key: string]: { cardClass: string; imageContainerClass: string; showDescription: boolean; showName: boolean; showWebsiteButton: boolean } } = {
   diamond: { cardClass: 'w-full md:w-3/4 lg:w-2/3', imageContainerClass: 'h-64', showDescription: true, showName: true, showWebsiteButton: true },
   sapphire: { cardClass: 'w-full md:w-[calc(50%-1rem)]', imageContainerClass: 'h-56', showDescription: true, showName: true, showWebsiteButton: true },
@@ -19,8 +21,6 @@ const tierConfig: { [key: string]: { cardClass: string; imageContainerClass: str
   silver: { cardClass: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] md:w-[calc(25%-1.5rem)] lg:w-[calc(20%-1.6rem)]', imageContainerClass: 'h-32', showDescription: false, showName: true, showWebsiteButton: false },
   bronze: { cardClass: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] md:w-[calc(25%-1.5rem)] lg:w-[calc(20%-1.6rem)]', imageContainerClass: 'h-24', showDescription: false, showName: true, showWebsiteButton: false },
 };
-
-const MIN_TIER_AMOUNT = 500;
 
 const Sponsors: React.FC = () => {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -62,6 +62,7 @@ const Sponsors: React.FC = () => {
   }, []);
 
   const getTierForAmount = (amount: number): SponsorshipTier | null => {
+    // Tiers are already sorted descending by price from the useEffect
     for (const tier of sponsorshipTiers) {
       const threshold = parseInt(tier.price.replace(/[^0-9]/g, ''), 10);
       if (amount >= threshold) {
@@ -70,6 +71,22 @@ const Sponsors: React.FC = () => {
     }
     return null;
   };
+
+  // Group sponsors by tier or into an 'other' category
+  const sponsorsByTier: Record<string, Sponsor[]> = {};
+  const otherSponsorsList: Sponsor[] = [];
+
+  sponsors.forEach(sponsor => {
+    const tier = getTierForAmount(sponsor.amount);
+    if (tier) {
+      if (!sponsorsByTier[tier.tier_id]) {
+        sponsorsByTier[tier.tier_id] = [];
+      }
+      sponsorsByTier[tier.tier_id].push(sponsor);
+    } else {
+      otherSponsorsList.push(sponsor);
+    }
+  });
 
   const listVariants = {
     visible: { transition: { staggerChildren: 0.1 } },
@@ -104,20 +121,6 @@ const Sponsors: React.FC = () => {
       </div>
     );
   }
-
-  const tieredSponsors = sponsors.filter(s => s.amount >= MIN_TIER_AMOUNT);
-  const otherSponsors = sponsors.filter(s => s.amount < MIN_TIER_AMOUNT);
-
-  const sponsorsByTier = tieredSponsors.reduce((acc, sponsor) => {
-    const tier = getTierForAmount(sponsor.amount);
-    if (tier) {
-      if (!acc[tier.tier_id]) {
-        acc[tier.tier_id] = [];
-      }
-      acc[tier.tier_id].push(sponsor);
-    }
-    return acc;
-  }, {} as Record<string, Sponsor[]>);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -209,7 +212,7 @@ const Sponsors: React.FC = () => {
         })}
 
         {/* Other Sponsors */}
-        {otherSponsors.length > 0 && (
+        {otherSponsorsList.length > 0 && (
           <motion.div
             className="mb-10"
             initial="hidden"
@@ -226,7 +229,7 @@ const Sponsors: React.FC = () => {
               <Card className="shadow-lg">
                 <CardContent className="p-8">
                   <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
-                    {otherSponsors.map((sponsor) => (
+                    {otherSponsorsList.map((sponsor) => (
                       <motion.div key={sponsor.id} variants={itemVariants} className="text-lg text-gray-800 font-medium">
                         {sponsor.website_url ? (
                           <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="text-[#d92507] hover:underline">
