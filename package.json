@@ -3,13 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://www.your-custom-domain.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "predeploy": "npm run build && cp ./dist/index.html ./dist/404.html && echo $(jq -r '.homepage' package.json | sed -e 's|^[^/]*//||' -e 's|/.*$||') > ./dist/CNAME",
+    "predeploy": "npm run build && cp ./dist/index.html ./dist/404.html",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -67,7 +66,7 @@
     "recharts": "^2.12.7",
     "remark-gfm": "^4.0.1",
     "sonner": "^1.5.0",
-    "tailwind-merge": "^2.1.1",
+    "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.3",
     "zod": "^3.23.8"
