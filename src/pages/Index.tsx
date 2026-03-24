@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,17 +7,30 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Newspaper, CalendarDays } from "lucide-react"; // Added CalendarDays icon
+import { ArrowRight, Newspaper, CalendarDays } from "lucide-react";
 import AwardBanners from "@/components/AwardBanners";
 import { supabase } from "@/integrations/supabase/client";
 import { WebsiteSettings, Event, Sponsor, NewsArticle } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Helmet } from 'react-helmet-async'; // Import Helmet
+import { Helmet } from 'react-helmet-async';
+
+const DEFAULT_SETTINGS: Partial<WebsiteSettings> = {
+  hero_title: "Welcome to Tomball Robotics",
+  hero_subtitle: "Building the future of STEM, one robot at a time.",
+  hero_background_image: "/images/general/hero-background.jpeg",
+  about_preview_title: "About Our Team",
+  about_preview_description: "Tomball T3 Robotics, FRC Team 7312, is dedicated to inspiring young minds in science, technology, engineering, and mathematics (STEM) through participation in the FIRST Robotics Competition.",
+  about_preview_image_url: "/images/general/indexcollage.jpg",
+  events_preview_title: "Our Latest Events",
+  events_preview_description: "Discover our recent competitions, awards, and community outreach activities.",
+  sponsors_preview_title: "Our Valued Sponsors",
+  sponsors_preview_description: "We are grateful for the generous support of our sponsors who make our mission possible.",
+};
 
 const Index: React.FC = () => {
-  const [homePageData, setHomePageData] = useState<WebsiteSettings | null>(null);
+  const [homePageData, setHomePageData] = useState<Partial<WebsiteSettings>>(DEFAULT_SETTINGS);
   const [latestEvents, setLatestEvents] = useState<Event[]>([]);
   const [featuredSponsors, setFeaturedSponsors] = useState<Sponsor[]>([]);
   const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
@@ -25,52 +40,58 @@ const Index: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { data: settingsData, error: settingsError } = await supabase
-        .from("website_settings")
-        .select("*")
-        .limit(1)
-        .single();
+      setError(null);
 
-      // Fetch latest events from Supabase
-      const { data: eventsData, error: eventsError } = await supabase
-        .from("events")
-        .select("*")
-        .order("event_date", { ascending: false })
-        .limit(3);
+      try {
+        // Fetch website settings
+        const { data: settingsData, error: settingsError } = await supabase
+          .from("website_settings")
+          .select("*")
+          .maybeSingle();
 
-      const { data: sponsorsData, error: sponsorsError } = await supabase
-        .from("sponsors")
-        .select("*")
-        .order("amount", { ascending: false })
-        .limit(3);
-      
-      const { data: newsData, error: newsError } = await supabase
-        .from("news_articles")
-        .select("*")
-        .order("publish_date", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(3);
+        if (settingsError) {
+          console.warn("Error fetching website settings:", settingsError);
+        } else if (settingsData) {
+          setHomePageData(settingsData);
+        }
 
-      if (settingsError) {
-        console.error("Error fetching website settings:", settingsError);
-        setError("Failed to load home page settings.");
-      } else if (eventsError) {
-        console.error("Error fetching latest events:", eventsError);
-        setError("Failed to load latest events.");
-      } else if (sponsorsError) {
-        console.error("Error fetching featured sponsors:", sponsorsError);
-        setError("Failed to load featured sponsors.");
-      } else if (newsError) {
-        console.error("Error fetching latest news:", newsError);
-        setError("Failed to load latest news.");
+        // Fetch latest events
+        const { data: eventsData, error: eventsError } = await supabase
+          .from("events")
+          .select("*")
+          .order("event_date", { ascending: false })
+          .limit(3);
+
+        if (eventsError) console.error("Error fetching latest events:", eventsError);
+        else setLatestEvents(eventsData || []);
+
+        // Fetch featured sponsors
+        const { data: sponsorsData, error: sponsorsError } = await supabase
+          .from("sponsors")
+          .select("*")
+          .order("amount", { ascending: false })
+          .limit(3);
+
+        if (sponsorsError) console.error("Error fetching featured sponsors:", sponsorsError);
+        else setFeaturedSponsors(sponsorsData || []);
+        
+        // Fetch latest news
+        const { data: newsData, error: newsError } = await supabase
+          .from("news_articles")
+          .select("*")
+          .order("publish_date", { ascending: false })
+          .order("created_at", { ascending: false })
+          .limit(3);
+
+        if (newsError) console.error("Error fetching latest news:", newsError);
+        else setLatestNews(newsData || []);
+
+      } catch (err) {
+        console.error("Unexpected error in Home page fetchData:", err);
+        // We don't set a fatal error here to allow the page to render with defaults
+      } finally {
+        setLoading(false);
       }
-      else {
-        setHomePageData(settingsData);
-        setLatestEvents(eventsData || []);
-        setFeaturedSponsors(sponsorsData || []);
-        setLatestNews(newsData || []);
-      }
-      setLoading(false);
     };
 
     fetchData();
@@ -100,8 +121,7 @@ const Index: React.FC = () => {
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
-      opacity: 1,
-      y: 0,
+      opacity: 1, y: 0,
       transition: {
         duration: 0.8,
         ease: "easeOut",
@@ -115,18 +135,6 @@ const Index: React.FC = () => {
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
           <Spinner text="Loading home page content..." />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error || !homePageData) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <p className="text-lg text-red-600">{error || "Failed to load home page content."}</p>
         </main>
         <Footer />
       </div>
@@ -210,7 +218,7 @@ const Index: React.FC = () => {
                   scrolling="no"
                   className="absolute top-0 left-0 w-full h-full"
                   title="Tomball Robotics Calendar"
-                  loading="lazy" // Lazy load iframe
+                  loading="lazy"
                 ></iframe>
               </motion.div>
               <Button asChild size="lg" className="bg-[#d92507] hover:bg-[#b31f06] text-white group mt-10">
@@ -251,9 +259,9 @@ const Index: React.FC = () => {
                           src={article.image_urls[0]}
                           alt={`Image for ${article.title}`}
                           className="w-full h-48 object-cover rounded-t-lg"
-                          width={400} // Explicit width
-                          height={192} // Explicit height (h-48 = 192px)
-                          loading="lazy" // Lazy load news images
+                          width={400}
+                          height={192}
+                          loading="lazy"
                         />
                       )}
                       <CardHeader className="p-4">
@@ -321,14 +329,16 @@ const Index: React.FC = () => {
                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                <img
-                  src={homePageData.about_preview_image_url}
-                  alt="T3 Robotics Team"
-                  className="rounded-lg shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-300"
-                  width={600} // Example width, adjust as needed
-                  height={400} // Example height, adjust as needed
-                  loading="lazy" // Lazy load about preview image
-                />
+                {homePageData.about_preview_image_url && (
+                  <img
+                    src={homePageData.about_preview_image_url}
+                    alt="T3 Robotics Team"
+                    className="rounded-lg shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-300"
+                    width={600}
+                    height={400}
+                    loading="lazy"
+                  />
+                )}
               </motion.div>
             </div>
           </div>
@@ -426,9 +436,9 @@ const Index: React.FC = () => {
                               src={sponsor.image_url}
                               alt={`Logo for ${sponsor.name}`}
                               className="w-24 h-24 mx-auto object-contain mb-4"
-                              width={96} // Explicit width (w-24 = 96px)
-                              height={96} // Explicit height (h-24 = 96px)
-                              loading="lazy" // Lazy load sponsor logos
+                              width={96}
+                              height={96}
+                              loading="lazy"
                             />
                           </a>
                         ) : (
@@ -436,9 +446,9 @@ const Index: React.FC = () => {
                             src={sponsor.image_url}
                             alt={`Logo for ${sponsor.name}`}
                             className="w-24 h-24 mx-auto object-contain mb-4"
-                            width={96} // Explicit width (w-24 = 96px)
-                            height={96} // Explicit height (h-24 = 96px)
-                            loading="lazy" // Lazy load sponsor logos
+                            width={96}
+                            height={96}
+                            loading="lazy"
                           />
                         )
                       )}

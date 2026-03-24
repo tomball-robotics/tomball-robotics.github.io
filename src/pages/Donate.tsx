@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,45 +8,58 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorshipTier, WebsiteSettings } from "@/types/supabase"; // Import WebsiteSettings
-import Spinner from "@/components/Spinner"; // Import Spinner
-import { Helmet } from 'react-helmet-async'; // Import Helmet
+import { SponsorshipTier, WebsiteSettings } from "@/types/supabase";
+import Spinner from "@/components/Spinner";
+import { Helmet } from 'react-helmet-async';
 
 const Donate: React.FC = () => {
   const [sponsorshipTiers, setSponsorshipTiers] = useState<SponsorshipTier[]>([]);
-  const [websiteSettings, setWebsiteSettings] = useState<WebsiteSettings | null>(null); // State for website settings
+  const [websiteSettings, setWebsiteSettings] = useState<Partial<WebsiteSettings> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { data: tiersData, error: tiersError } = await supabase
-        .from("sponsorship_tiers")
-        .select("*");
+      setError(null);
 
-      const { data: settingsData, error: settingsError } = await supabase // Fetch website settings
-        .from("website_settings")
-        .select("donate_button_text, donate_button_url")
-        .limit(1)
-        .single();
+      try {
+        // Fetch sponsorship tiers
+        const { data: tiersData, error: tiersError } = await supabase
+          .from("sponsorship_tiers")
+          .select("*");
 
-      if (tiersError) {
-        console.error("Error fetching sponsorship tiers:", tiersError);
-        setError("Failed to load sponsorship tiers.");
-      } else if (settingsError) {
-        console.error("Error fetching website settings:", settingsError);
-        setError("Failed to load website settings for donate page.");
-      } else {
-        const sortedTiers = (tiersData || []).sort((a, b) => {
-          const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
-          const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
-          return priceB - priceA;
-        });
-        setSponsorshipTiers(sortedTiers);
-        setWebsiteSettings(settingsData); // Set website settings
+        if (tiersError) {
+          console.error("Error fetching sponsorship tiers:", tiersError);
+          // We don't set a fatal error here if tiers are missing, just log it
+        } else {
+          const sortedTiers = (tiersData || []).sort((a, b) => {
+            const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
+            const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
+            return priceB - priceA;
+          });
+          setSponsorshipTiers(sortedTiers);
+        }
+
+        // Fetch website settings for donate button
+        // Using maybeSingle() to avoid error if table is empty
+        const { data: settingsData, error: settingsError } = await supabase
+          .from("website_settings")
+          .select("donate_button_text, donate_button_url")
+          .maybeSingle();
+
+        if (settingsError) {
+          console.warn("Error fetching website settings for donate page:", settingsError);
+          // Not a fatal error, we'll use defaults
+        } else {
+          setWebsiteSettings(settingsData);
+        }
+      } catch (err) {
+        console.error("Unexpected error in Donate page fetchData:", err);
+        setError("An unexpected error occurred while loading the page.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchData();
@@ -76,7 +91,7 @@ const Donate: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
-          <Spinner text="Loading sponsorship tiers..." />
+          <Spinner text="Loading donation information..." />
         </main>
         <Footer />
       </div>
@@ -89,6 +104,9 @@ const Donate: React.FC = () => {
         <Header />
         <main className="flex-grow container mx-auto px-4 py-12 pt-24 text-center">
           <p className="text-lg text-red-600">{error}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4 bg-[#0d2f60]">
+            Retry
+          </Button>
         </main>
         <Footer />
       </div>
@@ -118,37 +136,43 @@ const Donate: React.FC = () => {
           necessary skills needed for future success.
         </p>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-12"
-          variants={listVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {sponsorshipTiers.map((tier) => (
-            <motion.div
-              key={tier.id}
-              variants={itemVariants}
-              className="flex"
-            >
-              <Card className="w-full flex flex-col bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow">
-                <CardHeader className="p-0 mb-4 text-center">
-                  <CardTitle className={`text-3xl font-bold ${tier.color}`}>{tier.name} Tier</CardTitle>
-                  <p className="text-2xl font-semibold text-gray-800">{tier.price}</p>
-                </CardHeader>
-                <CardContent className="p-0 flex-grow text-left">
-                  <ul className="space-y-2 text-gray-600">
-                    {tier.benefits && tier.benefits.map((benefit, i) => (
-                      <li key={i} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-1 flex-shrink-0" />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        {sponsorshipTiers.length > 0 ? (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-12"
+            variants={listVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {sponsorshipTiers.map((tier) => (
+              <motion.div
+                key={tier.id}
+                variants={itemVariants}
+                className="flex"
+              >
+                <Card className="w-full flex flex-col bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow">
+                  <CardHeader className="p-0 mb-4 text-center">
+                    <CardTitle className={`text-3xl font-bold ${tier.color}`}>{tier.name} Tier</CardTitle>
+                    <p className="text-2xl font-semibold text-gray-800">{tier.price}</p>
+                  </CardHeader>
+                  <CardContent className="p-0 flex-grow text-left">
+                    <ul className="space-y-2 text-gray-600">
+                      {tier.benefits && tier.benefits.map((benefit, i) => (
+                        <li key={i} className="flex items-start">
+                          <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-1 flex-shrink-0" />
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <div className="mb-12 p-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+            <p className="text-gray-600 italic">Sponsorship tier information is currently being updated. Please check back soon!</p>
+          </div>
+        )}
 
         <div className="bg-gray-100 p-8 rounded-lg shadow-inner max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-[#d92507] mb-4">Ready to Support Us?</h2>
