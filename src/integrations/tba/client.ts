@@ -1,20 +1,28 @@
-import { Event } from '@/types/supabase';
+import { Event, WebsiteSettings } from '@/types/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 const TBA_BASE_URL = "https://www.thebluealliance.com/api/v3";
-const TBA_AUTH_KEY = import.meta.env.VITE_TBA_AUTH_KEY;
 const TEAM_KEY = "frc7312";
 
 export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
-  // Check if key exists and isn't just an empty string
-  if (!TBA_AUTH_KEY || TBA_AUTH_KEY.trim() === "") {
-    console.error("VITE_TBA_AUTH_KEY is missing or empty.");
+  // First, try to get the key from the database settings
+  const { data: settings } = await supabase
+    .from('website_settings')
+    .select('tba_api_key')
+    .maybeSingle();
+
+  // Fallback to environment variable if database key is missing
+  const authKey = settings?.tba_api_key || import.meta.env.VITE_TBA_AUTH_KEY;
+
+  if (!authKey || authKey.trim() === "") {
+    console.error("TBA API Key is missing. Please set it in the Admin Panel or environment variables.");
     throw new Error("API_KEY_MISSING");
   }
 
   try {
     const response = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/events/${year}/simple`, {
       headers: {
-        'X-TBA-Auth-Key': TBA_AUTH_KEY,
+        'X-TBA-Auth-Key': authKey,
       },
     });
 
@@ -36,7 +44,7 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
 
     const detailedEventsPromises = rawEvents.map(async (simpleEvent: any) => {
       const statusResponse = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/event/${simpleEvent.key}/status`, {
-        headers: { 'X-TBA-Auth-Key': TBA_AUTH_KEY },
+        headers: { 'X-TBA-Auth-Key': authKey },
       });
       let teamStatus = null;
       if (statusResponse.ok) {
@@ -44,7 +52,7 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
       }
 
       const awardsResponse = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/event/${simpleEvent.key}/awards`, {
-        headers: { 'X-TBA-Auth-Key': TBA_AUTH_KEY },
+        headers: { 'X-TBA-Auth-Key': authKey },
       });
       let teamAwards: string[] = [];
       if (awardsResponse.ok) {
@@ -76,12 +84,10 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
       source: 'tba',
     }));
   } catch (error: any) {
-    // Re-throw auth errors so the UI can handle them specifically
     if (error.message === "API_KEY_MISSING" || error.message === "API_KEY_INVALID") {
       throw error;
     }
     console.error(`Error fetching TBA events for year ${year}:`, error);
-    // For other errors (like network timeouts), we return empty to let other years finish
     return [];
   }
 };

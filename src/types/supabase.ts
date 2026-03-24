@@ -91,6 +91,8 @@ export interface WebsiteSettings {
   // Donate page fields
   donate_button_text: string | null; // New field for donate button text
   donate_button_url: string | null; // New field for donate button URL
+  // TBA Settings
+  tba_api_key: string | null; // New field for TBA API Key
 }
 
 export interface Robot {

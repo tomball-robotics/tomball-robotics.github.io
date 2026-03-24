@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSupabase } from '@/components/SessionContextProvider';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen, Database } from 'lucide-react';
+import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen, Database, Key } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminSponsors from './admin/AdminSponsors';
 import AdminTeamMembers from './admin/AdminTeamMembers';
@@ -23,7 +23,8 @@ import WebsiteAboutPreviewSettingsForm from '@/components/admin/WebsiteAboutPrev
 import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPreviewSettingsForm';
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
 import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm';
-import WebsiteDonateSettingsForm from '@/components/admin/WebsiteDonateSettingsForm'; // Import new form
+import WebsiteDonateSettingsForm from '@/components/admin/WebsiteDonateSettingsForm';
+import WebsiteTBASettingsForm from '@/components/admin/WebsiteTBASettingsForm'; // Import new form
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
@@ -47,8 +48,6 @@ interface AdminSubTab {
   value: string;
   label: string;
   icon: React.ElementType;
-  // The component function now only needs to return the JSX,
-  // as the props will be explicitly passed in renderContent
   component: React.FC<{ initialData?: WebsiteSettings, onSubmit?: (data: Partial<WebsiteSettings>) => Promise<void>, isLoading?: boolean }>;
 }
 
@@ -166,7 +165,8 @@ const adminSections: AdminSection[] = [
     icon: Settings,
     subTabs: [
       { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: AdminFooterSettings },
-      { value: 'donate-page-settings', label: 'Donate Page Settings', icon: DollarSign, component: WebsiteDonateSettingsForm }, // New sub-tab
+      { value: 'donate-page-settings', label: 'Donate Page Settings', icon: DollarSign, component: WebsiteDonateSettingsForm },
+      { value: 'tba-api-settings', label: 'TBA API Settings', icon: Key, component: WebsiteTBASettingsForm }, // New sub-tab
     ]
   },
   {
@@ -193,13 +193,12 @@ const AdminPage: React.FC = () => {
     fetchWebsiteSettings();
   }, []);
 
-  // Effect to set initial sub-tab when main tab changes
   useEffect(() => {
     const currentSection = adminSections.find(section => section.value === activeMainTab);
     if (currentSection && currentSection.subTabs.length > 0 && !activeSubTab) {
       setActiveSubTab(currentSection.subTabs[0].value);
     } else if (currentSection && currentSection.subTabs.length === 0) {
-      setActiveSubTab(undefined); // No sub-tab for sections without them (e.g., Dashboard, Help & Docs)
+      setActiveSubTab(undefined);
     }
   }, [activeMainTab, activeSubTab]);
 
@@ -213,12 +212,12 @@ const AdminPage: React.FC = () => {
       .limit(1)
       .single();
 
-    if (error && error.code === 'PGRST116') { // No rows found
+    if (error && error.code === 'PGRST116') {
       console.warn('No website settings found. Initializing default settings.');
       await initializeDefaultWebsiteSettings();
     } else if (error) {
       console.error('Error fetching website settings:', error);
-      setSettingsError('Failed to load website settings. Please ensure there is exactly one entry in the "website_settings" table.');
+      setSettingsError('Failed to load website settings.');
       setWebsiteSettings(null);
     } else {
       setWebsiteSettings(data);
@@ -246,9 +245,10 @@ const AdminPage: React.FC = () => {
         { type: 'youtube', url: "https://www.youtube.com/@FRC7312?app=desktop" },
         { type: 'x', url: "https://twitter.com/frc7312" },
       ],
-      calendar_embed_url: "https://calendar.google.com/calendar/embed?src=c_1c19550a800e65db313120e4fbd5f807a1a4ee37818794cefd2f920ca14dbf7b%40group.calendar.google.com&ctz=America%2FChicago", // Default calendar URL
-      donate_button_text: "Donate to Tomball Robotics with PayPal", // Default donate button text
-      donate_button_url: "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA", // Default donate button URL
+      calendar_embed_url: "https://calendar.google.com/calendar/embed?src=c_1c19550a800e65db313120e4fbd5f807a1a4ee37818794cefd2f920ca14dbf7b%40group.calendar.google.com&ctz=America%2FChicago",
+      donate_button_text: "Donate to Tomball Robotics with PayPal",
+      donate_button_url: "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA",
+      tba_api_key: null,
     };
 
     const toastId = showLoading('Initializing default website settings...');
@@ -262,7 +262,6 @@ const AdminPage: React.FC = () => {
     if (error) {
       console.error('Error inserting default website settings:', error);
       showError(`Failed to initialize default settings: ${error.message}`);
-      setSettingsError('Failed to initialize default website settings.');
     } else {
       showSuccess('Default website settings initialized!');
       setWebsiteSettings(data);
@@ -310,14 +309,13 @@ const AdminPage: React.FC = () => {
 
     const toastId = showLoading('Initializing default sponsorship tiers...');
     
-    // First, check if tiers already exist to avoid duplicates
     const { count } = await supabase
       .from('sponsorship_tiers')
       .select('*', { count: 'exact', head: true });
 
     if (count && count > 0) {
       dismissToast(toastId);
-      showError('Sponsorship tiers already exist. Please manage them in the Sponsors tab.');
+      showError('Sponsorship tiers already exist.');
       return;
     }
 
@@ -339,7 +337,7 @@ const AdminPage: React.FC = () => {
     const toastId = showLoading('Saving website settings...');
 
     if (!websiteSettings) {
-      showError('No settings found to update. Please ensure an initial entry exists and is correctly fetched.');
+      showError('No settings found to update.');
       dismissToast(toastId);
       setIsSubmittingSettings(false);
       return;
@@ -356,7 +354,7 @@ const AdminPage: React.FC = () => {
       showError(`Failed to save website settings: ${error.message}`);
     } else {
       showSuccess('Website settings saved successfully!');
-      await fetchWebsiteSettings(); // Re-fetch to ensure UI is up-to-date
+      await fetchWebsiteSettings();
     }
     setIsSubmittingSettings(false);
   };
@@ -409,7 +407,7 @@ const AdminPage: React.FC = () => {
     if (!websiteSettings) {
       return (
         <div className="text-center p-4">
-          <p className="text-lg text-gray-600 mb-4">No website settings found. Please ensure an initial entry exists in your Supabase `website_settings` table.</p>
+          <p className="text-lg text-gray-600 mb-4">No website settings found.</p>
           <Button onClick={initializeDefaultWebsiteSettings} className="bg-[#d92507] hover:bg-[#b31f06]">
             Initialize Website Settings
           </Button>
@@ -420,16 +418,16 @@ const AdminPage: React.FC = () => {
     if (currentSubTab) {
       const ComponentToRender = currentSubTab.component;
       
-      // Check if the component is one of the WebsiteSettings forms
       const isWebsiteSettingsForm = [
         WebsiteHeroSettingsForm,
         WebsiteAboutPreviewSettingsForm,
         WebsiteEventsPreviewSettingsForm,
         WebsiteSponsorsPreviewSettingsForm,
         WebsiteCalendarSettingsForm,
-        WebsiteDonateSettingsForm, // Include new form here
-        AdminFooterSettings, // AdminFooterSettings also uses WebsiteSettings
-      ].includes(ComponentToRender as any); // Using 'any' for type comparison
+        WebsiteDonateSettingsForm,
+        WebsiteTBASettingsForm, // Include new form here
+        AdminFooterSettings,
+      ].includes(ComponentToRender as any);
 
       if (isWebsiteSettingsForm) {
         return (
@@ -442,7 +440,6 @@ const AdminPage: React.FC = () => {
           </div>
         );
       } else {
-        // For other admin components that manage their own data (e.g., AdminTeamMembers, AdminNews)
         return <ComponentToRender />;
       }
     }
