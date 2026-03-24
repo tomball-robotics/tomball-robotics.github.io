@@ -6,11 +6,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { fetchTBAEventsByYear } from '@/integrations/tba/client';
 import { Event } from '@/types/supabase';
 
-const FOUNDING_YEAR = 2018; // Define the team's founding year
+const FOUNDING_YEAR = 2018;
 
 interface RefreshTBAButtonProps {
-  onRefreshComplete?: () => void; // Callback to notify parent when refresh is done
-  description?: string; // New prop for description text
+  onRefreshComplete?: () => void;
+  description?: string;
 }
 
 const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, description }) => {
@@ -21,9 +21,10 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
     const toastId = showLoading('Refreshing events from The Blue Alliance...');
 
     try {
+      // We fetch up to next year to catch early registrations for the upcoming season
       const currentYear = new Date().getFullYear();
       const yearsToFetch: number[] = [];
-      for (let year = FOUNDING_YEAR; year <= currentYear; year++) {
+      for (let year = FOUNDING_YEAR; year <= currentYear + 1; year++) {
         yearsToFetch.push(year);
       }
 
@@ -31,42 +32,50 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
       const results = await Promise.allSettled(allEventsPromises);
 
       const fetchedEvents: Event[] = [];
-      results.forEach((result, index) => {
+      let authError = false;
+
+      results.forEach((result) => {
         if (result.status === 'fulfilled') {
           fetchedEvents.push(...result.value);
         } else {
-          console.error(`Error fetching events for year ${yearsToFetch[index]} from TBA:`, result.reason);
-          showError(`Failed to fetch some events from TBA for year ${yearsToFetch[index]}.`);
+          if (result.reason.message === "API_KEY_MISSING" || result.reason.message === "API_KEY_INVALID") {
+            authError = true;
+          }
         }
       });
 
-      if (fetchedEvents.length === 0) {
-        showError('No events fetched from The Blue Alliance. Please check your TBA API key and network.');
+      if (authError) {
+        showError('The Blue Alliance API key is missing or invalid. Please check your environment variables.');
         return;
       }
 
-      // Clear existing events in Supabase
-      const { error: deleteError } = await supabase.from('events').delete().neq('id', 'dummy_id'); // Delete all rows
+      if (fetchedEvents.length === 0) {
+        showError('No events found on The Blue Alliance for Team 7312. Please check your network or API key.');
+        return;
+      }
+
+      // Clear existing TBA events in Supabase
+      const { error: deleteError } = await supabase
+        .from('events')
+        .delete()
+        .eq('source', 'tba');
+
       if (deleteError) {
-        console.error('Error clearing existing events:', deleteError);
         showError(`Failed to clear existing events: ${deleteError.message}`);
         return;
       }
 
-      // Insert new events into Supabase
-      // Ensure each fetched event has the 'source' property set to 'tba'
-      const eventsToInsert = fetchedEvents.map(event => ({ ...event, source: 'tba' }));
-      const { error: insertError } = await supabase.from('events').insert(eventsToInsert);
+      // Insert new events
+      const { error: insertError } = await supabase.from('events').insert(fetchedEvents);
+      
       if (insertError) {
-        console.error('Error inserting new events:', insertError);
         showError(`Failed to save new events: ${insertError.message}`);
       } else {
-        showSuccess('Events refreshed and saved successfully!');
-        onRefreshComplete?.(); // Notify parent component
+        showSuccess(`Successfully synced ${fetchedEvents.length} events from TBA!`);
+        onRefreshComplete?.();
       }
-    } catch (err) {
-      console.error('Overall error during TBA refresh:', err);
-      showError(`An unexpected error occurred during refresh: ${(err as Error).message}`);
+    } catch (err: any) {
+      showError(`An unexpected error occurred: ${err.message}`);
     } finally {
       dismissToast(toastId);
       setIsSyncing(false);
@@ -76,7 +85,8 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
   return (
     <div className="space-y-2">
       <Button onClick={handleRefreshFromTBA} disabled={isSyncing} className="bg-[#0d2f60] hover:bg-[#0a244a]">
-        <RefreshCw className="mr-2 h-4 w-4" /> {isSyncing ? 'Syncing...' : 'Sync All Event Data from TBA'}
+        <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} /> 
+        {isSyncing ? 'Syncing...' : 'Sync All Event Data from TBA'}
       </Button>
       {description && <p className="text-sm text-gray-600">{description}</p>}
     </div>
