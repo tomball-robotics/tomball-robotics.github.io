@@ -34,8 +34,8 @@ const AdminSponsorshipTiers: React.FC = () => {
       showError('Failed to load sponsorship tiers.');
     } else {
       const sortedTiers = (data || []).sort((a, b) => {
-        const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
-        const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
+        const priceA = parseInt(a.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
+        const priceB = parseInt(b.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
         return priceB - priceA;
       });
       setSponsorshipTiers(sortedTiers);
@@ -130,7 +130,7 @@ const AdminSponsorshipTiers: React.FC = () => {
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
-      <div className="max-w-6xl mx-auto"> {/* Inner wrapper for centering content */}
+      <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-[#0d2f60]">Manage Sponsorship Tiers</h2>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

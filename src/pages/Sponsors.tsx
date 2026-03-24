@@ -9,9 +9,7 @@ import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Sponsor, SponsorshipTier } from "@/types/supabase";
 import Spinner from "@/components/Spinner";
-import { Helmet } from 'react-helmet-async'; // Import Helmet
-
-// Removed MIN_TIER_AMOUNT as it's no longer needed with the new grouping logic
+import { Helmet } from 'react-helmet-async';
 
 const tierConfig: { [key: string]: { cardClass: string; imageContainerClass: string; showDescription: boolean; showName: boolean; showWebsiteButton: boolean } } = {
   diamond: { cardClass: 'w-full md:w-3/4 lg:w-2/3', imageContainerClass: 'h-64', showDescription: true, showName: true, showWebsiteButton: true },
@@ -49,8 +47,8 @@ const Sponsors: React.FC = () => {
       } else {
         setSponsors(sponsorsData || []);
         const sortedTiers = (tiersData || []).sort((a, b) => {
-          const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
-          const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
+          const priceA = parseInt(a.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
+          const priceB = parseInt(b.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
           return priceB - priceA;
         });
         setSponsorshipTiers(sortedTiers);
@@ -62,9 +60,8 @@ const Sponsors: React.FC = () => {
   }, []);
 
   const getTierForAmount = (amount: number): SponsorshipTier | null => {
-    // Tiers are already sorted descending by price from the useEffect
     for (const tier of sponsorshipTiers) {
-      const threshold = parseInt(tier.price.replace(/[^0-9]/g, ''), 10);
+      const threshold = parseInt(tier.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
       if (amount >= threshold) {
         return tier;
       }
@@ -72,7 +69,6 @@ const Sponsors: React.FC = () => {
     return null;
   };
 
-  // Group sponsors by tier or into an 'other' category
   const sponsorsByTier: Record<string, Sponsor[]> = {};
   const otherSponsorsList: Sponsor[] = [];
 
@@ -141,7 +137,7 @@ const Sponsors: React.FC = () => {
           const sponsorsInTier = sponsorsByTier[tier.tier_id];
           if (!sponsorsInTier || sponsorsInTier.length === 0) return null;
 
-          const config = tierConfig[tier.tier_id] || tierConfig.gold; // Default to gold style
+          const config = tierConfig[tier.tier_id] || tierConfig.gold;
 
           return (
             <motion.div
@@ -175,9 +171,9 @@ const Sponsors: React.FC = () => {
                                 ? 'w-full h-full object-cover'
                                 : 'max-h-full max-w-full object-contain p-4'
                             }
-                            width={200} // Example width, adjust as needed
-                            height={config.imageContainerClass.includes('h-64') ? 256 : config.imageContainerClass.includes('h-56') ? 224 : config.imageContainerClass.includes('h-48') ? 192 : config.imageContainerClass.includes('h-40') ? 160 : config.imageContainerClass.includes('h-32') ? 128 : 96} // Dynamic height based on class
-                            loading="lazy" // Lazy load sponsor images
+                            width={200}
+                            height={config.imageContainerClass.includes('h-64') ? 256 : config.imageContainerClass.includes('h-56') ? 224 : config.imageContainerClass.includes('h-48') ? 192 : config.imageContainerClass.includes('h-40') ? 160 : config.imageContainerClass.includes('h-32') ? 128 : 96}
+                            loading="lazy"
                           />
                         </div>
                       )}
@@ -211,7 +207,6 @@ const Sponsors: React.FC = () => {
           );
         })}
 
-        {/* Other Sponsors */}
         {otherSponsorsList.length > 0 && (
           <motion.div
             className="mb-10"

@@ -31,18 +31,17 @@ const Donate: React.FC = () => {
 
         if (tiersError) {
           console.error("Error fetching sponsorship tiers:", tiersError);
-          // We don't set a fatal error here if tiers are missing, just log it
         } else {
           const sortedTiers = (tiersData || []).sort((a, b) => {
-            const priceA = parseInt(a.price.replace(/[^0-9]/g, ''), 10);
-            const priceB = parseInt(b.price.replace(/[^0-9]/g, ''), 10);
+            // Extract only the first number from the price string for sorting
+            const priceA = parseInt(a.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
+            const priceB = parseInt(b.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
             return priceB - priceA;
           });
           setSponsorshipTiers(sortedTiers);
         }
 
         // Fetch website settings for donate button
-        // Using maybeSingle() to avoid error if table is empty
         const { data: settingsData, error: settingsError } = await supabase
           .from("website_settings")
           .select("donate_button_text, donate_button_url")
@@ -50,7 +49,6 @@ const Donate: React.FC = () => {
 
         if (settingsError) {
           console.warn("Error fetching website settings for donate page:", settingsError);
-          // Not a fatal error, we'll use defaults
         } else {
           setWebsiteSettings(settingsData);
         }
