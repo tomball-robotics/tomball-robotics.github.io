@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSupabase } from '@/components/SessionContextProvider';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen } from 'lucide-react';
+import { LogOut, LayoutDashboard, Settings, Calendar, Users, Handshake, Bot, Award, DollarSign, Image, Images, Info, Home, Newspaper, BookOpen, Database } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminSponsors from './admin/AdminSponsors';
 import AdminTeamMembers from './admin/AdminTeamMembers';
@@ -28,7 +28,7 @@ import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
 import { supabase } from '@/integrations/supabase/client';
-import { WebsiteSettings } from '@/types/supabase';
+import { WebsiteSettings, SponsorshipTier } from '@/types/supabase';
 import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import AdminHelpAndDocs from './admin/AdminHelpAndDocs';
@@ -40,7 +40,7 @@ interface AdminSection {
   label: string;
   icon: React.ElementType;
   subTabs: AdminSubTab[];
-  component?: (onTabChange: (mainTab: string, subTab?: string) => void) => React.ReactNode;
+  component?: (onTabChange: (mainTab: string, subTab?: string) => void, onInitTiers: () => Promise<void>) => React.ReactNode;
 }
 
 interface AdminSubTab {
@@ -57,22 +57,38 @@ const adminSections: AdminSection[] = [
     value: 'dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    component: (onTabChange) => (
+    component: (onTabChange, onInitTiers) => (
       <div className="space-y-8">
         <h2 className="text-3xl font-bold text-[#0d2f60]">Welcome to the Admin Dashboard!</h2>
         <p className="text-lg text-gray-700">Use the links below to manage your website content.</p>
         
-        <Card className="p-6 shadow-md">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-2xl font-bold text-[#0d2f60]">Event Data Synchronization</CardTitle>
-            <CardDescription className="text-gray-700 mt-2">
-              This button synchronizes your website's event data with The Blue Alliance (TBA). It fetches all past and current event details, including competition results, team rankings, alliance status, and awards for Team 7312. Existing event data in your database will be replaced with the latest information from TBA, ensuring your Events page and About page achievements are always up-to-date.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <RefreshTBAButton onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')} />
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="p-6 shadow-md">
+            <CardHeader className="p-0 mb-4">
+              <CardTitle className="text-2xl font-bold text-[#0d2f60]">Event Data Synchronization</CardTitle>
+              <CardDescription className="text-gray-700 mt-2">
+                This button synchronizes your website's event data with The Blue Alliance (TBA). It fetches all past and current event details for Team 7312.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <RefreshTBAButton onRefreshComplete={() => console.log('TBA refresh completed from dashboard.')} />
+            </CardContent>
+          </Card>
+
+          <Card className="p-6 shadow-md">
+            <CardHeader className="p-0 mb-4">
+              <CardTitle className="text-2xl font-bold text-[#0d2f60]">Database Initialization</CardTitle>
+              <CardDescription className="text-gray-700 mt-2">
+                Populate your database with the standard sponsorship tiers (Diamond, Platinum, Gold, Silver, Bronze).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Button onClick={onInitTiers} className="bg-[#0d2f60] hover:bg-[#0a244a]">
+                <Database className="mr-2 h-4 w-4" /> Initialize Sponsorship Tiers
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         <DashboardQuickLinks onTabChange={onTabChange} />
       </div>
@@ -253,6 +269,71 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  const initializeDefaultSponsorshipTiers = async () => {
+    const defaultTiers: Partial<SponsorshipTier>[] = [
+      {
+        tier_id: "diamond",
+        name: "Diamond",
+        price: "$10,000+",
+        benefits: ["All Benefits of Platinum Tier", "Prominent Logo Placement on Shirt, Banner, etc.", "T3 Merch Bundle"],
+        color: "text-cyan-400",
+      },
+      {
+        tier_id: "platinum",
+        name: "Platinum",
+        price: "$5,000 - $9,999",
+        benefits: ["All Benefits of Gold Tier", "T3 Thank You Plaque"],
+        color: "text-slate-400",
+      },
+      {
+        tier_id: "gold",
+        name: "Gold",
+        price: "$2,500 - $4,999",
+        benefits: ["All Benefits of Silver Tier", "Dedicated Social Media Post"],
+        color: "text-yellow-500",
+      },
+      {
+        tier_id: "silver",
+        name: "Silver",
+        price: "$500 - $2,499",
+        benefits: ["All Benefits of Bronze Tier", "Logo on T-Shirt and Banner", "Logo on Competition Robot"],
+        color: "text-gray-400",
+      },
+      {
+        tier_id: "bronze",
+        name: "Bronze",
+        price: "Up To $499",
+        benefits: ["Logo on Website", "Logo in Printed Materials", "Feature in Sponsor Social Media Post"],
+        color: "text-orange-600",
+      },
+    ];
+
+    const toastId = showLoading('Initializing default sponsorship tiers...');
+    
+    // First, check if tiers already exist to avoid duplicates
+    const { count } = await supabase
+      .from('sponsorship_tiers')
+      .select('*', { count: 'exact', head: true });
+
+    if (count && count > 0) {
+      dismissToast(toastId);
+      showError('Sponsorship tiers already exist. Please manage them in the Sponsors tab.');
+      return;
+    }
+
+    const { error } = await supabase
+      .from('sponsorship_tiers')
+      .insert(defaultTiers);
+
+    dismissToast(toastId);
+    if (error) {
+      console.error('Error inserting default sponsorship tiers:', error);
+      showError(`Failed to initialize default tiers: ${error.message}`);
+    } else {
+      showSuccess('Default sponsorship tiers initialized successfully!');
+    }
+  };
+
   const handleWebsiteSettingsSubmit = async (formData: Partial<WebsiteSettings>) => {
     setIsSubmittingSettings(true);
     const toastId = showLoading('Saving website settings...');
@@ -305,7 +386,7 @@ const AdminPage: React.FC = () => {
     const currentSubTab = currentSection?.subTabs.find(subTab => subTab.value === activeSubTab);
 
     if (activeMainTab === 'dashboard') {
-      return currentSection?.component?.(handleQuickLinkChange);
+      return currentSection?.component?.(handleQuickLinkChange, initializeDefaultSponsorshipTiers);
     }
 
     if (activeMainTab === 'help-docs') {
