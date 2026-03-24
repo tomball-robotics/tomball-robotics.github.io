@@ -5,8 +5,9 @@ const TBA_AUTH_KEY = import.meta.env.VITE_TBA_AUTH_KEY;
 const TEAM_KEY = "frc7312";
 
 export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
-  if (!TBA_AUTH_KEY) {
-    console.error("VITE_TBA_AUTH_KEY is not set. Please add it to your environment variables.");
+  // Check if key exists and isn't just an empty string
+  if (!TBA_AUTH_KEY || TBA_AUTH_KEY.trim() === "") {
+    console.error("VITE_TBA_AUTH_KEY is missing or empty.");
     throw new Error("API_KEY_MISSING");
   }
 
@@ -19,7 +20,6 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
 
     if (!response.ok) {
       if (response.status === 404) {
-        // Year might not exist yet or team has no events for this year
         return [];
       }
       if (response.status === 401) {
@@ -35,7 +35,6 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
     }
 
     const detailedEventsPromises = rawEvents.map(async (simpleEvent: any) => {
-      // Fetch team's status for this event
       const statusResponse = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/event/${simpleEvent.key}/status`, {
         headers: { 'X-TBA-Auth-Key': TBA_AUTH_KEY },
       });
@@ -44,7 +43,6 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
         teamStatus = await statusResponse.json();
       }
 
-      // Fetch awards for the team at this event
       const awardsResponse = await fetch(`${TBA_BASE_URL}/team/${TEAM_KEY}/event/${simpleEvent.key}/awards`, {
         headers: { 'X-TBA-Auth-Key': TBA_AUTH_KEY },
       });
@@ -78,10 +76,12 @@ export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
       source: 'tba',
     }));
   } catch (error: any) {
+    // Re-throw auth errors so the UI can handle them specifically
     if (error.message === "API_KEY_MISSING" || error.message === "API_KEY_INVALID") {
       throw error;
     }
     console.error(`Error fetching TBA events for year ${year}:`, error);
-    return []; // Return empty array for network errors on specific years to allow others to succeed
+    // For other errors (like network timeouts), we return empty to let other years finish
+    return [];
   }
 };

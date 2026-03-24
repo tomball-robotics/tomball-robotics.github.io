@@ -21,9 +21,9 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
     const toastId = showLoading('Refreshing events from The Blue Alliance...');
 
     try {
-      // We fetch up to next year to catch early registrations for the upcoming season
       const currentYear = new Date().getFullYear();
       const yearsToFetch: number[] = [];
+      // Always fetch from founding year to next year to catch upcoming seasons
       for (let year = FOUNDING_YEAR; year <= currentYear + 1; year++) {
         yearsToFetch.push(year);
       }
@@ -33,24 +33,36 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
 
       const fetchedEvents: Event[] = [];
       let authError = false;
+      let networkErrorCount = 0;
 
-      results.forEach((result) => {
+      results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           fetchedEvents.push(...result.value);
         } else {
-          if (result.reason.message === "API_KEY_MISSING" || result.reason.message === "API_KEY_INVALID") {
+          const errorMsg = result.reason?.message || "";
+          if (errorMsg === "API_KEY_MISSING" || errorMsg === "API_KEY_INVALID") {
             authError = true;
+          } else {
+            networkErrorCount++;
           }
         }
       });
 
       if (authError) {
-        showError('The Blue Alliance API key is missing or invalid. Please check your environment variables.');
+        showError('The Blue Alliance API key is missing or invalid. Please ensure VITE_TBA_AUTH_KEY is set in your environment variables.');
+        dismissToast(toastId);
+        setIsSyncing(false);
         return;
       }
 
       if (fetchedEvents.length === 0) {
-        showError('No events found on The Blue Alliance for Team 7312. Please check your network or API key.');
+        if (networkErrorCount > 0) {
+          showError('Failed to connect to The Blue Alliance. Please check your internet connection.');
+        } else {
+          showError('No events found on The Blue Alliance for Team 7312. Please verify your API key has access.');
+        }
+        dismissToast(toastId);
+        setIsSyncing(false);
         return;
       }
 
@@ -62,6 +74,8 @@ const RefreshTBAButton: React.FC<RefreshTBAButtonProps> = ({ onRefreshComplete, 
 
       if (deleteError) {
         showError(`Failed to clear existing events: ${deleteError.message}`);
+        dismissToast(toastId);
+        setIsSyncing(false);
         return;
       }
 
