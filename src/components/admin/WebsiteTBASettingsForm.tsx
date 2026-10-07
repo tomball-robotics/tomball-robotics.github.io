@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { WebsiteSettings } from '@/types/supabase';
-import { Info, Copy, Check } from 'lucide-react';
+import { Key, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { showSuccess, showError } from '@/utils/toast';
 
 const formSchema = z.object({
-  tba_api_key: z.string().min(1, "TBA API Key is required").or(z.literal("")).optional(),
+  tba_api_key: z.string().min(1, "TBA API Key is required"),
 });
 
 interface WebsiteTBASettingsFormProps {
@@ -18,11 +19,10 @@ interface WebsiteTBASettingsFormProps {
   isLoading: boolean;
 }
 
-const SQL_MIGRATION_SNIPPET = `ALTER TABLE website_settings
-ADD COLUMN IF NOT EXISTS tba_api_key TEXT;`;
-
 const WebsiteTBASettingsForm: React.FC<WebsiteTBASettingsFormProps> = ({ initialData, onSubmit, isLoading }) => {
-  const [copied, setCopied] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<'success' | 'error' | null>(null);
+
   const localKey = typeof window !== 'undefined' ? localStorage.getItem('tba_api_key') : '';
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,36 +42,47 @@ const WebsiteTBASettingsForm: React.FC<WebsiteTBASettingsFormProps> = ({ initial
     await onSubmit(values);
   };
 
-  const handleCopySQL = () => {
-    navigator.clipboard.writeText(SQL_MIGRATION_SNIPPET);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleTestKey = async () => {
+    const key = form.getValues('tba_api_key');
+    if (!key || key.trim() === '') {
+      showError('Please enter a key before testing.');
+      return;
+    }
+
+    setTesting(true);
+    setTestResult(null);
+
+    try {
+      const res = await fetch('https://www.thebluealliance.com/api/v3/team/frc7312', {
+        headers: { 'X-TBA-Auth-Key': key.trim() },
+      });
+
+      if (res.ok) {
+        const teamData = await res.json();
+        setTestResult('success');
+        showSuccess(`Connected successfully to TBA! Team: ${teamData.nickname || 'Team 7312'}`);
+      } else if (res.status === 401) {
+        setTestResult('error');
+        showError('Invalid API Key. Please verify the key from your The Blue Alliance account.');
+      } else {
+        setTestResult('error');
+        showError(`TBA responded with status: ${res.status}`);
+      }
+    } catch (err: any) {
+      setTestResult('error');
+      showError('Failed to reach The Blue Alliance API. Check network connection.');
+    } finally {
+      setTesting(false);
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-        <div className="flex items-start gap-2">
-          <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div className="space-y-2">
-            <p className="font-semibold">Database Schema Notice:</p>
-            <p>
-              Your key is saved locally and will be used when syncing. To also store it permanently in Supabase, run this in your <strong>Supabase SQL Editor</strong>:
-            </p>
-            <div className="relative bg-slate-900 text-slate-100 font-mono text-xs p-3 rounded mt-2 overflow-x-auto">
-              <pre>{SQL_MIGRATION_SNIPPET}</pre>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleCopySQL}
-                className="absolute top-2 right-2 h-7 px-2 text-xs bg-slate-800 text-white border-slate-700 hover:bg-slate-700 hover:text-white"
-              >
-                {copied ? <Check className="h-3.5 w-3.5 mr-1" /> : <Copy className="h-3.5 w-3.5 mr-1" />}
-                {copied ? 'Copied' : 'Copy SQL'}
-              </Button>
-            </div>
-          </div>
+      <div className="flex items-center gap-3 border-b pb-4">
+        <Key className="h-7 w-7 text-[#0d2f60]" />
+        <div>
+          <h3 className="text-xl font-bold text-[#0d2f60]">The Blue Alliance (TBA) Integration</h3>
+          <p className="text-sm text-gray-600">Enter your Read API key to automatically fetch Team 7312 match outcomes, awards, and rank information.</p>
         </div>
       </div>
 
@@ -82,25 +93,60 @@ const WebsiteTBASettingsForm: React.FC<WebsiteTBASettingsFormProps> = ({ initial
             name="tba_api_key"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>The Blue Alliance API Key</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="password" 
-                    placeholder="Paste your TBA Read API Key here" 
-                    {...field} 
-                    disabled={isLoading} 
-                  />
-                </FormControl>
+                <FormLabel className="font-semibold text-gray-800">The Blue Alliance API Key</FormLabel>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input 
+                      type="password" 
+                      placeholder="Paste your TBA Read API Key here" 
+                      {...field} 
+                      disabled={isLoading || testing} 
+                      className="font-mono text-sm"
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleTestKey}
+                    disabled={testing || isLoading}
+                    className="flex-shrink-0"
+                  >
+                    {testing ? (
+                      <>
+                        <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Testing...
+                      </>
+                    ) : (
+                      'Test Key'
+                    )}
+                  </Button>
+                </div>
                 <FormDescription>
-                  You can get this key from your account page on <a href="https://www.thebluealliance.com/account" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">The Blue Alliance</a>.
+                  Obtain your key anytime under Account Settings at{' '}
+                  <a href="https://www.thebluealliance.com/account" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    thebluealliance.com/account
+                  </a>.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          {testResult === 'success' && (
+            <div className="p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+              <span>Key validated! Successfully connected to The Blue Alliance API.</span>
+            </div>
+          )}
+
+          {testResult === 'error' && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+              <span>Validation failed. Ensure you copied the "Read API Key" without extra whitespace.</span>
+            </div>
+          )}
+
           <Button type="submit" disabled={isLoading} className="bg-[#d92507] hover:bg-[#b31f06]">
-            {isLoading ? 'Saving...' : 'Save Changes'}
+            {isLoading ? 'Saving...' : 'Save TBA Key'}
           </Button>
         </form>
       </Form>

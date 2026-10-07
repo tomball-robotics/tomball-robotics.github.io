@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { WebsiteSettings } from '@/types/supabase';
-import { Info, Copy, Check } from 'lucide-react';
+import { ExternalLink, HeartHandshake } from 'lucide-react';
 
 const formSchema = z.object({
-  donate_button_text: z.string().min(1, "Donate button text is required").optional(),
-  donate_button_url: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
+  donate_button_text: z.string().min(1, "Donate button text is required"),
+  donate_button_url: z.string().url("Must be a valid URL"),
 });
 
 interface WebsiteDonateSettingsFormProps {
@@ -19,14 +19,7 @@ interface WebsiteDonateSettingsFormProps {
   isLoading: boolean;
 }
 
-const SQL_MIGRATION_SNIPPET = `ALTER TABLE website_settings
-ADD COLUMN IF NOT EXISTS donate_button_text TEXT,
-ADD COLUMN IF NOT EXISTS donate_button_url TEXT,
-ADD COLUMN IF NOT EXISTS tba_api_key TEXT;`;
-
 const WebsiteDonateSettingsForm: React.FC<WebsiteDonateSettingsFormProps> = ({ initialData, onSubmit, isLoading }) => {
-  const [copied, setCopied] = useState(false);
-
   const localText = typeof window !== 'undefined' ? localStorage.getItem('donate_button_text') : '';
   const localUrl = typeof window !== 'undefined' ? localStorage.getItem('donate_button_url') : '';
 
@@ -49,36 +42,16 @@ const WebsiteDonateSettingsForm: React.FC<WebsiteDonateSettingsFormProps> = ({ i
     await onSubmit(values);
   };
 
-  const handleCopySQL = () => {
-    navigator.clipboard.writeText(SQL_MIGRATION_SNIPPET);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const previewUrl = form.watch('donate_button_url');
+  const previewText = form.watch('donate_button_text');
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-        <div className="flex items-start gap-2">
-          <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div className="space-y-2">
-            <p className="font-semibold">Database Schema Notice:</p>
-            <p>
-              Your changes are automatically saved and will take effect immediately. To also store them in your Supabase database permanently, run this quick SQL statement in your <strong>Supabase Dashboard > SQL Editor</strong>:
-            </p>
-            <div className="relative bg-slate-900 text-slate-100 font-mono text-xs p-3 rounded mt-2 overflow-x-auto">
-              <pre>{SQL_MIGRATION_SNIPPET}</pre>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleCopySQL}
-                className="absolute top-2 right-2 h-7 px-2 text-xs bg-slate-800 text-white border-slate-700 hover:bg-slate-700 hover:text-white"
-              >
-                {copied ? <Check className="h-3.5 w-3.5 mr-1" /> : <Copy className="h-3.5 w-3.5 mr-1" />}
-                {copied ? 'Copied' : 'Copy SQL'}
-              </Button>
-            </div>
-          </div>
+      <div className="flex items-center gap-3 border-b pb-4">
+        <HeartHandshake className="h-7 w-7 text-[#d92507]" />
+        <div>
+          <h3 className="text-xl font-bold text-[#0d2f60]">Donate Page Call-to-Action</h3>
+          <p className="text-sm text-gray-600">Customize the donation button and destination link displayed on the /donate page.</p>
         </div>
       </div>
 
@@ -89,27 +62,44 @@ const WebsiteDonateSettingsForm: React.FC<WebsiteDonateSettingsFormProps> = ({ i
             name="donate_button_text"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Donate Button Text</FormLabel>
+                <FormLabel className="font-semibold text-gray-800">Donate Button Text</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g., Donate to Tomball Robotics with PayPal" {...field} disabled={isLoading} />
                 </FormControl>
+                <FormDescription>The label displayed on the main donation button.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="donate_button_url"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Donate Button URL</FormLabel>
+                <FormLabel className="font-semibold text-gray-800">Donate Button URL</FormLabel>
                 <FormControl>
                   <Input type="url" placeholder="e.g., https://www.paypal.com/ncp/payment/..." {...field} disabled={isLoading} />
                 </FormControl>
+                <FormDescription>The link users will be redirected to when clicking the button.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          {previewUrl && (
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Live Preview</p>
+                <p className="font-medium text-gray-800 mt-1">{previewText || "Donate Button"}</p>
+              </div>
+              <Button asChild size="sm" variant="outline">
+                <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5">
+                  Test Link <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </Button>
+            </div>
+          )}
 
           <Button type="submit" disabled={isLoading} className="bg-[#d92507] hover:bg-[#b31f06]">
             {isLoading ? 'Saving...' : 'Save Changes'}

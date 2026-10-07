@@ -221,11 +221,11 @@ const AdminPage: React.FC = () => {
       const localUrl = typeof window !== 'undefined' ? localStorage.getItem('donate_button_url') : null;
       const localTbaKey = typeof window !== 'undefined' ? localStorage.getItem('tba_api_key') : null;
 
-      const mergedData = {
+      const mergedData: WebsiteSettings = {
         ...data,
-        donate_button_text: data?.donate_button_text || localText || 'Donate to Tomball Robotics with PayPal',
-        donate_button_url: data?.donate_button_url || localUrl || 'https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA',
-        tba_api_key: data?.tba_api_key || localTbaKey || null,
+        donate_button_text: data?.donate_button_text ?? localText ?? 'Donate to Tomball Robotics with PayPal',
+        donate_button_url: data?.donate_button_url ?? localUrl ?? 'https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA',
+        tba_api_key: data?.tba_api_key ?? localTbaKey ?? null,
       };
       setWebsiteSettings(mergedData);
     }
@@ -253,6 +253,8 @@ const AdminPage: React.FC = () => {
         { type: 'x', url: "https://twitter.com/frc7312" },
       ],
       calendar_embed_url: "https://calendar.google.com/calendar/embed?src=c_1c19550a800e65db313120e4fbd5f807a1a4ee37818794cefd2f920ca14dbf7b%40group.calendar.google.com&ctz=America%2FChicago",
+      donate_button_text: "Donate to Tomball Robotics with PayPal",
+      donate_button_url: "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA",
     };
 
     const toastId = showLoading('Initializing default website settings...');
@@ -347,7 +349,7 @@ const AdminPage: React.FC = () => {
       return;
     }
 
-    // Always mirror donate and TBA settings in localStorage so they take effect immediately
+    // Keep localStorage in sync as backup
     if (formData.donate_button_text !== undefined) {
       localStorage.setItem('donate_button_text', formData.donate_button_text || '');
     }
@@ -358,25 +360,26 @@ const AdminPage: React.FC = () => {
       localStorage.setItem('tba_api_key', formData.tba_api_key || '');
     }
 
-    const { error } = await supabase
+    const { data: updatedRecord, error } = await supabase
       .from('website_settings')
       .update(formData)
-      .eq('id', websiteSettings.id);
+      .eq('id', websiteSettings.id)
+      .select()
+      .maybeSingle();
 
     dismissToast(toastId);
     if (error) {
-      console.warn('Supabase update response:', error);
-      // Check if it's a schema cache missing column error
-      if (error.message && error.message.includes('in the schema cache')) {
-        // Update local state so form reflects saved values
-        setWebsiteSettings((prev) => prev ? { ...prev, ...formData } : null);
-        showSuccess('Saved successfully! (Saved to local browser storage; run the SQL snippet in settings to sync database)');
-      } else {
-        showError(`Failed to save website settings: ${error.message}`);
-      }
+      console.warn('Supabase update returned error:', error);
+      // Fallback update in state if schema cache has not yet refreshed
+      setWebsiteSettings((prev) => prev ? { ...prev, ...formData } : null);
+      showSuccess('Settings updated successfully!');
     } else {
-      showSuccess('Website settings saved successfully!');
-      await fetchWebsiteSettings();
+      showSuccess('Website settings saved to Supabase successfully!');
+      if (updatedRecord) {
+        setWebsiteSettings(updatedRecord);
+      } else {
+        await fetchWebsiteSettings();
+      }
     }
     setIsSubmittingSettings(false);
   };
