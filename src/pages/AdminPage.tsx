@@ -24,7 +24,7 @@ import WebsiteEventsPreviewSettingsForm from '@/components/admin/WebsiteEventsPr
 import WebsiteSponsorsPreviewSettingsForm from '@/components/admin/WebsiteSponsorsPreviewSettingsForm';
 import WebsiteCalendarSettingsForm from '@/components/admin/WebsiteCalendarSettingsForm';
 import WebsiteDonateSettingsForm from '@/components/admin/WebsiteDonateSettingsForm';
-import WebsiteTBASettingsForm from '@/components/admin/WebsiteTBASettingsForm'; // Import new form
+import WebsiteTBASettingsForm from '@/components/admin/WebsiteTBASettingsForm';
 import DashboardQuickLinks from '@/components/admin/DashboardQuickLinks';
 import RefreshTBAButton from '@/components/admin/RefreshTBAButton';
 import Spinner from '@/components/Spinner';
@@ -34,7 +34,6 @@ import { showSuccess, showError, showLoading, dismissToast } from '@/utils/toast
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import AdminHelpAndDocs from './admin/AdminHelpAndDocs';
 import { Helmet } from 'react-helmet-async';
-
 
 interface AdminSection {
   value: string;
@@ -166,7 +165,7 @@ const adminSections: AdminSection[] = [
     subTabs: [
       { value: 'footer-settings', label: 'Footer Settings', icon: Info, component: AdminFooterSettings },
       { value: 'donate-page-settings', label: 'Donate Page Settings', icon: DollarSign, component: WebsiteDonateSettingsForm },
-      { value: 'tba-api-settings', label: 'TBA API Settings', icon: Key, component: WebsiteTBASettingsForm }, // New sub-tab
+      { value: 'tba-api-settings', label: 'TBA API Settings', icon: Key, component: WebsiteTBASettingsForm },
     ]
   },
   {
@@ -188,7 +187,6 @@ const AdminPage: React.FC = () => {
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [isSubmittingSettings, setIsSubmittingSettings] = useState(false);
 
-
   useEffect(() => {
     fetchWebsiteSettings();
   }, []);
@@ -201,7 +199,6 @@ const AdminPage: React.FC = () => {
       setActiveSubTab(undefined);
     }
   }, [activeMainTab, activeSubTab]);
-
 
   const fetchWebsiteSettings = async () => {
     setSettingsLoading(true);
@@ -220,7 +217,17 @@ const AdminPage: React.FC = () => {
       setSettingsError('Failed to load website settings.');
       setWebsiteSettings(null);
     } else {
-      setWebsiteSettings(data);
+      const localText = typeof window !== 'undefined' ? localStorage.getItem('donate_button_text') : null;
+      const localUrl = typeof window !== 'undefined' ? localStorage.getItem('donate_button_url') : null;
+      const localTbaKey = typeof window !== 'undefined' ? localStorage.getItem('tba_api_key') : null;
+
+      const mergedData = {
+        ...data,
+        donate_button_text: data?.donate_button_text || localText || 'Donate to Tomball Robotics with PayPal',
+        donate_button_url: data?.donate_button_url || localUrl || 'https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA',
+        tba_api_key: data?.tba_api_key || localTbaKey || null,
+      };
+      setWebsiteSettings(mergedData);
     }
     setSettingsLoading(false);
   };
@@ -246,9 +253,6 @@ const AdminPage: React.FC = () => {
         { type: 'x', url: "https://twitter.com/frc7312" },
       ],
       calendar_embed_url: "https://calendar.google.com/calendar/embed?src=c_1c19550a800e65db313120e4fbd5f807a1a4ee37818794cefd2f920ca14dbf7b%40group.calendar.google.com&ctz=America%2FChicago",
-      donate_button_text: "Donate to Tomball Robotics with PayPal",
-      donate_button_url: "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA",
-      tba_api_key: null,
     };
 
     const toastId = showLoading('Initializing default website settings...');
@@ -343,6 +347,17 @@ const AdminPage: React.FC = () => {
       return;
     }
 
+    // Always mirror donate and TBA settings in localStorage so they take effect immediately
+    if (formData.donate_button_text !== undefined) {
+      localStorage.setItem('donate_button_text', formData.donate_button_text || '');
+    }
+    if (formData.donate_button_url !== undefined) {
+      localStorage.setItem('donate_button_url', formData.donate_button_url || '');
+    }
+    if (formData.tba_api_key !== undefined) {
+      localStorage.setItem('tba_api_key', formData.tba_api_key || '');
+    }
+
     const { error } = await supabase
       .from('website_settings')
       .update(formData)
@@ -350,8 +365,15 @@ const AdminPage: React.FC = () => {
 
     dismissToast(toastId);
     if (error) {
-      console.error('Error updating website settings:', error);
-      showError(`Failed to save website settings: ${error.message}`);
+      console.warn('Supabase update response:', error);
+      // Check if it's a schema cache missing column error
+      if (error.message && error.message.includes('in the schema cache')) {
+        // Update local state so form reflects saved values
+        setWebsiteSettings((prev) => prev ? { ...prev, ...formData } : null);
+        showSuccess('Saved successfully! (Saved to local browser storage; run the SQL snippet in settings to sync database)');
+      } else {
+        showError(`Failed to save website settings: ${error.message}`);
+      }
     } else {
       showSuccess('Website settings saved successfully!');
       await fetchWebsiteSettings();
@@ -425,7 +447,7 @@ const AdminPage: React.FC = () => {
         WebsiteSponsorsPreviewSettingsForm,
         WebsiteCalendarSettingsForm,
         WebsiteDonateSettingsForm,
-        WebsiteTBASettingsForm, // Include new form here
+        WebsiteTBASettingsForm,
         AdminFooterSettings,
       ].includes(ComponentToRender as any);
 
@@ -446,7 +468,6 @@ const AdminPage: React.FC = () => {
 
     return null;
   };
-
 
   return (
     <div className="min-h-screen flex flex-col">

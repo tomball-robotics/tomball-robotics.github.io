@@ -33,7 +33,6 @@ const Donate: React.FC = () => {
           console.error("Error fetching sponsorship tiers:", tiersError);
         } else {
           const sortedTiers = (tiersData || []).sort((a, b) => {
-            // Extract only the first number from the price string for sorting
             const priceA = parseInt(a.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
             const priceB = parseInt(b.price.replace(/,/g, '').match(/\d+/)?.[0] || '0', 10);
             return priceB - priceA;
@@ -41,15 +40,15 @@ const Donate: React.FC = () => {
           setSponsorshipTiers(sortedTiers);
         }
 
-        // Fetch website settings for donate button
+        // Fetch website settings using select('*') to prevent schema cache errors if columns are missing
         const { data: settingsData, error: settingsError } = await supabase
           .from("website_settings")
-          .select("donate_button_text, donate_button_url")
+          .select("*")
           .maybeSingle();
 
         if (settingsError) {
-          console.warn("Error fetching website settings for donate page:", settingsError);
-        } else {
+          console.warn("Notice fetching website settings for donate page:", settingsError);
+        } else if (settingsData) {
           setWebsiteSettings(settingsData);
         }
       } catch (err) {
@@ -111,8 +110,11 @@ const Donate: React.FC = () => {
     );
   }
 
-  const donateButtonText = websiteSettings?.donate_button_text || "Donate to Tomball Robotics with PayPal";
-  const donateButtonUrl = websiteSettings?.donate_button_url || "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA";
+  const localDonateText = typeof window !== 'undefined' ? localStorage.getItem('donate_button_text') : null;
+  const localDonateUrl = typeof window !== 'undefined' ? localStorage.getItem('donate_button_url') : null;
+
+  const donateButtonText = websiteSettings?.donate_button_text || localDonateText || "Donate to Tomball Robotics with PayPal";
+  const donateButtonUrl = websiteSettings?.donate_button_url || localDonateUrl || "https://www.paypal.com/ncp/payment/WRGGJGFCNSYTA";
 
   return (
     <div className="min-h-screen flex flex-col">

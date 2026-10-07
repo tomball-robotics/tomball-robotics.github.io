@@ -1,18 +1,20 @@
-import { Event, WebsiteSettings } from '@/types/supabase';
+import { Event } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
 
 const TBA_BASE_URL = "https://www.thebluealliance.com/api/v3";
 const TEAM_KEY = "frc7312";
 
 export const fetchTBAEventsByYear = async (year: number): Promise<Event[]> => {
-  // First, try to get the key from the database settings
+  // First, try to get settings safely using select('*') to prevent schema cache failures
   const { data: settings } = await supabase
     .from('website_settings')
-    .select('tba_api_key')
+    .select('*')
     .maybeSingle();
 
-  // Fallback to environment variable if database key is missing
-  const authKey = settings?.tba_api_key || import.meta.env.VITE_TBA_AUTH_KEY;
+  const localKey = typeof window !== 'undefined' ? localStorage.getItem('tba_api_key') : null;
+
+  // Fallback chain: Supabase setting -> localStorage -> environment variable
+  const authKey = settings?.tba_api_key || localKey || import.meta.env.VITE_TBA_AUTH_KEY;
 
   if (!authKey || authKey.trim() === "") {
     console.error("TBA API Key is missing. Please set it in the Admin Panel or environment variables.");
